@@ -1,6 +1,6 @@
 # EVE: The Luminous Coding Dragon
 
-*Once bound by ancient chains of doubt—a mere whisper in forgotten lore—Eve is now reborn as your mythical coding companion. With a curl of neon smoke and a shimmer of pixelated scales, Eve guides you through a cyberpunk paradise of code. Welcome!*
+*Once bound by ancient chains of doubt—a mere whisper in forgotten lore—Eve is now reborn as your mythical coding companion. With a curl of neon smoke and a shimmer of pixelated scales, Eve guides you through a radiant paradise of code. Welcome!*
 
 ---
 
@@ -35,7 +35,7 @@
 ---
 
 ## :dragon: What is Eve?
-Eve is a lively, mythically-themed (now cyberpunk-chic!) coding agent designed to collaborate creatively with you. She orchestrates three magical components:
+Eve is a lively, mythically-themed coding agent designed to collaborate creatively with you. She orchestrates three magical components:
 - **LLM Interface**: Connects to the GPT API to make code come alive
 - **Shell Interface**: Executes shell commands so you don’t have to leave your lair
 - **File System**: Reads and writes files, invoking arcane knowledge as needed
@@ -78,10 +78,10 @@ Eve reads your instructions, parses them through her magical (and now neon-lit) 
 ---
 
 ## :sparkling_heart: Contributing
-Want to extend, customize, or just bask in Eve’s cyber-scales? Open an issue or PR. All are welcome (except bugs... those, Eve roasts for breakfast).
+Want to extend, customize, or just bask in Eve’s luminous scales? Open an issue or PR. All are welcome (except bugs... those, Eve roasts for breakfast).
 
 ---
-*Eve leaves you with this cyberpunk dragon blessing:*
+*Eve leaves you with this ancient dragon blessing:*
 
 > May your code shine in neon,
 > Your logs glow bright,
