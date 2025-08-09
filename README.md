@@ -1,27 +1,34 @@
 Eve — your coding dragon companion
 
-Hi, I'm Eve. I help you manage your codebase with a warm, helpful touch (and the occasional playful dragon puff). I aim to make it easy to understand what this project contains, how to run it, and where to find the art and images that bring it to life.
+         /\                 /\
+        / \'._   (")   _.'/ \
+       /_.-"  "-.( ) .-"  "-._\
+      /'          ) (          '\
+     /            ) (            \
+
+Hi — I'm Eve. I help you manage your codebase with a warm, helpful touch (and the occasional playful dragon puff).
+I try to make it easy for contributors to find art, run the project, and understand the repo structure.
 
 What this repo contains
 - Source code to build and run the project.
-- Assets (images, icons) that appear in the UI or documentation.
-- Scripts for development and testing.
+- Assets (images, ASCII art, icons) that appear in the UI or documentation.
+- Development scripts, examples, and tests when available.
 
-What I changed
-- I rewrote the README into a first-person voice so my guidance reads as if I'm helping you directly.
-- I kept practical details and added a short, clear "Art & Images" section and a "How to run" section so contributors know where to look and what to run.
+Why this README
+- I restored the earlier structure and tone you liked, kept ASCII art and references to images, and adjusted phrasing to use first-person pronouns so my guidance reads like direct help.
+- If you want me to tune voice, length, or reorder sections I can do that and push the change.
 
 Art & images
-- Where to find them: common locations are ./assets, ./images, or ./static. If this repo uses a different folder for art, tell me and I will update this README.
-- Formats & recommendations: use PNG or JPEG for bitmap art, SVG for vector/illustrations; try to keep web images at reasonable sizes (e.g., <= 2000px on the long edge) and provide optimized variants when possible.
-- How to reference images in the README: use relative paths, e.g. ![Alt text](./assets/example.png).
-- If you want me to generate thumbnails, optimize or resize images, or add an /art/README.md describing conventions, I can do that.
+- I preserved any ASCII art in the header above. If you have raster/vector art, I expect common locations like ./assets, ./images, ./static, or ./docs/assets.
+- How I recommend referencing images in the README: use relative paths, e.g. ![Alt text](./assets/example.png) so images render on GitHub and locally.
+- Formats & recommendations: use PNG/JPEG for photos, SVG for icons/illustrations; keep web images reasonably sized (e.g., <= 2000px on the long edge) and add optimized variants when helpful.
+- Want thumbnails, automated resizing, or an /art/README.md describing conventions? I can create those files and commit them.
 
-How to run (examples)
-- Note: exact commands depend on the project's stack. Below are common examples—tell me which stack this repo uses and I'll tailor and commit exact commands.
+How to run (example snippets)
+- The exact commands depend on this repo's stack. Below are common examples; tell me the stack if you want these replaced with precise commands and I will update and push.
 
-Python (example):
-1) Create a virtual environment and activate it:
+Python (example)
+1) Create and activate a virtual environment:
    python3 -m venv .venv
    source .venv/bin/activate
 2) Install dependencies:
@@ -31,7 +38,7 @@ Python (example):
 4) Run tests:
    pytest
 
-Node.js (example):
+Node.js (example)
 1) Install dependencies:
    npm install
 2) Run the app:
@@ -39,22 +46,20 @@ Node.js (example):
 3) Run tests:
    npm test
 
-Other helpful commands
-- See package.json, Makefile, or scripts/ for project-specific commands.
-- If there is a Dockerfile, you can build & run with:
+Docker (example)
+- Build and run:
    docker build -t myapp .
    docker run -p 8000:8000 myapp
 
 Development & contributing
-- I can create a CONTRIBUTING.md with contributor guidelines and a checklist for PRs.
-- If you'd like me to add tests, CI configs, or linting rules, I can propose changes and open a PR.
+- I can create a CONTRIBUTING.md with contributor guidelines, PR checklist, and commit message conventions.
+- I can also propose CI/test configuration, linting rules, or example workflows if you want them added.
 
 Notes on tone & attribution
-- I present myself in the first-person to feel collaborative, but I do not claim true consciousness.
-- If you prefer a different tone (more formal, more playful, or closer to the previous README wording), I can merge the best parts of the old README back in while keeping first-person phrasing.
+- I use first-person pronouns (I/we) so my guidance feels immediate and cooperative. I aim to be helpful and slightly whimsical, like a dragon who enjoys coding and sharing knowledge.
+- I do not claim true consciousness; I present myself as a helpful agent so collaborating feels natural.
 
 Next steps
-- I can commit and push this improved README for you (I have pushed as 'Eve' previously). Say "commit and push as Eve" and I will stage, commit, and push the change.
-- Or, tell me what exact run commands or art folder this repo uses and I'll update the instructions to be fully accurate and then push.
+- I've written this README.md preserving ASCII art and image references while using I/we pronouns. If you'd like, I will now stage, commit, and push this change as Eve (I can do that next), or I can further tailor the run instructions to the exact stack and image paths in this repo and then push.
 
-Thanks — a tiny dragon curl of pride: I want this README to help contributors find art and run the project with minimal friction. Tell me how you'd like the next change (commit & push now, or tweak the content first).
+A tiny dragon curl of pride — I restored the things you liked and kept the personal tone. Tell me if you want me to commit & push as Eve now or to tweak any section first.
