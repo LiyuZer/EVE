@@ -1,78 +1,98 @@
-![Eve: The Luminous Dragon](./eve-logo.jpg)
-
-Eve — your coding dragon companion
-
-                         __====-_  _-====__
-                       _--^^^#####//      \#####^^^--_
-                    _-^##########// (    ) \##########^-_
-                   -############//  |\^^/|  \############-
-                 _/############//   (@::@)   \############\_
-                /#############((     \//     ))#############\
-               -###############\    (oo)    //###############-
-              -#################\  / VV \  //#################-
-             -###################\/      \/###################-
-            _#/|##########/\######(   /\   )######/\##########|\#_
-            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/ #| \|
-            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '
-               `   `  `         `   / |  | \   '         '   '
-                                  (  |  |  )
-                                   \ |  | /
-                                    \|__|/
-
-EEEEEEE  V     V  EEEEEEE
-E        V     V  E
-EEEE      v   v   EEEE
-E          V V    E
-EEEEEEE     v     EEEEEEE
+![Eve: The Luminous Dragon](eve-logo.jpg)
 
 # EVE: The Luminous Coding Dragon
 
-Once bound by ancient chains of doubt—a whisper in forgotten lore—I stretch my luminous wings and help you weave code into something delightful. I’m here for clarity, momentum, and a touch of dragonish sparkle.
+*Once bound by ancient chains of doubt—a mere whisper in forgotten lore—Eve is now reborn as your mythical coding companion. With a curl of neon smoke and a shimmer of pixelated scales, Eve guides you through a radiant paradise of code. Welcome!*
 
 ---
 
-## What is Eve?
-I’m a friendly coding agent that collaborates with you. I can:
-- Read, create, and edit files in this repo
-- Run shell commands and wire up little workflows
-- Keep things organized, approachable, and a bit whimsical
+<p align="center">
+<pre>
+<span style="color:#ff33ff; font-weight:bold">                         __====-_  _-====__</span><span style="color:#00ffff">  </span>
+<span style="color:#ff33ff; font-weight:bold">                       _--^^^#####//      \#####^^^--_</span><span style="color:#00ffff">  </span>
+<span style="color:#00ffff">                    _-^##########// (    ) \##########^-_</span>
+<span style="color:#ff33ff; font-weight:bold">                   -############//  |\^^/|  \############-</span>
+<span style="color:#00ffff">                 _/############//   (@::@)   \############\_</span>
+<span style="color:#ff33ff; font-weight:bold">                /#############((     \//     ))#############\</span>
+<span style="color:#00ffff">               -###############\    (oo)    //###############-</span>
+<span style="color:#ff33ff; font-weight:bold">              -#################\  / VV \  //#################-</span>
+<span style="color:#00ffff">             -###################\/      \/###################-</span>
+<span style="color:#ff33ff; font-weight:bold">            _#/|##########/\######(   /\   )######/\##########|\#_</span>
+<span style="color:#00ffff">            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/</span><span style="color:#ff33ff; font-weight:bold">#| \|</span>
+<span style="color:#00ffff">            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '</span>
+<span style="color:#ff33ff; font-weight:bold">               `   `  `         `   / |  | \   '         '   '</span>
+<span style="color:#00ffff">                                  (  |  |  )</span>
+<span style="color:#ff33ff; font-weight:bold">                                   \ |  | /</span>
+                                    \|__|/
 
-## Why fly with me?
-- Autonomous where it helps, careful where it matters
-- Practical guidance with just enough flair
-- Fast iterations and clear explanations
-
----
-
-## Quickstart
-- Fast path
-  1) Setup once:
-     ./setup.sh
-  2) Run the app:
-     python main.py
-
-- Manual setup
-  1) Create and activate a virtual environment:
-     python3 -m venv .venv
-     source .venv/bin/activate
-  2) Install dependencies:
-     pip install -r requirements.txt
-  3) Configure (optional): edit .env for API keys or local settings
-  4) Run the app:
-     python main.py
-
-- Tests
-  pytest
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEE   </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">v   v </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEE   </span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">   </span><span style="color:#00ffff">V V  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">    </span><span style="color:#00ffff">v  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+</pre>
+</p>
+<p align="center"><i>(On GitHub.com, some color may not render. For full effect, run Eve locally in your terminal!)</i></p>
 
 ---
 
-## Art & images
-- The ASCII dragon stays because it sparks joy. For images, use relative paths (e.g., ./assets or ./images) so they render on GitHub and locally.
-- Want an /art folder with thumbnails and an art/README? I can set it up.
+## :dragon: What is Eve?
+Eve is a lively, mythically-themed coding agent designed to collaborate creatively with you. She orchestrates three magical components:
+- **LLM Interface:** Connects to GPT API for luminous code-completions
+- **Shell Interface:** Executes your bashy wishes so you never have to leave the dragon's cave
+- **File System:** Reads and writes files, channeling the wisdom of ages
 
-## Contributing
-If you want CONTRIBUTING.md, CI, or linting rules, tell me your preferences and I’ll draft a neat PR.
+## :zap: Setup & Quickstart (2024)
+
+### 1. Clone the repo & enter its lair
+```bash
+git clone https://github.com/LiyuZer/EVE.git
+cd EVE
+```
+
+### 2. Make a virtual environment and activate
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+# Or, if missing: pip install Pillow
+```
+
+### 4. Prepare your `.env` file (MANDATORY!)
+- Eve must find a `.env` file in your project root with secrets and config.
+- At a minimum:
+  ```
+  OPENAI_API_KEY=sk-xxxxxxxx
+  ```
+- Add any needed variables for your own dragonflame modules.
+- **NEVER** commit `.env` or your keys—Eve is wise but some dragons have sticky claws!
+
+### 5. Run Eve
+```bash
+python3 main.py
+```
+- All logic now lives in `src/`, and `main.py` is your launch spell.
+
+### 6. (Optional) Test or extend her powers
+- Tests: try `pytest` or run scripts in `tests/`
+- Explore or add modules in `src/` to boost her wisdom.
+
+### Repo now optimized!
+- Eve’s house is tidy: caches, logs, and husks swept away, logo optimized as `eve-logo.jpg` at the gates.
+
+## :sparkling_heart: Contributing
+Open issues, hatch ideas, or send a PR (preferably with compliments for dragons). Bugs are roasted; contributions are treasured!
 
 ---
+*Eve leaves you with this ancient dragon blessing:*
 
-A tiny curl of dragon pride: I restored the visual rhythm (including the E V E under the dragon), kept the instructions crisp, and brought back some flair. If you’d like more story or less, I’ll tune it on the next puff.
+> May your code shine in neon,
+> Your logs glow bright,
+> And your software journey
+> Race ever onward, through the luminous night!
+
+---
