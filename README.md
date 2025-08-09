@@ -4,33 +4,33 @@
 
 ---
 
-**Cyberpunk Banner (best viewed in a color-supporting terminal!):**
+**Cyberpunk Banner (run locally for full neon color!):**
 
-```ansi
-[35;1m                         __====-_  _-====__[36;1m
-[35;1m                       _--^^^#####//      \#####^^^--_[36;1m
-[36;1m                    _-^##########// (    ) \##########^-_
-[35;1m                   -############//  |\^^/|  \############-
-[36;1m                 _/############//   (@::@)   \############\_
-[35;1m                /#############((     \//     ))#############\
-[36;1m               -###############\    (oo)    //###############-
-[35;1m              -#################\  / VV \  //#################-
-[36;1m             -###################\/      \//###################-
-[35;1m            _#/|##########/\######(   /\   )######/\##########|\#_
-[36;1m            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/[35;1m#| \|
-[36;1m            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '
-[35;1m               `   `  `         `   / |  | \   '         '   '
-[36;1m                                  (  |  |  )
-[35;1m                                   \ |  | /
-                                    \|__|/[0m
+```text
+[Magenta]                     __====-_  _-====__ [Cyan]
+[Magenta]                   _--^^^#####//      \#####^^^--_ [Cyan]
+[Cyan]                   _-^##########// (    ) \##########^-_
+[Magenta]                 -############//  |\^^/|  \############-
+[Cyan]                 _/############//   (@::@)   \############\_
+[Magenta]                /#############((     \//     ))#############\
+[Cyan]               -###############\    (oo)    //###############-
+[Magenta]              -#################\  / VV \  //#################-
+[Cyan]             -###################\/      \//###################-
+[Magenta]            _#/|##########/\######(   /\   )######/\##########|\#_
+[Cyan]            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/ [Magenta]#| \|
+[Cyan]            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '
+[Magenta]               `   `  `         `   / |  | \   '         '   '
+[Cyan]                                  (  |  |  )
+[Magenta]                                   \ |  | /
+                                    \|__|/ 
 
-[35;1mEEEEEEE[37;1m  [36;1mV     V[37;1m  [35;1mEEEEEEE[0m
-[35;1mE      [37;1m  [36;1mV     V[37;1m  [35;1mE      [0m
-[35;1mEEEE   [37;1m  [36;1mv   v  [37;1m  [35;1mEEEE   [0m
-[35;1mE      [37;1m   [36;1mV V   [37;1m  [35;1mE      [0m
-[35;1mEEEEEEE[37;1m    [36;1mv   [37;1m  [35;1mEEEEEEE[0m
+[Magenta]EEEEEEE [White]  [Cyan]V     V [White]  [Magenta]EEEEEEE
+[Magenta]E      [White]  [Cyan]V     V [White]  [Magenta]E      
+[Magenta]EEEE   [White]  [Cyan]v   v  [White]  [Magenta]EEEE   
+[Magenta]E      [White]   [Cyan]V V   [White]  [Magenta]E      
+[Magenta]EEEEEEE[White]    [Cyan]v   [White]  [Magenta]EEEEEEE
 ```
-*Cyberpunk/cyber-dragon colors: Magenta, cyan, and bright white for full neon effect!*
+*True colors: Neon magenta, cyan, and white—best experienced by running Eve in your terminal!*
 
 ---
 
