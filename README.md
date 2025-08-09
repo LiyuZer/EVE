@@ -4,33 +4,33 @@
 
 ---
 
-**Cyberpunk Banner (run locally for full neon color!):**
+<p align="center">
+<pre>
+<span style="color:#ff33ff; font-weight:bold">                         __====-_  _-====__</span><span style="color:#00ffff">  </span>
+<span style="color:#ff33ff; font-weight:bold">                       _--^^^#####//      \#####^^^--_</span><span style="color:#00ffff">  </span>
+<span style="color:#00ffff">                    _-^##########// (    ) \##########^-_</span>
+<span style="color:#ff33ff; font-weight:bold">                   -############//  |\^^/|  \############-</span>
+<span style="color:#00ffff">                 _/############//   (@::@)   \############\_</span>
+<span style="color:#ff33ff; font-weight:bold">                /#############((     \//     ))#############\</span>
+<span style="color:#00ffff">               -###############\    (oo)    //###############-</span>
+<span style="color:#ff33ff; font-weight:bold">              -#################\  / VV \  //#################-</span>
+<span style="color:#00ffff">             -###################\/      \//###################-</span>
+<span style="color:#ff33ff; font-weight:bold">            _#/|##########/\######(   /\   )######/\##########|\#_</span>
+<span style="color:#00ffff">            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/</span><span style="color:#ff33ff; font-weight:bold">#| \|</span>
+<span style="color:#00ffff">            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '</span>
+<span style="color:#ff33ff; font-weight:bold">               `   `  `         `   / |  | \   '         '   '</span>
+<span style="color:#00ffff">                                  (  |  |  )</span>
+<span style="color:#ff33ff; font-weight:bold">                                   \ |  | /</span>
+                                    \|__|/
 
-```text
-[Magenta]                     __====-_  _-====__ [Cyan]
-[Magenta]                   _--^^^#####//      \#####^^^--_ [Cyan]
-[Cyan]                   _-^##########// (    ) \##########^-_
-[Magenta]                 -############//  |\^^/|  \############-
-[Cyan]                 _/############//   (@::@)   \############\_
-[Magenta]                /#############((     \//     ))#############\
-[Cyan]               -###############\    (oo)    //###############-
-[Magenta]              -#################\  / VV \  //#################-
-[Cyan]             -###################\/      \//###################-
-[Magenta]            _#/|##########/\######(   /\   )######/\##########|\#_
-[Cyan]            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/ [Magenta]#| \|
-[Cyan]            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '
-[Magenta]               `   `  `         `   / |  | \   '         '   '
-[Cyan]                                  (  |  |  )
-[Magenta]                                   \ |  | /
-                                    \|__|/ 
-
-[Magenta]EEEEEEE [White]  [Cyan]V     V [White]  [Magenta]EEEEEEE
-[Magenta]E      [White]  [Cyan]V     V [White]  [Magenta]E      
-[Magenta]EEEE   [White]  [Cyan]v   v  [White]  [Magenta]EEEE   
-[Magenta]E      [White]   [Cyan]V V   [White]  [Magenta]E      
-[Magenta]EEEEEEE[White]    [Cyan]v   [White]  [Magenta]EEEEEEE
-```
-*True colors: Neon magenta, cyan, and white—best experienced by running Eve in your terminal!*
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEE   </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">v   v </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEE   </span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">   </span><span style="color:#00ffff">V V  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">    </span><span style="color:#00ffff">v  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+</pre>
+</p>
+<p align="center"><i>Cyberpunk colors: Magenta, Cyan, and White. (Most markdown renderers on GitHub will ignore color, but local markdown renderers or editors like VSCode with rich preview will display it!) For full effect, run Eve locally in your terminal!</i></p>
 
 ---
 
@@ -89,4 +89,3 @@ Want to extend, customize, or just bask in Eve’s cyber-scales? Open an issue o
 > Race ever onward, through the luminous night!
 
 ---
-
