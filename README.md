@@ -30,7 +30,7 @@
 <span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">    </span><span style="color:#00ffff">v  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
 </pre>
 </p>
-<p align="center"><i>Cyberpunk colors: Magenta, Cyan, and White. (Most markdown renderers on GitHub will ignore color, but local markdown renderers or editors like VSCode with rich preview will display it!) For full effect, run Eve locally in your terminal!</i></p>
+<p align="center"><i>(On GitHub.com, some color may not render. For full effect, run Eve locally in your terminal!)</i></p>
 
 ---
 
