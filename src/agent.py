@@ -85,7 +85,7 @@ class Agent:
                 # Prune HEAD context
                 self.context_tree.prune(node_hash=self.context_tree.head.content_hash, replacement_val=f"<ERROR when executing plan: {e}>")
                 self.context_tree.head = self.context_tree._find_node(self.context_tree.root, self.context_tree.head.content_hash)
-                
+
                 self.terminal.print_error_message(f" I have encountered an error: {e}")
                 logger.error(f"LLM API error: {e}")
                 continue
@@ -106,6 +106,7 @@ class Agent:
                 if file_action == 0:  # Read
                     self.terminal.print_agent_message(f"Reading file: {file_name}")
                     file_content = self.file_system.read_file(file_name)
+                    print(file_content)
                     self.context_tree.add_node(ContextNode(
                         user_message=None,
                         agent_response=str(llm_response),
