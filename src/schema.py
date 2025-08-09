@@ -12,6 +12,7 @@ class Diff(BaseModel):
     content: str
 
 class ResponseBody(BaseModel):
+    action: int
     action_description: str
     shell_command: str
     file_action: int
@@ -19,8 +20,9 @@ class ResponseBody(BaseModel):
     write_content: str
     finished: bool = False
     response: Optional[str] = None
-    action: int
     diff: Diff
+    node_hash: str
+    node_content: str
 
 # You can add additional pydantic models/types/functions here as needed.
 # If you require 'base_prompt', import it using absolute import, e.g.,

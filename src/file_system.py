@@ -12,6 +12,7 @@ class FileHandler:
         self.logger = setup_logger(__name__)
 
     def read_file(self, filename: str) -> dict:
+        print(f"Reading file: {filename}")
         try:
             with open(filename, 'r') as file:
                 lines = file.readlines()

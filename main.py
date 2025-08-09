@@ -9,7 +9,7 @@ sys.path.insert(0, str(src_path))
 from agent import Agent
 
 def main():
-    agent = Agent()
+    agent = Agent(src_path)
     agent.start_execution()
 
 if __name__ == "__main__":

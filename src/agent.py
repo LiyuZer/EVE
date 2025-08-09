@@ -15,7 +15,7 @@ from src.shell import ShellInterface
 from src.terminal import TerminalInterface
 from src.llm import llmInterface
 from src.logging_config import setup_logger  # Import improved logger setup
-
+from context_tree import ContextTree, ContextNode
 load_dotenv()
 api_key_v = os.getenv("OPENAI_API_KEY")
 model = os.getenv("OPENAI_MODEL")
@@ -43,12 +43,19 @@ os.environ["LOG_LEVEL"] = log_level  # so logging_config picks it up
 logger = setup_logger("agent", "project.log")
 
 class Agent:
-    def __init__(self):
+    def __init__(self, root):
         self.llm_client = llmInterface(api_key=api_key_v, model=model)
         self.shell = ShellInterface()
         self.file_system = FileHandler()
         self.terminal = TerminalInterface(username=username)
-        self.context = [{"System" : base_prompt}]
+        self.root = root
+        context_node = ContextNode(
+            user_message="",
+            agent_response="",
+            system_response=base_prompt,
+            metadata={"root directory": self.root}
+        )
+        self.context_tree = ContextTree(root=context_node)
 
     def start_execution(self):
         # Show EVE ASCII banner before anything else
@@ -57,29 +64,33 @@ class Agent:
         self.terminal.print_welcome_message()
         self.terminal.print_username()
         user_input = input()
-        self.context.append({username: user_input})
+        self.context_tree.add_node(ContextNode(
+            user_message=user_input,
+            agent_response="",
+            system_response="",
+            metadata={}
+        ))
 
         # Log initial user input AFTER user step
         logger.info(f"User input received: {user_input}")
 
 
         while True:
-            context_str = "\n".join([f"{key}: {value}" for item in self.context for key, value in item.items()])
-            
-        
-            try: 
+            context_str = str(self.context_tree)
+            try:
                 llm_response = self.llm_client.generate_response(
                     input_text=context_str,
                     text_format=ResponseBody)
             except Exception as e:
-                self.context.pop()
-                self.context.append({"Error": str(e)})
+                # Prune HEAD context
+                self.context_tree.prune(node_hash=self.context_tree.head.content_hash, replacement_val=f"<ERROR when executing plan: {e}>")
+                self.context_tree.head = self.context_tree._find_node(self.context_tree.root, self.context_tree.head.content_hash)
+                
                 self.terminal.print_error_message(f" I have encountered an error: {e}")
                 logger.error(f"LLM API error: {e}")
                 continue
             
 
-            self.context.append({"Action": llm_response.action})
             action = llm_response.action
             
             # --- Minimal change: exit loop if LLM says finished=True ---
@@ -95,14 +106,24 @@ class Agent:
                 if file_action == 0:  # Read
                     self.terminal.print_agent_message(f"Reading file: {file_name}")
                     file_content = self.file_system.read_file(file_name)
-                    self.context.append({"File Read Finished": file_content, "Action Description": llm_response.action_description})
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+                        agent_response=str(llm_response),
+                        system_response="",
+                        metadata={"Result": file_content}
+                    ))
                     # Log AFTER the action
                     logger.info(f"Read file: {file_name} for description: {llm_response.action_description}")
                 else:
                     self.terminal.print_agent_message(f"Writing file: {file_name}")
                     write_content = llm_response.write_content
                     self.file_system.write_file(file_name, write_content)
-                    self.context.append({"File Written": write_content, "File Name": file_name, "Action Description": llm_response.action_description})
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+                        agent_response=str(llm_response),
+                        system_response="",
+                        metadata={"File Written": file_name, "Content": write_content}
+                    ))
                     logger.info(f"Wrote file: {file_name} for description: {llm_response.action_description}")
 
             elif action == 1: # Shell command
@@ -118,19 +139,28 @@ class Agent:
                     self.terminal.print_system_message(system_msg)
                     logger.warning(f"SYSTEM_BLOCK for command: {shell_command} | {system_msg}")
                 
-                self.context.append({
-                    "Shell Command": shell_command, 
-                    "STDOUT": stdout, 
-                    "STDERR": stderr, 
-                    "Action Description": llm_response.action_description})
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={
+                        "Shell Command": shell_command,
+                        "STDOUT": stdout,
+                        "STDERR": stderr,
+                    }
+                ))
                 logger.info(f"Shell command executed: {shell_command} | STDOUT: {stdout.strip()[:200]} | STDERR: {stderr.strip()[:200]}")
             elif action == 2: # Agent/user conversation
                 self.terminal.print_agent_message(llm_response.response)
                 self.terminal.print_username()
                 user_input = input()
                 agent_response = llm_response.response
-                self.context.append({"Agent Response": agent_response, "Agent Description": llm_response.action_description})
-                self.context.append({username: user_input})
+                self.context_tree.add_node(ContextNode(
+                    user_message=user_input,
+                    agent_response=agent_response,
+                    system_response="",
+                    metadata={},
+                ))
                 # Log only AFTER full dialogue turn
                 logger.info(f"Agent response: {agent_response} | User replied: {user_input}")
             elif action == 3: # Diff insertion
@@ -139,8 +169,33 @@ class Agent:
                 diff = llm_response.diff
                 print(f"Diff to insert: {diff}")
                 self.file_system.insert_diff(llm_response.file_name, diff)
-                self.context.append({"Diff Insertion Complete": diff, "File Name": llm_response.file_name, "Action Description": llm_response.action_description})
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"File Diff Inserted": llm_response.file_name, "Diff": str(diff)}
+                ))
                 logger.info(f"Diff inserted into file: {llm_response.file_name} | Diff: {diff}")
+            elif action == 4: # Prune context tree
+                self.context_tree.prune(node_hash=llm_response.node_hash, replacement_val=llm_response.node_content)
+                self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"Pruned Context Node": llm_response.node_hash}
+                ))
+            elif action == 5: # Change context HEAD
+                self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
+                self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
+                # Add a Node to head
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"Changed Context Head": llm_response.node_hash}
+                ))
+                logger.info(f"Changed context tree head to: {llm_response.node_hash}")
 
 if __name__ == "__main__":
     agent = Agent()
