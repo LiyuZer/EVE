@@ -1,5 +1,8 @@
 from pathlib import Path
 from src.logging_config import setup_logger
+import subprocess
+import tempfile
+from pathlib import Path
 
 class FileHandler:
     def __init__(self):
@@ -23,4 +26,25 @@ class FileHandler:
             self.logger.info(f"Wrote to file: {filename}")
         except Exception as e:
             self.logger.error(f"Error writing file {filename}: {e}")
-            raise e
+            return f"Error writing file: {e}"
+
+
+    def insert_diff(self, filename: str, diff: str) -> str:
+        # Ensure file path is absolute
+        file_path = Path(filename).resolve()
+
+        # Write diff to a temporary file
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as tmp:
+            tmp.write(diff)
+            tmp_path = tmp.name
+
+        try:
+            subprocess.run(
+                ["patch", "-u", str(file_path), "-i", tmp_path],
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            return f"Applied diff to file: {filename}"
+        except subprocess.CalledProcessError as e:
+            return f"Failed to apply diff: {e.stderr or e.stdout}"

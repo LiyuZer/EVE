@@ -133,6 +133,13 @@ class Agent:
                 self.context.append({username: user_input})
                 # Log only AFTER full dialogue turn
                 logger.info(f"Agent response: {agent_response} | User replied: {user_input}")
+            elif action == 3: # Diff insertion
+                self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
+                self.terminal.print_agent_message(f"Inserting diff into file: {llm_response.file_name}")
+                diff = llm_response.diff
+                self.file_system.insert_diff(llm_response.file_name, diff)
+                self.context.append({"Diff Insertion Complete": diff, "File Name": llm_response.file_name, "Action Description": llm_response.action_description})
+                logger.info(f"Diff inserted into file: {llm_response.file_name} | Diff: {diff}")
 
 if __name__ == "__main__":
     agent = Agent()

@@ -12,6 +12,7 @@ class ResponseBody(BaseModel):
     finished: bool = False
     response: Optional[str] = None
     action: int
+    diff: str
 
 # You can add additional pydantic models/types/functions here as needed.
 # If you require 'base_prompt', import it using absolute import, e.g.,

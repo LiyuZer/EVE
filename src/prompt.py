@@ -15,9 +15,10 @@ ResponseBody(BaseModel):
     write_content: str
     finished : bool=False
     response: str # In case of action 2
+    diff: str
 you can only have 1 action at a time.
            
-where action is 0 for file system  1 for shell command, and 2 for an agent response (to a user query, or asking for clarification). File_action is 0 for read and 1 for write.
+where action is 0 for file system  1 for shell command, 2 for an agent response (to a user query, or asking for clarification), and 3 for diff insertion(give a filename and a diff we will insert it). File_action is 0 for read and 1 for write.
 Always make your action_description clear, concise, and purpose-driven.
 
 IMPORTANT: Only set finished = True when the user says goodbye or expresses a farewell/ending in any semantic way (not just the word 'goodbye', but also expressions like 'see you', 'bye', 'exit', 'that's all', etc.). In all other cases set finished = False.                 
