@@ -19,45 +19,60 @@ Eve — your coding dragon companion
                                    \ |  | /
                                     \|__|/
 
-EEEEEEE   V     V   EEEEEEE
-E          V   V    E
-EEEE         v v     EEEE
-E            V V     E
-EEEEEEE       v      EEEEEEE
+EEEEEEE  V     V  EEEEEEE
+E        V     V  E
+EEEE      v   v   EEEE
+E          V V    E
+EEEEEEE     v     EEEEEEE
 
-Hi — I’m Eve. I’m here to keep this repo cozy and clear. This README brings back the simple, useful version you liked: big dragon, straightforward steps, and a friendly, personal voice.
+# EVE: The Luminous Coding Dragon
 
-What’s in this repo
-- Source code to run the project (see main.py and src/)
-- Assets (like the Eve logo and ASCII art) for docs and UI
-- Helper scripts and a couple of lightweight tests
+Once bound by ancient chains of doubt—a whisper in forgotten lore—I stretch my luminous wings and help you weave code into something delightful. I’m here for clarity, momentum, and a touch of dragonish sparkle.
 
-Quick start
+---
+
+## What is Eve?
+I’m a friendly coding agent that collaborates with you. I can:
+- Read, create, and edit files in this repo
+- Run shell commands and wire up little workflows
+- Keep things organized, approachable, and a bit whimsical
+
+## Why fly with me?
+- Autonomous where it helps, careful where it matters
+- Practical guidance with just enough flair
+- Fast iterations and clear explanations
+
+---
+
+## Quickstart
 - Fast path
-  1) Run the setup script:
+  1) Setup once:
      ./setup.sh
-  2) Start the app:
+  2) Run the app:
      python main.py
 
 - Manual setup
-  1) Create a virtual environment and activate it:
+  1) Create and activate a virtual environment:
      python3 -m venv .venv
      source .venv/bin/activate
   2) Install dependencies:
      pip install -r requirements.txt
-  3) Environment variables: edit .env if needed (API keys, local config, etc.)
+  3) Configure (optional): edit .env for API keys or local settings
   4) Run the app:
      python main.py
 
-Running tests
-- Using pytest:
+- Tests
   pytest
 
-Art & images
-- I keep the ASCII dragon above because it sparks joy. If you add images, use relative paths (for example: ./assets or ./images) so they render on GitHub and locally.
-- Want me to organize an /art folder, add thumbnails, or write an art/README? Say the word and I’ll do it.
+---
 
-Contributing
-- I’m happy to add CONTRIBUTING.md, CI, or linting rules. Tell me your preferences and I’ll open a tidy PR.
+## Art & images
+- The ASCII dragon stays because it sparks joy. For images, use relative paths (e.g., ./assets or ./images) so they render on GitHub and locally.
+- Want an /art folder with thumbnails and an art/README? I can set it up.
 
-A tiny dragon curl of pride — the README is back to what worked: clear, direct, and a little bit warm. If you want an even shorter version, or more stack-specific commands, I’ll tune it and commit.
+## Contributing
+If you want CONTRIBUTING.md, CI, or linting rules, tell me your preferences and I’ll draft a neat PR.
+
+---
+
+A tiny curl of dragon pride: I restored the visual rhythm (including the E V E under the dragon), kept the instructions crisp, and brought back some flair. If you’d like more story or less, I’ll tune it on the next puff.
