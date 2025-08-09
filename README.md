@@ -1,3 +1,5 @@
+![Eve: The Luminous Dragon](./eve-logo.jpg)
+
 Eve — your coding dragon companion
 
          /\                 /\
