@@ -3,6 +3,14 @@
 from pydantic import BaseModel
 from typing import Optional
 
+class Diff(BaseModel):
+    line_range_1: list[int]
+    line_range_2: list[int]
+    Add: bool
+    Remove: bool
+    Replace: bool
+    content: str
+
 class ResponseBody(BaseModel):
     action_description: str
     shell_command: str
@@ -12,7 +20,7 @@ class ResponseBody(BaseModel):
     finished: bool = False
     response: Optional[str] = None
     action: int
-    diff: str
+    diff: Diff
 
 # You can add additional pydantic models/types/functions here as needed.
 # If you require 'base_prompt', import it using absolute import, e.g.,

@@ -95,7 +95,7 @@ class Agent:
                 if file_action == 0:  # Read
                     self.terminal.print_agent_message(f"Reading file: {file_name}")
                     file_content = self.file_system.read_file(file_name)
-                    self.context.append({"File Read": file_content, "Action Description": llm_response.action_description})
+                    self.context.append({"File Read Finished": file_content, "Action Description": llm_response.action_description})
                     # Log AFTER the action
                     logger.info(f"Read file: {file_name} for description: {llm_response.action_description}")
                 else:
@@ -137,6 +137,7 @@ class Agent:
                 self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
                 self.terminal.print_agent_message(f"Inserting diff into file: {llm_response.file_name}")
                 diff = llm_response.diff
+                print(f"Diff to insert: {diff}")
                 self.file_system.insert_diff(llm_response.file_name, diff)
                 self.context.append({"Diff Insertion Complete": diff, "File Name": llm_response.file_name, "Action Description": llm_response.action_description})
                 logger.info(f"Diff inserted into file: {llm_response.file_name} | Diff: {diff}")

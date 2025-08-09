@@ -15,7 +15,18 @@ ResponseBody(BaseModel):
     write_content: str
     finished : bool=False
     response: str # In case of action 2
-    diff: str
+    diff: Diff
+               
+class Diff(BaseModel):
+    line_range_1: tuple[int, int] # (for insertion, deletion)
+    line_range_2: tuple[int, int]  # (for replacement etc)
+    Add: bool
+    Remove: bool
+    Replace: bool
+    content: str
+**NOTE**       
+Only 1 of Add, Remove, Replace can be True.
+
 you can only have 1 action at a time.
            
 where action is 0 for file system  1 for shell command, 2 for an agent response (to a user query, or asking for clarification), and 3 for diff insertion(give a filename and a diff we will insert it). File_action is 0 for read and 1 for write.
