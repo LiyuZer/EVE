@@ -38,63 +38,54 @@
 
 ## :dragon: What is Eve?
 Eve is a lively, mythically-themed coding agent designed to collaborate creatively with you. She orchestrates three magical components:
-- **LLM Interface**: Connects to the GPT API to make code come alive
-- **Shell Interface**: Executes shell commands so you don’t have to leave your lair
-- **File System**: Reads and writes files, invoking arcane knowledge as needed
+- **LLM Interface:** Connects to GPT API for luminous code-completions
+- **Shell Interface:** Executes your bashy wishes so you never have to leave the dragon's cave
+- **File System:** Reads and writes files, channeling the wisdom of ages
 
-## :sparkles: Why Eve?
-- Autonomous: Navigates, edits, and manages the codebase by herself
-- Wise: Offers context-aware suggestions, explanations, and the occasional dragon byte
-- Collaborative: Responds naturally, as a mythical co-coder born to help
+## :zap: Setup & Quickstart (2024)
 
-## :zap: Quickstart
-
-### 1. Clone this repo
+### 1. Clone the repo & enter its lair
 ```bash
 git clone https://github.com/LiyuZer/EVE.git
 cd EVE
 ```
 
-### 2. Set up your environment
-- Make sure you have Python 3.8+ and pip.
-- Run: `./setup.sh`  *(creates venv, installs dependencies, and preps .env stub)*
-
-### 3. Set up your `.env` file
-Eve uses a `.env` file to store sensitive configuration such as API keys and environment settings. Without this, Eve cannot access the magical (and practical) services she relies on!
-
-**Required variables:**
-- `OPENAI_API_KEY` – Your OpenAI API key for Eve’s brainpower
-- (add any other required variables if your project needs them)
-
-**Sample `.env` file:**
-```
-OPENAI_API_KEY=sk-your-key-here
-# Put other configuration variables as needed
-```
-Copy the example above into a file named `.env` in your project root. Don’t commit your secret keys to version control, or dragons will frown in disappointment!
-
-### 4. Run Eve
+### 2. Make a virtual environment and activate
 ```bash
-python agent.py
+python3 -m venv venv
+source venv/bin/activate
 ```
-- Optional: use the `-env` flag (`prod` or `debug`) for logging flavor.
 
-### 5. Let the (neon) adventure begin!
-Enjoy Eve’s welcoming banner and start collaborating. She’s as good with code as she is with puns.
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+# Or, if missing: pip install Pillow
+```
 
----
+### 4. Prepare your `.env` file (MANDATORY!)
+- Eve must find a `.env` file in your project root with secrets and config.
+- At a minimum:
+  ```
+  OPENAI_API_KEY=sk-xxxxxxxx
+  ```
+- Add any needed variables for your own dragonflame modules.
+- **NEVER** commit `.env` or your keys—Eve is wise but some dragons have sticky claws!
 
-## :scroll: How It Works
-Eve reads your instructions, parses them through her magical (and now neon-lit) brain (LLM), acts autonomously, and logs every adventure.
+### 5. Run Eve
+```bash
+python3 main.py
+```
+- All logic now lives in `src/`, and `main.py` is your launch spell.
 
-- **File actions**: can create, read, or write files
-- **Shell actions**: can execute responsible, self-aware shell commands
-- **Chit-chat**: will lighten the mood—and brighten the room
+### 6. (Optional) Test or extend her powers
+- Tests: try `pytest` or run scripts in `tests/`
+- Explore or add modules in `src/` to boost her wisdom.
 
----
+### Repo now optimized!
+- Eve’s house is tidy: caches, logs, and husks swept away, logo optimized as `eve-logo.jpg` at the gates.
 
 ## :sparkling_heart: Contributing
-Want to extend, customize, or just bask in Eve’s luminous scales? Open an issue or PR. All are welcome (except bugs... those, Eve roasts for breakfast).
+Open issues, hatch ideas, or send a PR (preferably with compliments for dragons). Bugs are roasted; contributions are treasured!
 
 ---
 *Eve leaves you with this ancient dragon blessing:*
