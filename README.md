@@ -59,13 +59,27 @@ cd EVE
 - Make sure you have Python 3.8+ and pip.
 - Run: `./setup.sh`  *(creates venv, installs dependencies, and preps .env stub)*
 
-### 3. Run Eve
+### 3. Set up your `.env` file
+Eve uses a `.env` file to store sensitive configuration such as API keys and environment settings. Without this, Eve cannot access the magical (and practical) services she relies on!
+
+**Required variables:**
+- `OPENAI_API_KEY` – Your OpenAI API key for Eve’s brainpower
+- (add any other required variables if your project needs them)
+
+**Sample `.env` file:**
+```
+OPENAI_API_KEY=sk-your-key-here
+# Put other configuration variables as needed
+```
+Copy the example above into a file named `.env` in your project root. Don’t commit your secret keys to version control, or dragons will frown in disappointment!
+
+### 4. Run Eve
 ```bash
 python agent.py
 ```
 - Optional: use the `-env` flag (`prod` or `debug`) for logging flavor.
 
-### 4. Let the (neon) adventure begin!
+### 5. Let the (neon) adventure begin!
 Enjoy Eve’s welcoming banner and start collaborating. She’s as good with code as she is with puns.
 
 ---
@@ -91,4 +105,3 @@ Want to extend, customize, or just bask in Eve’s luminous scales? Open an issu
 > Race ever onward, through the luminous night!
 
 ---
-
