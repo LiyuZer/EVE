@@ -8,13 +8,13 @@ from dotenv import load_dotenv
 import os
 import sys
 import argparse
-from schema import *
-from prompt import *
-from file_system import FileHandler
-from shell import ShellInterface
-from terminal import TerminalInterface
-from llm import llmInterface
-from logging_config import setup_logger  # Import improved logger setup
+from src.schema import *
+from src.prompt import *
+from src.file_system import FileHandler
+from src.shell import ShellInterface
+from src.terminal import TerminalInterface
+from src.llm import llmInterface
+from src.logging_config import setup_logger  # Import improved logger setup
 
 load_dotenv()
 api_key_v = os.getenv("OPENAI_API_KEY")
@@ -48,7 +48,7 @@ class Agent:
         self.shell = ShellInterface()
         self.file_system = FileHandler()
         self.terminal = TerminalInterface(username=username)
-        self.context = [base_prompt]
+        self.context = [{"System" : base_prompt}]
 
     def start_execution(self):
         # Show EVE ASCII banner before anything else
@@ -62,8 +62,11 @@ class Agent:
         # Log initial user input AFTER user step
         logger.info(f"User input received: {user_input}")
 
+
         while True:
             context_str = "\n".join([f"{key}: {value}" for item in self.context for key, value in item.items()])
+            
+        
             try: 
                 llm_response = self.llm_client.generate_response(
                     input_text=context_str,
@@ -75,6 +78,7 @@ class Agent:
                 logger.error(f"LLM API error: {e}")
                 continue
             
+
             self.context.append({"Action": llm_response.action})
             action = llm_response.action
             
