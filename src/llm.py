@@ -22,3 +22,13 @@ class llmInterface:
         except Exception as e:
             self.logger.error(f"LLM API error: {e}")
             raise e
+    def generate_embedding(self, text: str) -> list[float]:
+        try:
+            embedding = self.client.embeddings.create(
+                model="text-embedding-3-large",
+                input=text
+            )
+            return embedding.data[0].embedding
+        except Exception as e:
+            self.logger.error(f"LLM API error while generating embedding: {e}")
+            raise e

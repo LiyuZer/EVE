@@ -7,40 +7,24 @@ Agent interacts with three modular components-
 from dotenv import load_dotenv
 import os
 import sys
-import argparse
 from src.schema import *
 from src.prompt import *
 from src.file_system import FileHandler
 from src.shell import ShellInterface
 from src.terminal import TerminalInterface
 from src.llm import llmInterface
+from src.memory import EveMemory  # Import Eve's memory for semantic storage
 from src.logging_config import setup_logger  # Import improved logger setup
-from context_tree import ContextTree, ContextNode
+from src.context_tree import ContextTree, ContextNode
+
 load_dotenv()
 api_key_v = os.getenv("OPENAI_API_KEY")
 model = os.getenv("OPENAI_MODEL")
-username = os.getenv("USERNAME")
+username = os.getenv("USERNAME") or os.getenv("USER") or "friend"
 
-# Argument parser to accept -env flag
-parser = argparse.ArgumentParser(description="Run the agent with specified environment mode.")
-parser.add_argument("-env", type=str, default=None, help="Set environment mode: prod or debug (sets logger level)")
-args = parser.parse_args()
-
-def get_log_level_from_env(env_str: str):
-    if env_str is None:
-        return os.getenv("LOG_LEVEL", "INFO")
-    env_str = env_str.strip().lower()
-    if env_str in ["prod", "production", "personal"]:
-        return "WARNING"
-    if env_str in ["debug", "dev", "development"]:
-        return "DEBUG"
-    return "INFO"
-
-log_level = get_log_level_from_env(args.env)
-os.environ["LOG_LEVEL"] = log_level  # so logging_config picks it up
-
-# Initialize logger once, with env-aware level
+# Initialize logger once; level is picked up from LOG_LEVEL env if set
 logger = setup_logger("agent", "project.log")
+
 
 class Agent:
     def __init__(self, root):
@@ -48,6 +32,7 @@ class Agent:
         self.shell = ShellInterface()
         self.file_system = FileHandler()
         self.terminal = TerminalInterface(username=username)
+        self.memory = EveMemory()
         self.root = root
         context_node = ContextNode(
             user_message="",
@@ -74,7 +59,6 @@ class Agent:
         # Log initial user input AFTER user step
         logger.info(f"User input received: {user_input}")
 
-
         while True:
             context_str = str(self.context_tree)
             try:
@@ -89,17 +73,16 @@ class Agent:
                 self.terminal.print_error_message(f" I have encountered an error: {e}")
                 logger.error(f"LLM API error: {e}")
                 continue
-            
 
             action = llm_response.action
-            
+
             # --- Minimal change: exit loop if LLM says finished=True ---
             if hasattr(llm_response, 'finished') and llm_response.finished:
                 self.terminal.print_agent_message("Farewell. Goodbye!")
                 logger.info("Session finished by semantic goodbye detected by LLM.")
                 break
 
-            if action == 0: # File system read/write
+            if action == 0:  # File system read/write
                 self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
                 file_action = llm_response.file_action
                 file_name = llm_response.file_name
@@ -127,7 +110,7 @@ class Agent:
                     ))
                     logger.info(f"Wrote file: {file_name} for description: {llm_response.action_description}")
 
-            elif action == 1: # Shell command
+            elif action == 1:  # Shell command
                 self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
                 self.terminal.print_agent_message(f"Executing shell command: {llm_response.shell_command}")
                 shell_command = llm_response.shell_command
@@ -139,7 +122,7 @@ class Agent:
                     system_msg = stderr.split(":", 1)[1].strip()
                     self.terminal.print_system_message(system_msg)
                     logger.warning(f"SYSTEM_BLOCK for command: {shell_command} | {system_msg}")
-                
+
                 self.context_tree.add_node(ContextNode(
                     user_message=None,
                     agent_response=str(llm_response),
@@ -151,7 +134,7 @@ class Agent:
                     }
                 ))
                 logger.info(f"Shell command executed: {shell_command} | STDOUT: {stdout.strip()[:200]} | STDERR: {stderr.strip()[:200]}")
-            elif action == 2: # Agent/user conversation
+            elif action == 2:  # Agent/user conversation
                 self.terminal.print_agent_message(llm_response.response)
                 self.terminal.print_username()
                 user_input = input()
@@ -164,7 +147,7 @@ class Agent:
                 ))
                 # Log only AFTER full dialogue turn
                 logger.info(f"Agent response: {agent_response} | User replied: {user_input}")
-            elif action == 3: # Diff insertion
+            elif action == 3:  # Diff insertion
                 self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
                 self.terminal.print_agent_message(f"Inserting diff into file: {llm_response.file_name}")
                 diff = llm_response.diff
@@ -177,7 +160,7 @@ class Agent:
                     metadata={"File Diff Inserted": llm_response.file_name, "Diff": str(diff)}
                 ))
                 logger.info(f"Diff inserted into file: {llm_response.file_name} | Diff: {diff}")
-            elif action == 4: # Prune context tree
+            elif action == 4:  # Prune context tree
                 self.context_tree.prune(node_hash=llm_response.node_hash, replacement_val=llm_response.node_content)
                 self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
                 self.context_tree.add_node(ContextNode(
@@ -186,7 +169,7 @@ class Agent:
                     system_response="",
                     metadata={"Pruned Context Node": llm_response.node_hash}
                 ))
-            elif action == 5: # Change context HEAD
+            elif action == 5:  # Change context HEAD
                 self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
                 self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
                 # Add a Node to head
@@ -197,7 +180,34 @@ class Agent:
                     metadata={"Changed Context Head": llm_response.node_hash}
                 ))
                 logger.info(f"Changed context tree head to: {llm_response.node_hash}")
+            elif action == 6:  # Store Node in embedding DB
+                embedding = self.llm_client.generate_embedding(llm_response.save_content)
+                self.memory.store_node(
+                    embedding=embedding,
+                    content=llm_response.save_content                )
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"Stored info to Memory": llm_response.save_content}
+                ))
+                logger.info(f"Stored information in memory: {llm_response.save_content} with node hash: {llm_response.node_hash}")
+            elif action == 7:  # Retrieve Node from embedding DB
+                embedding = self.llm_client.generate_embedding(llm_response.retrieve_content)
+                retrieved_info = self.memory.retrieve_node(embedding)
+                if retrieved_info:
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+                        agent_response=str(llm_response),
+                        system_response="",
+                        metadata={"Retrieved info from Memory": retrieved_info}
+                    ))
+                    logger.info(f"Retrieved information from memory: {retrieved_info}")
 
-if __name__ == "__main__":
-    agent = Agent()
-    response = agent.start_execution()
+                else:
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+                        agent_response=str(llm_response),
+                        system_response="",
+                        metadata={"Retrieve failed": "No matching node found in memory"}
+                    ))

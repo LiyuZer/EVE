@@ -23,7 +23,8 @@ class ResponseBody(BaseModel):
     diff: Diff
     node_hash: str # For replacement, and pruning
     node_content:str # For replacement and pruning, a detailed, but compact summary of the whole sub branch(what has been done)
-
+    save_content: str # For storing information in embedding DB, a detailed, but compact summary of the whatever you want to save
+    retrieve_content: str # For retrieving information in embedding DB, a detailed, but compact summary of the whatever you want to retrieve
 class Diff(BaseModel):
     line_range_1: tuple[int, int]
     line_range_2: tuple[int, int]
@@ -39,12 +40,18 @@ ACTIONS (one per response):
 3 - File diff edit
 4 - Prune context tree (node_name, replacement_summary, if your head is on the subtree rooted by this node, you need to switch HEAD)
 5 - Change context HEAD (target_node)
+6 - Store info embedding DB (save_content)
+7 - Retrieve info embedding DB (search_content)
 
 RULES:
 - One action per response
 - Only one of Add/Remove/Replace can be True in Diff
+- Pruning is used to decrease context size, not for editing, so when things get too big, prune the least relevant nodes
+- Use Diff for file edits, not for adding/removing files
 - Set finished=True only on semantic farewell
 - Make action_description clear and purposeful
+- Store info when you think they will be useful later(or other sessions), be selective, if need be make multiple save responses one after the other. 
+
     '''
 }
 

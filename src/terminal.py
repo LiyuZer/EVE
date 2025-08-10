@@ -41,14 +41,14 @@ class TerminalInterface:
             "                         __====-_  _-====__",
             "                       _--^^^#####//      \\#####^^^--_",
             "                    _-^##########// (    ) \\##########^-_",
-            "                   -############//  |\^^/|  \\############-",
+            "                   -############//  |\\^^/|  \\############-",
             "                 _/############//   (@::@)   \\############\\_",
             "                /#############((     \\//     ))#############\\",
             "               -###############\\    (oo)    //###############-",
             "              -#################\\  / VV \\  //#################-",
             "             -###################\\/      \\//###################-",
             "            _#/|##########/\\######(   /\\   )######/\\##########|\\#_",
-            "            |/ |#/\\#/\\#/\/  \\#/\\##\\  |  |  /##/\\#/  \\/\\#/\\#/\#| \\|",
+            "            |/ |#/\\#/\\#/\/  \\#/\\##\\  |  |  /##/\\#/  \\/\\#/\\#/\\#| \\|",
             "            `  |/  V  V  `    V  \\#\\|  | |/##/  V     `  V  \\|  '",
             "               `   `  `         `   / |  | \\   '         '   '",
             "                                  (  |  |  )",
@@ -57,7 +57,7 @@ class TerminalInterface:
         ]
         for idx, d in enumerate(dragon_lines):
             c = color_magenta if idx % 2 == 0 else color_blue
-            print_aligned_colored([(d, c)], align="left", region="center")
+            print_aligned_colored([(d, c)], align="left", region="left")
 
         print()
         lines = [
@@ -89,7 +89,7 @@ class TerminalInterface:
         self.logger.info("Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.")
 
     def print_welcome_message(self) -> None:
-        message = f"Hello, {self.username} what are we doing today!"
+        message = f"Hello, {self.username}! What are we doing today?"
         print(colorama.Fore.LIGHTGREEN_EX + message + colorama.Style.RESET_ALL)
         self.logger.info(message)
 

@@ -30,6 +30,19 @@ class ContextTree:
         self.root = root
         self.head = root
 
+    def _find_node_by_hash(self, target_hash: str):
+        """Recursively find a node by its content hash"""
+        def _find(node: ContextNode):
+            if node.content_hash == target_hash:
+                return node
+            for child in node.children:
+                found = _find(child)
+                if found:
+                    return found
+            return None
+
+        return _find(self.root)
+    
     def _find_node(self, node: ContextNode, target_hash: str):
         if node.content_hash == target_hash:
             return node

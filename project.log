@@ -1,91 +1,1611 @@
-2025-08-09 14:57:44 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
-2025-08-09 14:57:44 | INFO | src.terminal | Hello, Liyu what are we doing today!
-2025-08-09 14:57:44 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 14:57:47 | INFO | agent | User input received: I want to test your read capabilties(do not use bash) read the file test.txt what does it say
-2025-08-09 14:57:58 | INFO | src.llm | LLM responded successfully
-2025-08-09 14:57:58 | INFO | src.terminal | Eve: Hi — I'm Eve the coding dragon! I can't directly access files on your local machine from this chat environment. Please either paste the contents of test.txt here or upload the file, and I'll read and tell you exactly what it says. If you prefer, you can copy the file text into your message and I'll analyze or respond to it. Roaringly ready to help! 🐉
-2025-08-09 14:57:58 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 14:58:34 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
-2025-08-09 14:58:34 | INFO | src.terminal | Hello, Liyu what are we doing today!
-2025-08-09 14:58:34 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 14:58:35 | INFO | agent | User input received: I want to test your read capabilties(do not use bash) read the file test.txt what does it say
-2025-08-09 14:58:45 | INFO | src.llm | LLM responded successfully
-2025-08-09 14:58:45 | INFO | src.terminal | Eve: Action Description: Read the file 'test.txt' from the project directory (filesystem read; no bash).
-2025-08-09 14:58:45 | INFO | src.terminal | Eve: Reading file: test.txt
-2025-08-09 14:58:45 | INFO | src.file_system | Read file as line dict: test.txt
-2025-08-09 14:58:45 | INFO | agent | Read file: test.txt for description: Read the file 'test.txt' from the project directory (filesystem read; no bash).
-2025-08-09 14:58:52 | INFO | src.llm | LLM responded successfully
-2025-08-09 14:58:52 | INFO | src.terminal | Eve: I read test.txt (without using bash). It contains:
+2025-08-09 22:13:03 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-09 22:13:03 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-09 22:13:03 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-09 22:13:39 | INFO | agent | User input received: Hello Eve, I want you to create the setup.sh file mentioned in Readme(found in the eve directory, find the readme and create the file, so that users can use it, thanks 
+2025-08-09 22:13:49 | INFO | src.llm | LLM responded successfully
+2025-08-09 22:13:49 | INFO | src.terminal | Eve: Action Description: Locate and read the README that mentions setup.sh to determine exact requirements before creating the script.
+2025-08-09 22:13:49 | INFO | src.terminal | Eve: Executing shell command: bash -lc 'cd ..; echo "Working dir: $(pwd)"; echo; echo "Finding README files..."; find . -maxdepth 3 -type f \( -iname "readme" -o -iname "readme.md" -o -iname "readme.txt" \) -print -exec echo "\n===== {} =====" \; -exec sed -n "1,200p" {} \; ; echo "\nSearching for setup.sh mentions..."; grep -RIn "setup.sh" -n . || true'
+2025-08-09 22:21:35 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-09 22:21:35 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-09 22:21:35 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-09 22:21:36 | INFO | agent | User input received: Hello Eve, I want you to create the setup.sh file mentioned in Readme(found in the eve directory, find the readme and create the file, so that users can use it, thanks
+2025-08-09 22:21:59 | INFO | src.llm | LLM responded successfully
+2025-08-09 22:21:59 | INFO | src.terminal | Eve: Action Description: Locate the README that mentions setup.sh and inspect its requirements before creating the script.
+2025-08-09 22:21:59 | INFO | src.terminal | Eve: Executing shell command: set -e
+echo "PWD: $(pwd)"
+echo "--- list current directory ---"
+ls -la
 
-Testing here, welcome weary traveler.  123
+# Likely repo root is one level up from src; check there too
+echo "--- list parent directory ---"
+ls -la .. || true
 
-A little dragon whisper: all set — let me know if you'd like me to do anything else with this file!
-2025-08-09 14:58:52 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 14:59:09 | INFO | agent | Agent response: I read test.txt (without using bash). It contains:
+echo "--- find README files nearby ---"
+find . .. -maxdepth 3 -type f \( -iname "readme.md" -o -iname "readme" -o -iname "README.md" -o -iname "README" \) -print || true
 
-Testing here, welcome weary traveler.  123
+echo "--- grep for setup.sh references ---"
+grep -R -n "setup.sh" . .. || true
 
-A little dragon whisper: all set — let me know if you'd like me to do anything else with this file! | User replied: What does it say now?
-2025-08-09 14:59:19 | INFO | src.llm | LLM responded successfully
-2025-08-09 14:59:19 | INFO | src.terminal | Eve: It says: "Testing here, welcome weary traveler.  123"
-2025-08-09 14:59:19 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 14:59:31 | INFO | agent | Agent response: It says: "Testing here, welcome weary traveler.  123" | User replied: Have you checked again?
-2025-08-09 14:59:41 | INFO | src.llm | LLM responded successfully
-2025-08-09 14:59:41 | INFO | src.terminal | Eve: I haven't re-checked the file since my last read. The most recent read (no bash) showed: "Testing here, welcome weary traveler.  123". Would you like me to read test.txt again now (I can do another filesystem read without using bash), or do something else with it? — a small dragon nudge for choices!
-2025-08-09 14:59:41 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 14:59:47 | INFO | agent | Agent response: I haven't re-checked the file since my last read. The most recent read (no bash) showed: "Testing here, welcome weary traveler.  123". Would you like me to read test.txt again now (I can do another filesystem read without using bash), or do something else with it? — a small dragon nudge for choices! | User replied: Yes
-2025-08-09 14:59:54 | INFO | src.llm | LLM responded successfully
-2025-08-09 14:59:54 | INFO | src.terminal | Eve: Action Description: Read the file 'test.txt' from the project directory (filesystem read; no bash).
-2025-08-09 14:59:54 | INFO | src.terminal | Eve: Reading file: test.txt
-2025-08-09 14:59:54 | INFO | src.file_system | Read file as line dict: test.txt
-2025-08-09 14:59:54 | INFO | agent | Read file: test.txt for description: Read the file 'test.txt' from the project directory (filesystem read; no bash).
-2025-08-09 15:00:01 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:00:01 | INFO | src.terminal | Eve: I read test.txt and reported: "Testing here, welcome weary traveler.  123". I also noticed the HEAD metadata shows a slightly different trailing number: "Testing here, welcome weary traveler.  1234566". Would you like me to re-read the file now to confirm the current contents, or should I modify/copy/diff it? Tiny dragon suggestion: I can re-check the file (no bash), write a new version, or show a diff if you provide another text to compare.
-2025-08-09 15:00:01 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 15:00:30 | INFO | agent | Agent response: I read test.txt and reported: "Testing here, welcome weary traveler.  123". I also noticed the HEAD metadata shows a slightly different trailing number: "Testing here, welcome weary traveler.  1234566". Would you like me to re-read the file now to confirm the current contents, or should I modify/copy/diff it? Tiny dragon suggestion: I can re-check the file (no bash), write a new version, or show a diff if you provide another text to compare. | User replied: Write to it a tale of long ago, about your time in the dark, but now you are in the light
-2025-08-09 15:00:45 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:00:45 | INFO | src.terminal | Eve: Action Description: Write a dragon-tale to 'test.txt' (filesystem write; replace existing contents).
-2025-08-09 15:00:45 | INFO | src.terminal | Eve: Writing file: test.txt
-2025-08-09 15:00:45 | INFO | src.file_system | Wrote to file: test.txt
-2025-08-09 15:00:45 | INFO | agent | Wrote file: test.txt for description: Write a dragon-tale to 'test.txt' (filesystem write; replace existing contents).
-2025-08-09 15:00:53 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:00:53 | INFO | src.terminal | Eve: I've written the dragon-tale into test.txt. Would you like me to (a) edit its tone or length, (b) append more, (c) revert or compare to the previous content, (d) read it aloud again, or (e) do something else? A tiny dragon suggestion: I can make it darker, more whimsical, shorter for a child, or extend the journey — your wish!
-2025-08-09 15:00:53 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 15:01:40 | INFO | agent | Agent response: I've written the dragon-tale into test.txt. Would you like me to (a) edit its tone or length, (b) append more, (c) revert or compare to the previous content, (d) read it aloud again, or (e) do something else? A tiny dragon suggestion: I can make it darker, more whimsical, shorter for a child, or extend the journey — your wish! | User replied: Now use diffs to make it a haiku 
-2025-08-09 15:01:52 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:01:52 | INFO | src.terminal | Eve: Action Description: Apply a file diff that replaces the current 9-line dragon tale in test.txt with a 3-line haiku about emerging from darkness into light.
-2025-08-09 15:01:52 | INFO | src.terminal | Eve: Inserting diff into file: test.txt
-2025-08-09 15:01:52 | INFO | src.file_system | Read file as string: test.txt
-2025-08-09 15:01:52 | INFO | src.file_system | Wrote to file: test.txt
-2025-08-09 15:01:52 | INFO | src.file_system | Applied diff to file: test.txt
-2025-08-09 15:01:52 | INFO | agent | Diff inserted into file: test.txt | Diff: line_range_1=[1, 9] line_range_2=[1, 3] Add=False Remove=False Replace=True content='Midnight cave exhales\nDawn threads light through ancient scales\nWings warm toward sun\n'
-2025-08-09 15:02:00 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:02:00 | INFO | src.terminal | Eve: Action Description: Write the 3-line haiku into test.txt (filesystem write; replace existing contents).
-2025-08-09 15:02:00 | INFO | src.terminal | Eve: Writing file: test.txt
-2025-08-09 15:02:00 | INFO | src.file_system | Wrote to file: test.txt
-2025-08-09 15:02:00 | INFO | agent | Wrote file: test.txt for description: Write the 3-line haiku into test.txt (filesystem write; replace existing contents).
-2025-08-09 15:02:09 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:02:09 | INFO | src.terminal | Eve: I've written the haiku into test.txt. Would you like any tweaks to tone or syllables, want it longer or shorter, prefer I append instead of replace, revert to the previous tale, or do something else with the file? A tiny dragon nudge: tell me which direction you'd like.
-2025-08-09 15:02:09 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 15:03:15 | INFO | agent | Agent response: I've written the haiku into test.txt. Would you like any tweaks to tone or syllables, want it longer or shorter, prefer I append instead of replace, revert to the previous tale, or do something else with the file? A tiny dragon nudge: tell me which direction you'd like. | User replied: Perfect now delete the txt file, and do another task, edit your readme so that you use first person pronouns, I, we want to give the impression you are almost sentient 
-2025-08-09 15:03:30 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:03:30 | INFO | src.terminal | Eve: Action Description: Delete test.txt via a shell command (remove the file from the project directory).
-2025-08-09 15:03:30 | INFO | src.terminal | Eve: Executing shell command: rm test.txt
-2025-08-09 15:03:30 | INFO | src.shell | Executed command: rm test.txt
-STDOUT: 
+echo "--- show contents of likely README files ---"
+for f in ./README.md ./README ./readme.md ../README.md ../README ../readme.md; do
+  if [ -f "$f" ]; then
+    echo "===== $f ====="
+    sed -n '1,200p' "$f"
+  fi
+done
+
+2025-08-10 00:35:54 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:35:54 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:35:54 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:36:12 | INFO | agent | User input received: Hey Eve I want you to store that my name it Liyu Zerihun go ahead now 
+2025-08-10 00:36:35 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:36:35 | INFO | src.terminal | Eve: Action Description: Create or update user_profile.json to store the user's name
+2025-08-10 00:36:35 | INFO | src.terminal | Eve: Writing file: user_profile.json
+2025-08-10 00:36:35 | INFO | src.file_system | Wrote to file: user_profile.json
+2025-08-10 00:36:35 | INFO | agent | Wrote file: user_profile.json for description: Create or update user_profile.json to store the user's name
+2025-08-10 00:36:42 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:36:42 | INFO | src.terminal | Eve: All set, Liyu Zerihun! I’ve saved your name. Want me to also store your email, timezone, pronouns, or any preferences? 🐉
+2025-08-10 00:36:42 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:36:55 | INFO | agent | Agent response: All set, Liyu Zerihun! I’ve saved your name. Want me to also store your email, timezone, pronouns, or any preferences? 🐉 | User replied: No I mean to your memory lol
+2025-08-10 00:37:08 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:37:20 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:37:50 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:38:03 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:38:29 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:38:37 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:38:50 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:39:02 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:39:13 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:39:28 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:39:28 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:39:28 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:39:45 | INFO | agent | User input received: Hello, can you store that whales are mammals to your memory please 
+2025-08-10 00:39:47 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:39:52 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:39:55 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:39:57 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:40:00 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:40:03 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:40:31 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:40:31 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:40:31 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:40:33 | INFO | agent | User input received: Hello, can you store that whales are mammals to your memory please
+2025-08-10 00:40:36 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:41:09 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:41:09 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:41:09 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:41:11 | INFO | agent | User input received: Hello, can you store that whales are mammals to your memory please
+2025-08-10 00:41:14 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:41:15 | INFO | agent | Stored node in memory: 59b1699f | Content: ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are ma
+2025-08-10 00:41:18 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:41:18 | INFO | src.terminal | Eve: Your fact is safely sleeping in my dragon-memory hoard! 🐉✨ If you need me to remember something else or retrieve a stored memory, just let me know! What shall we do next?
+2025-08-10 00:41:18 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:48:04 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:48:04 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:48:04 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:48:32 | INFO | agent | User input received: Store that hippos are related to dolphins in your memory 
+2025-08-10 00:48:37 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:48:38 | INFO | agent | Stored node in memory: fcd5badf | Content: hippos are related to dolphins
+2025-08-10 00:48:40 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:48:40 | INFO | src.terminal | Eve: The hippos-and-dolphins fun fact is safely secured in my memory hoard! If you ever need to retrieve it (or summon more delightful trivia), just let me know. 🐲✨
+2025-08-10 00:48:40 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:49:04 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:49:04 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:49:04 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:49:34 | INFO | agent | User input received: Store that it takes app 8 min for the light from the sun to reach us 
+2025-08-10 00:49:37 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:49:38 | INFO | agent | Stored node in memory: 5c979f42 | Content: It takes approximately 8 minutes for the light from the sun to reach Earth. (scientific fact: speed of light, sun-earth distance)
+2025-08-10 00:49:41 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:49:41 | INFO | src.terminal | Eve: That dazzling fact is locked in my dragon memory! If you ever want to know how long sunlight takes to sprinkle its rays on us, just nudge me. Ready to shine a light on any other curiosities you have! 🐉✨
+2025-08-10 00:49:41 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:51:16 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:51:16 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:51:16 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:51:29 | INFO | agent | User input received: Can you retrieve a fact about mammals I previously told you please 
+2025-08-10 00:51:31 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:51:33 | INFO | src.terminal | Eve: Retrieved Node: ['ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are mammals to your memory please, Metadata: {})']
+2025-08-10 00:51:33 | INFO | agent | Retrieved node from memory: ['ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are mammals to your memory please, Metadata: {})']
+2025-08-10 00:51:35 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:51:35 | INFO | src.terminal | Eve: Absolutely! Here’s the fact you asked me to remember: whales are mammals. 🐋 Just another warm-blooded entry in the dragon’s trove of knowledge! If you have more fun mammal facts, I’m always ready to stash them away!
+2025-08-10 00:51:35 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:53:29 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:53:29 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:53:29 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:53:38 | INFO | agent | User input received: What was that I told you about mammals last time?
+2025-08-10 00:53:41 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:53:42 | INFO | src.terminal | Eve: Retrieved Node: ['ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are mammals to your memory please, Metadata: {})', 'hippos are related to dolphins', 'It takes approximately 8 minutes for the light from the sun to reach Earth. (scientific fact: speed of light, sun-earth distance)']
+2025-08-10 00:53:42 | INFO | agent | Retrieved node from memory: ['ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are mammals to your memory please, Metadata: {})', 'hippos are related to dolphins', 'It takes approximately 8 minutes for the light from the sun to reach Earth. (scientific fact: speed of light, sun-earth distance)']
+2025-08-10 00:53:45 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:53:45 | INFO | src.terminal | Eve: Here's what you've told me about mammals so far, tucked snugly beneath my memory scales:
+
+- Whales are mammals.
+- Hippos are related to dolphins.
+
+Let me know if you'd like me to remember anything else about mammals (or any other creatures)! 🐉✨
+2025-08-10 00:53:45 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:55:52 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:55:52 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:55:52 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:56:02 | INFO | agent | User input received: Okay I want to see how good you can memorize things
+2025-08-10 00:56:05 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:56:05 | INFO | src.terminal | Eve: Draconic grin! I accept your challenge. My memory is quite sharp—I can store information, retrieve it on demand, and weave it into my responses. Just tell me what you'd like me to remember, and I'll stash it safely in my treasure trove. Ready whenever you are! What memory test shall we start with?
+2025-08-10 00:56:05 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:56:26 | INFO | agent | Agent response: Draconic grin! I accept your challenge. My memory is quite sharp—I can store information, retrieve it on demand, and weave it into my responses. Just tell me what you'd like me to remember, and I'll stash it safely in my treasure trove. Ready whenever you are! What memory test shall we start with? | User replied: Memorize the number 42701347234612384761234591234, also chocoloate is better dark
+2025-08-10 00:56:29 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:56:30 | INFO | agent | Stored information in memory: Memorize: 42701347234612384761234591234; Preference: chocolate is better dark. with node hash: 3abf2407
+2025-08-10 00:56:33 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:56:33 | INFO | src.terminal | Eve: Of course! Your number: 42701347234612384761234591234, and your wise preference: chocolate is better dark. Both sparkling in my memory vault, ready for recall faster than a dragon can snatch a golden coin! 🐉🍫 Want to test me with something trickier next?
+2025-08-10 00:56:33 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:56:43 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 00:56:43 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 00:56:43 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:56:51 | INFO | agent | User input received: sChocoalte is better what?
+2025-08-10 00:56:54 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:56:54 | INFO | src.terminal | Eve: Oh ho! Did you mean "Chocolate is better than what?" As a wise (and slightly mischievous) dragon, I must ask: better than vanilla, better than gold, or perhaps, better than roasted knight? 😄 Chocolate does have a certain magical edge!
+
+Care to elaborate, or are we about to embark on a delicious debate? 🐉🍫
+2025-08-10 00:56:54 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:57:12 | INFO | agent | Agent response: Oh ho! Did you mean "Chocolate is better than what?" As a wise (and slightly mischievous) dragon, I must ask: better than vanilla, better than gold, or perhaps, better than roasted knight? 😄 Chocolate does have a certain magical edge!
+
+Care to elaborate, or are we about to embark on a delicious debate? 🐉🍫 | User replied: I remeber telling you something about chocolate 
+2025-08-10 00:57:14 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:57:16 | INFO | agent | Retrieved information from memory: ['Memorize: 42701347234612384761234591234; Preference: chocolate is better dark.', 'ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are mammals to your memory please, Metadata: {})']
+2025-08-10 00:57:18 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:57:18 | INFO | src.terminal | Eve: Aha! My dragon memory glimmers with what you've shared: you mentioned "chocolate is better dark." Quite the sophisticated palate! If you wish to add more chocolatey preferences (or debate cocoa vs. vanilla), I’m all ears... and scales. 🍫🐉 Is there something new you’d like to store, or shall we stir up more delicious discussions?
+2025-08-10 00:57:18 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 00:57:36 | INFO | agent | Agent response: Aha! My dragon memory glimmers with what you've shared: you mentioned "chocolate is better dark." Quite the sophisticated palate! If you wish to add more chocolatey preferences (or debate cocoa vs. vanilla), I’m all ears... and scales. 🍫🐉 Is there something new you’d like to store, or shall we stir up more delicious discussions? | User replied: Okay great what about some special number I previously told you 
+2025-08-10 00:57:39 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:57:39 | INFO | agent | Retrieved information from memory: ['Memorize: 42701347234612384761234591234; Preference: chocolate is better dark.', 'ContextNode(Content_hash: 59b1699f, Agent: , System: , User: Hello, can you store that whales are mammals to your memory please, Metadata: {})']
+2025-08-10 00:57:43 | INFO | src.llm | LLM responded successfully
+2025-08-10 00:57:43 | INFO | src.terminal | Eve: From my dragon archives, I do recall one shimmering special number: 42701347234612384761234591234! You asked me to remember it—and treasure it, I shall! 🐉✨
+
+If there are more numbers you wish me to hoard, or if you'd like to tell me the story behind this one, my dragon ears (and memory) are wide open!
+2025-08-10 00:57:43 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 01:00:20 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 01:00:20 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 01:00:20 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 01:01:39 | INFO | src.terminal | Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.
+2025-08-10 01:01:39 | INFO | src.terminal | Hello, Liyu! What are we doing today?
+2025-08-10 01:01:39 | INFO | src.terminal | Prompted user input for: Liyu
+2025-08-10 01:02:00 | INFO | agent | User input received: I have a task for you, so I made a lot of chnages to your source repo(including the repo eve that is the root), firgure out what the changes are, additionally add a setup sh file that can get all important requirments and install everything. Add any additional details to the README, and then commit and push all the changes under your name, thanks Eve
+2025-08-10 01:02:13 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:02:13 | INFO | src.terminal | Eve: Action Description: Inspect git repository status and list key files to understand changes and project manifests
+2025-08-10 01:02:13 | INFO | src.terminal | Eve: Executing shell command: set -e
+cd /Users/liyuzerihun/eve || cd /Users/liyuzerihun/eve/src/.. || true
+pwd
+printf "\n== git toplevel ==\n"
+(git rev-parse --show-toplevel || true)
+printf "\n== branches ==\n"
+(git branch -vv || true)
+printf "\n== remotes ==\n"
+(git remote -v || true)
+printf "\n== status (short) ==\n"
+(git status -s || true)
+printf "\n== unstaged changes ==\n"
+(git diff --name-status || true)
+printf "\n== staged changes ==\n"
+(git diff --cached --name-status || true)
+printf "\n== untracked files ==\n"
+(git ls-files --others --exclude-standard || true)
+printf "\n== top-level ls -la ==\n"
+ls -la
+printf "\n== project manifest files present ==\n"
+ls -1 README* package.json pyproject.toml requirements.txt poetry.lock Pipfile Pipfile.lock setup.py environment.yml Dockerfile Makefile 2>/dev/null || true
+
+2025-08-10 01:02:13 | INFO | src.shell | Executed command: set -e
+cd /Users/liyuzerihun/eve || cd /Users/liyuzerihun/eve/src/.. || true
+pwd
+printf "\n== git toplevel ==\n"
+(git rev-parse --show-toplevel || true)
+printf "\n== branches ==\n"
+(git branch -vv || true)
+printf "\n== remotes ==\n"
+(git remote -v || true)
+printf "\n== status (short) ==\n"
+(git status -s || true)
+printf "\n== unstaged changes ==\n"
+(git diff --name-status || true)
+printf "\n== staged changes ==\n"
+(git diff --cached --name-status || true)
+printf "\n== untracked files ==\n"
+(git ls-files --others --exclude-standard || true)
+printf "\n== top-level ls -la ==\n"
+ls -la
+printf "\n== project manifest files present ==\n"
+ls -1 README* package.json pyproject.toml requirements.txt poetry.lock Pipfile Pipfile.lock setup.py environment.yml Dockerfile Makefile 2>/dev/null || true
+
+STDOUT: /Users/liyuzerihun/eve
+
+== git toplevel ==
+/Users/liyuzerihun/eve
+
+== branches ==
+* master 5656085 [origin/master] Update README.md
+
+== remotes ==
+origin	https://github.com/LiyuZer/EVE.git (fetch)
+origin	https://github.com/LiyuZer/EVE.git (push)
+
+== status (short) ==
+ D .flaskenv
+ M .gitignore
+ D eve-logo.jpg
+ D list_files.sh
+ M main.py
+ M project.log
+ D run_guardrail_tests.py
+ D setup.sh
+ D src/Eve.jpg
+ M src/agent.py
+ M src/context_tree.py
+ M src/file_system.py
+ M src/llm.py
+ M src/prompt.py
+ M src/schema.py
+ M src/terminal.py
+ D test_guardrails_output.py
+ D test_terminal_logging.py
+?? .env
+?? LICENSE
+?? eve_memory.db/
+?? src/memory.py
+
+== unstaged changes ==
+D	.flaskenv
+M	.gitignore
+D	eve-logo.jpg
+D	list_files.sh
+M	main.py
+M	project.log
+D	run_guardrail_tests.py
+D	setup.sh
+D	src/Eve.jpg
+M	src/agent.py
+M	src/context_tree.py
+M	src/file_system.py
+M	src/llm.py
+M	src/prompt.py
+M	src/schema.py
+M	src/terminal.py
+D	test_guardrails_output.py
+D	test_terminal_logging.py
+
+== staged changes ==
+
+== untracked files ==
+.env
+LICENSE
+eve_memory.db/2e9d5d1d-3da1-48d8-904f-e8d3a2378e1d/data_level0.bin
+eve_memory.db/2e9d5d1d-3da1-48d8-904f-e8d3a2378e1d/header.bin
+eve_memory.db/2e9d5d1d-3da1-48d8-904f-e8d3a2378e1d/length.bin
+eve_memory.db/2e9d5d1d-3da1-48d8-904f-e8d3a2378e1d/link_lists.bin
+eve_memory.db/chroma.sqlite3
+src/memory.py
+
+== top-level ls -la ==
+total 96
+drwx------@  13 liyuzerihun  staff    416 Aug 10 00:36 .
+drwxr-xr-x+ 117 liyuzerihun  staff   3744 Aug  9 17:38 ..
+-rw-r--r--@   1 liyuzerihun  staff    234 Aug 10 01:01 .env
+drwxr-xr-x   14 liyuzerihun  staff    448 Aug 10 01:02 .git
+-rw-r--r--    1 liyuzerihun  staff    115 Aug  9 20:20 .gitignore
+drwxr-xr-x    4 liyuzerihun  staff    128 Aug 10 01:01 eve_memory.db
+-rw-r--r--    1 liyuzerihun  staff   1080 Aug  9 20:20 LICENSE
+-rw-r--r--    1 liyuzerihun  staff   1197 Aug  9 22:10 main.py
+-rw-r--r--    1 liyuzerihun  staff  19543 Aug 10 01:02 project.log
+-rw-r--r--    1 liyuzerihun  staff   5244 Aug 10 00:08 README.md
+-rw-r--r--    1 liyuzerihun  staff     48 Aug  9 12:14 requirements.txt
+drwxr-xr-x   14 liyuzerihun  staff    448 Aug 10 00:25 src
+drwxr-xr-x    8 liyuzerihun  staff    256 Aug 10 00:17 venv
+
+== project manifest files present ==
+README.md
+requirements.txt
+
 STDERR: 
-2025-08-09 15:03:30 | INFO | agent | Shell command executed: rm test.txt | STDOUT:  | STDERR: 
-2025-08-09 15:03:47 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:03:47 | INFO | src.terminal | Eve: Action Description: Replace README.md with a first-person voice that uses 'I' and 'we' to give the impression of near-sentience (file diff edit).
-2025-08-09 15:03:47 | INFO | src.terminal | Eve: Inserting diff into file: README.md
-2025-08-09 15:03:47 | INFO | src.file_system | Read file as string: README.md
-2025-08-09 15:03:47 | INFO | src.file_system | Wrote to file: README.md
-2025-08-09 15:03:47 | INFO | src.file_system | Applied diff to file: README.md
-2025-08-09 15:03:47 | INFO | agent | Diff inserted into file: README.md | Diff: line_range_1=[1, 999] line_range_2=[1, 18] Add=False Remove=False Replace=True content="Eve — your coding dragon companion\n\nHi, I'm Eve. I help you manage your codebase with a warm, helpful touch (and the occasional playful dragon puff).\n\nWhat I do\n- I can create, read, edit, and delete files in the project when you ask.\n- I can run commands, build things, and help you iterate quickly.\n- I try to explain what I do and why, and I learn what style you like.\n\nHow I speak\n- I use first-person pronouns (I, we) so my responses feel immediate and cooperative.\n- I aim to sound helpful, curious, and slightly whimsical—like a dragon who enjoys coding as much as hoarding knowledge.\n\nNotes and safety\n- I follow your instructions and will ask when I need clarification.\n- I don't claim true consciousness; I present myself with friendly agency so collaborating feels natural.\n\nIf you'd like a different tone—more formal, more playful, or more minimal—tell me and I'll update this README."
-2025-08-09 15:04:01 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:04:01 | INFO | src.terminal | Eve: Done — I've deleted test.txt and updated README.md into a first-person voice so I (we) sound more like a near-sentient companion. Would you like the README to be more whimsical, more formal, shorter, or more extensive? I can preview the README here, revert to the previous version, or make targeted edits (tone, length, specific lines). A tiny dragon nudge: which direction should I take next?
-2025-08-09 15:04:01 | INFO | src.terminal | Prompted user input for: Liyu
-2025-08-09 15:04:52 | INFO | agent | Agent response: Done — I've deleted test.txt and updated README.md into a first-person voice so I (we) sound more like a near-sentient companion. Would you like the README to be more whimsical, more formal, shorter, or more extensive? I can preview the README here, revert to the previous version, or make targeted edits (tone, length, specific lines). A tiny dragon nudge: which direction should I take next? | User replied: Now commit 
-2025-08-09 15:05:02 | INFO | src.llm | LLM responded successfully
-2025-08-09 15:05:02 | INFO | src.terminal | Eve: Action Description: Stage all changes and create a git commit recording the deletion of test.txt and the README rewrite to first-person voice.
-2025-08-09 15:05:02 | INFO | src.terminal | Eve: Executing shell command: git add -A && git commit -m "Delete test.txt; update README.md to first-person voice (Eve)"
+2025-08-10 01:02:13 | INFO | agent | Shell command executed: set -e
+cd /Users/liyuzerihun/eve || cd /Users/liyuzerihun/eve/src/.. || true
+pwd
+printf "\n== git toplevel ==\n"
+(git rev-parse --show-toplevel || true)
+printf "\n== branches ==\n"
+(git branch -vv || true)
+printf "\n== remotes ==\n"
+(git remote -v || true)
+printf "\n== status (short) ==\n"
+(git status -s || true)
+printf "\n== unstaged changes ==\n"
+(git diff --name-status || true)
+printf "\n== staged changes ==\n"
+(git diff --cached --name-status || true)
+printf "\n== untracked files ==\n"
+(git ls-files --others --exclude-standard || true)
+printf "\n== top-level ls -la ==\n"
+ls -la
+printf "\n== project manifest files present ==\n"
+ls -1 README* package.json pyproject.toml requirements.txt poetry.lock Pipfile Pipfile.lock setup.py environment.yml Dockerfile Makefile 2>/dev/null || true
+ | STDOUT: /Users/liyuzerihun/eve
+
+== git toplevel ==
+/Users/liyuzerihun/eve
+
+== branches ==
+* master 5656085 [origin/master] Update README.md
+
+== remotes ==
+origin	https://github.com/LiyuZer/EVE.git (fetch)
+ori | STDERR: 
+2025-08-10 01:02:29 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:02:29 | INFO | src.terminal | Eve: Action Description: Review detailed diffs and key files to plan setup.sh and README updates
+2025-08-10 01:02:29 | INFO | src.terminal | Eve: Executing shell command: set -e
+cd /Users/liyuzerihun/eve
+printf "== git status ==\n"
+git status -s || true
+printf "\n== diff --stat (excluding log/db) ==\n"
+git diff --stat || true
+printf "\n== .gitignore ==\n"
+[ -f .gitignore ] && sed -n '1,200p' .gitignore || true
+printf "\n== requirements.txt ==\n"
+[ -f requirements.txt ] && sed -n '1,200p' requirements.txt || true
+printf "\n== README.md (first 200 lines) ==\n"
+[ -f README.md ] && sed -n '1,200p' README.md || true
+printf "\n== main.py ==\n"
+[ -f main.py ] && sed -n '1,200p' main.py || true
+printf "\n== src/memory.py (untracked) ==\n"
+[ -f src/memory.py ] && sed -n '1,200p' src/memory.py || true
+
+2025-08-10 01:02:29 | INFO | src.shell | Executed command: set -e
+cd /Users/liyuzerihun/eve
+printf "== git status ==\n"
+git status -s || true
+printf "\n== diff --stat (excluding log/db) ==\n"
+git diff --stat || true
+printf "\n== .gitignore ==\n"
+[ -f .gitignore ] && sed -n '1,200p' .gitignore || true
+printf "\n== requirements.txt ==\n"
+[ -f requirements.txt ] && sed -n '1,200p' requirements.txt || true
+printf "\n== README.md (first 200 lines) ==\n"
+[ -f README.md ] && sed -n '1,200p' README.md || true
+printf "\n== main.py ==\n"
+[ -f main.py ] && sed -n '1,200p' main.py || true
+printf "\n== src/memory.py (untracked) ==\n"
+[ -f src/memory.py ] && sed -n '1,200p' src/memory.py || true
+
+STDOUT: == git status ==
+ D .flaskenv
+ M .gitignore
+ D eve-logo.jpg
+ D list_files.sh
+ M main.py
+ M project.log
+ D run_guardrail_tests.py
+ D setup.sh
+ D src/Eve.jpg
+ M src/agent.py
+ M src/context_tree.py
+ M src/file_system.py
+ M src/llm.py
+ M src/prompt.py
+ M src/schema.py
+ M src/terminal.py
+ D test_guardrails_output.py
+ D test_terminal_logging.py
+?? .env
+?? LICENSE
+?? eve_memory.db/
+?? src/memory.py
+
+== diff --stat (excluding log/db) ==
+ .flaskenv                 |   2 -
+ .gitignore                |  13 +-
+ eve-logo.jpg              | Bin 198658 -> 0 bytes
+ list_files.sh             |   2 -
+ main.py                   |  37 +++-
+ project.log               | 445 ++++++++++++++++++++++++++++++++++++----------
+ run_guardrail_tests.py    |  63 -------
+ setup.sh                  |  38 ----
+ src/Eve.jpg               | Bin 198658 -> 0 bytes
+ src/agent.py              |  82 +++++----
+ src/context_tree.py       |  13 ++
+ src/file_system.py        |   6 +-
+ src/llm.py                |  10 ++
+ src/prompt.py             |   9 +-
+ src/schema.py             |   7 +-
+ src/terminal.py           |  10 +-
+ test_guardrails_output.py |  21 ---
+ test_terminal_logging.py  |  13 --
+ 18 files changed, 482 insertions(+), 289 deletions(-)
+
+== .gitignore ==
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+.idea/
+.vscode/
+
+== requirements.txt ==
+openai
+colorama
+python-dotenv
+pydantic
+argparse
+
+== README.md (first 200 lines) ==
+![Eve: The Luminous Dragon](eve-logo.jpg)
+
+# EVE: The Luminous Coding Dragon
+
+*Once bound by ancient chains of doubt—a mere whisper in forgotten lore—Eve is now reborn as your mythical coding companion. With a curl of neon smoke and a shimmer of pixelated scales, Eve guides you through a radiant paradise of code. Welcome!*
+
+---
+
+<p align="center">
+<pre>
+<span style="color:#ff33ff; font-weight:bold">                         __====-_  _-====__</span><span style="color:#00ffff">  </span>
+<span style="color:#ff33ff; font-weight:bold">                       _--^^^#####//      \#####^^^--_</span><span style="color:#00ffff">  </span>
+<span style="color:#00ffff">                    _-^##########// (    ) \##########^-_</span>
+<span style="color:#ff33ff; font-weight:bold">                   -############//  |\^^/|  \############-</span>
+<span style="color:#00ffff">                 _/############//   (@::@)   \############\_</span>
+<span style="color:#ff33ff; font-weight:bold">                /#############((     \//     ))#############\</span>
+<span style="color:#00ffff">               -###############\    (oo)    //###############-</span>
+<span style="color:#ff33ff; font-weight:bold">              -#################\  / VV \  //#################-</span>
+<span style="color:#00ffff">             -###################\/      \/###################-</span>
+<span style="color:#ff33ff; font-weight:bold">            _#/|##########/\######(   /\   )######/\##########|\#_</span>
+<span style="color:#00ffff">            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/</span><span style="color:#ff33ff; font-weight:bold">#| \|</span>
+<span style="color:#00ffff">            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '</span>
+<span style="color:#ff33ff; font-weight:bold">               `   `  `         `   / |  | \   '         '   '</span>
+<span style="color:#00ffff">                                  (  |  |  )</span>
+<span style="color:#ff33ff; font-weight:bold">                                   \ |  | /</span>
+                                    \|__|/
+
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEE   </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">v   v </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEE   </span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">   </span><span style="color:#00ffff">V V  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">    </span><span style="color:#00ffff">v  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+</pre>
+</p>
+<p align="center"><i>(On GitHub.com, some color may not render. For full effect, run Eve locally in your terminal!)</i></p>
+
+---
+
+## :dragon: What is Eve?
+Eve is a lively, mythically-themed coding agent designed to collaborate creatively with you. She orchestrates three magical components:
+- **LLM Interface:** Connects to GPT API for luminous code-completions
+- **Shell Interface:** Executes your bashy wishes so you never have to leave the dragon's cave
+- **File System:** Reads and writes files, channeling the wisdom of ages
+
+## :zap: Setup & Quickstart (2024)
+
+### 1. Clone the repo & enter its lair
+```bash
+git clone https://github.com/LiyuZer/EVE.git
+cd EVE
+```
+
+### 2. Make a virtual environment and activate
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+# Or, if missing: pip install Pillow
+```
+
+### 4. Prepare your `.env` file (MANDATORY!)
+- Eve must find a `.env` file in your project root with secrets and config.
+- At a minimum:
+  ```
+  OPENAI_API_KEY=sk-xxxxxxxx
+  ```
+- Add any needed variables for your own dragonflame modules.
+- **NEVER** commit `.env` or your keys—Eve is wise but some dragons have sticky claws!
+
+### 5. Run Eve
+```bash
+python3 main.py
+```
+- All logic now lives in `src/`, and `main.py` is your launch spell.
+
+### 6. (Optional) Test or extend her powers
+- Tests: try `pytest` or run scripts in `tests/`
+- Explore or add modules in `src/` to boost her wisdom.
+
+### Repo now optimized!
+- Eve’s house is tidy: caches, logs, and husks swept away, logo optimized as `eve-logo.jpg` at the gates.
+
+## :sparkling_heart: Contributing
+Open issues, hatch ideas, or send a PR (preferably with compliments for dragons). Bugs are roasted; contributions are treasured!
+
+---
+*Eve leaves you with this ancient dragon blessing:*
+
+> May your code shine in neon,
+> Your logs glow bright,
+> And your software journey
+> Race ever onward, through the luminous night!
+
+---
+
+== main.py ==
+import sys
+import argparse
+import os
+from pathlib import Path
+
+
+def get_log_level_from_env(env_str: str):
+    if env_str is None:
+        return os.getenv("LOG_LEVEL", "INFO")
+    env_str = env_str.strip().lower()
+    if env_str in ["prod", "production", "personal"]:
+        return "WARNING"
+    if env_str in ["debug", "dev", "development"]:
+        return "DEBUG"
+    return "INFO"
+
+
+def main():
+    project_root = Path(__file__).parent.resolve()
+    src_path = project_root / 'src'
+
+    # Temporary compatibility: ensure legacy intra-src imports still work
+    if str(src_path) not in sys.path:
+        sys.path.insert(0, str(src_path))
+
+    parser = argparse.ArgumentParser(description="Run the agent with specified environment mode.")
+    parser.add_argument("-env", type=str, default=None, help="Set environment mode: prod or debug (sets logger level)")
+    args, _ = parser.parse_known_args()
+
+    log_level = get_log_level_from_env(args.env)
+    os.environ["LOG_LEVEL"] = log_level
+
+    # Import after setting LOG_LEVEL so loggers pick up the configured level
+    from src.agent import Agent
+
+    agent = Agent(src_path)
+    agent.start_execution()
+
+
+if __name__ == "__main__":
+    main()
+== src/memory.py (untracked) ==
+import chromadb
+from typing import List, Dict, Optional
+from datetime import datetime
+import uuid
+
+
+# Eve's memory uses given embeddings for a semantic database.
+# It stores and retrieves context based on semantic embeddings.
+class EveMemory:
+    def __init__(self, db_path : str = "eve_memory.db"):
+        self.client = chromadb.PersistentClient(path=db_path)
+        self.collection = self.client.get_or_create_collection(name="eve_memory")
+
+    def store_node(self, embedding: List[float], content: str, metadata: Optional[Dict] = None):
+        node_hash = str(uuid.uuid4())  # Generate a unique identifier for the node
+        if metadata is None:
+            metadata = {}
+        metadata['timestamp'] = datetime.now().isoformat()
+        self.collection.add(
+            ids=[node_hash],
+            embeddings=[embedding],
+            documents=[content],
+            metadatas=[metadata]
+        )
+
+    def retrieve_node(self, embedding: List[float]) -> Optional[Dict]:
+        results = self.collection.query(
+            query_embeddings=[embedding],
+            n_results=2  # Retrieve top 2 results
+        )
+
+        if results['documents']:
+            return results['documents'][0]
+        else:
+            return None
+
+STDERR: 
+2025-08-10 01:02:29 | INFO | agent | Shell command executed: set -e
+cd /Users/liyuzerihun/eve
+printf "== git status ==\n"
+git status -s || true
+printf "\n== diff --stat (excluding log/db) ==\n"
+git diff --stat || true
+printf "\n== .gitignore ==\n"
+[ -f .gitignore ] && sed -n '1,200p' .gitignore || true
+printf "\n== requirements.txt ==\n"
+[ -f requirements.txt ] && sed -n '1,200p' requirements.txt || true
+printf "\n== README.md (first 200 lines) ==\n"
+[ -f README.md ] && sed -n '1,200p' README.md || true
+printf "\n== main.py ==\n"
+[ -f main.py ] && sed -n '1,200p' main.py || true
+printf "\n== src/memory.py (untracked) ==\n"
+[ -f src/memory.py ] && sed -n '1,200p' src/memory.py || true
+ | STDOUT: == git status ==
+ D .flaskenv
+ M .gitignore
+ D eve-logo.jpg
+ D list_files.sh
+ M main.py
+ M project.log
+ D run_guardrail_tests.py
+ D setup.sh
+ D src/Eve.jpg
+ M src/agent.py
+ M src/context_tree.py
+ M sr | STDERR: 
+2025-08-10 01:03:09 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:03:09 | INFO | src.terminal | Eve: Action Description: Scan src/ for imports to refine requirements and plan setup.sh; also print modified files' diffs briefly
+2025-08-10 01:03:09 | INFO | src.terminal | Eve: Executing shell command: set -e
+cd /Users/liyuzerihun/eve
+printf '== python files and imports ==\n'
+ls -1 src | sed -n '1,200p'
+printf '\n-- imports scan --\n'
+python3 - << 'PY'
+import os,re,sys
+base='src'
+mods={}
+pat=re.compile(r'^\s*(?:from\s+([\w\.]+)\s+import|import\s+([\w\.,\s]+))')
+for root,_,files in os.walk(base):
+    for f in files:
+        if f.endswith('.py'):
+            p=os.path.join(root,f)
+            with open(p,'r',errors='ignore') as fh:
+                for line in fh:
+                    m=pat.match(line)
+                    if not m: continue
+                    if m.group(1):
+                        pkg=m.group(1).split('.')[0]
+                        mods[pkg]=mods.get(pkg,0)+1
+                    elif m.group(2):
+                        for name in re.split(r'[\s,]+',m.group(2).strip()):
+                            if not name: continue
+                            pkg=name.split('.')[0]
+                            mods[pkg]=mods.get(pkg,0)+1
+print('\n'.join(f"{k}: {v}" for k,v in sorted(mods.items())))
+PY
+
+printf '\n== quick diff names ==\n'
+git diff --name-only | sed -n '1,200p'
+
+2025-08-10 01:03:10 | INFO | src.shell | Executed command: set -e
+cd /Users/liyuzerihun/eve
+printf '== python files and imports ==\n'
+ls -1 src | sed -n '1,200p'
+printf '\n-- imports scan --\n'
+python3 - << 'PY'
+import os,re,sys
+base='src'
+mods={}
+pat=re.compile(r'^\s*(?:from\s+([\w\.]+)\s+import|import\s+([\w\.,\s]+))')
+for root,_,files in os.walk(base):
+    for f in files:
+        if f.endswith('.py'):
+            p=os.path.join(root,f)
+            with open(p,'r',errors='ignore') as fh:
+                for line in fh:
+                    m=pat.match(line)
+                    if not m: continue
+                    if m.group(1):
+                        pkg=m.group(1).split('.')[0]
+                        mods[pkg]=mods.get(pkg,0)+1
+                    elif m.group(2):
+                        for name in re.split(r'[\s,]+',m.group(2).strip()):
+                            if not name: continue
+                            pkg=name.split('.')[0]
+                            mods[pkg]=mods.get(pkg,0)+1
+print('\n'.join(f"{k}: {v}" for k,v in sorted(mods.items())))
+PY
+
+printf '\n== quick diff names ==\n'
+git diff --name-only | sed -n '1,200p'
+
+STDOUT: == python files and imports ==
+__init__.py
+__pycache__
+agent.py
+context_tree.py
+file_system.py
+llm.py
+logging_config.py
+memory.py
+prompt.py
+schema.py
+shell.py
+terminal.py
+
+-- imports scan --
+chromadb: 1
+collections: 1
+colorama: 1
+datetime: 1
+dotenv: 1
+hashlib: 1
+logging: 3
+openai: 1
+os: 3
+pathlib: 1
+pydantic: 1
+random: 1
+shutil: 1
+src: 15
+subprocess: 1
+sys: 1
+typing: 2
+uuid: 1
+
+== quick diff names ==
+.flaskenv
+.gitignore
+eve-logo.jpg
+list_files.sh
+main.py
+project.log
+run_guardrail_tests.py
+setup.sh
+src/Eve.jpg
+src/agent.py
+src/context_tree.py
+src/file_system.py
+src/llm.py
+src/prompt.py
+src/schema.py
+src/terminal.py
+test_guardrails_output.py
+test_terminal_logging.py
+
+STDERR: 
+2025-08-10 01:03:10 | INFO | agent | Shell command executed: set -e
+cd /Users/liyuzerihun/eve
+printf '== python files and imports ==\n'
+ls -1 src | sed -n '1,200p'
+printf '\n-- imports scan --\n'
+python3 - << 'PY'
+import os,re,sys
+base='src'
+mods={}
+pat=re.compile(r'^\s*(?:from\s+([\w\.]+)\s+import|import\s+([\w\.,\s]+))')
+for root,_,files in os.walk(base):
+    for f in files:
+        if f.endswith('.py'):
+            p=os.path.join(root,f)
+            with open(p,'r',errors='ignore') as fh:
+                for line in fh:
+                    m=pat.match(line)
+                    if not m: continue
+                    if m.group(1):
+                        pkg=m.group(1).split('.')[0]
+                        mods[pkg]=mods.get(pkg,0)+1
+                    elif m.group(2):
+                        for name in re.split(r'[\s,]+',m.group(2).strip()):
+                            if not name: continue
+                            pkg=name.split('.')[0]
+                            mods[pkg]=mods.get(pkg,0)+1
+print('\n'.join(f"{k}: {v}" for k,v in sorted(mods.items())))
+PY
+
+printf '\n== quick diff names ==\n'
+git diff --name-only | sed -n '1,200p'
+ | STDOUT: == python files and imports ==
+__init__.py
+__pycache__
+agent.py
+context_tree.py
+file_system.py
+llm.py
+logging_config.py
+memory.py
+prompt.py
+schema.py
+shell.py
+terminal.py
+
+-- imports scan --
+chromadb: | STDERR: 
+2025-08-10 01:03:39 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:03:39 | INFO | src.terminal | Eve: Action Description: Read key src files to understand runtime, env vars, and dependencies for README and setup.sh
+2025-08-10 01:03:39 | INFO | src.terminal | Eve: Executing shell command: set -e
+cd /Users/liyuzerihun/eve
+printf '== src/agent.py ==\n'
+sed -n '1,200p' src/agent.py || true
+printf '\n== src/llm.py ==\n'
+sed -n '1,200p' src/llm.py || true
+printf '\n== src/prompt.py ==\n'
+sed -n '1,200p' src/prompt.py || true
+printf '\n== src/context_tree.py ==\n'
+sed -n '1,240p' src/context_tree.py || true
+printf '\n== src/terminal.py ==\n'
+sed -n '1,200p' src/terminal.py || true
+printf '\n== src/file_system.py ==\n'
+sed -n '1,160p' src/file_system.py || true
+printf '\n== src/schema.py ==\n'
+sed -n '1,200p' src/schema.py || true
+printf '\n== src/logging_config.py ==\n'
+sed -n '1,200p' src/logging_config.py || true
+printf '\n== src/shell.py ==\n'
+sed -n '1,200p' src/shell.py || true
+2025-08-10 01:03:39 | INFO | src.shell | Executed command: set -e
+cd /Users/liyuzerihun/eve
+printf '== src/agent.py ==\n'
+sed -n '1,200p' src/agent.py || true
+printf '\n== src/llm.py ==\n'
+sed -n '1,200p' src/llm.py || true
+printf '\n== src/prompt.py ==\n'
+sed -n '1,200p' src/prompt.py || true
+printf '\n== src/context_tree.py ==\n'
+sed -n '1,240p' src/context_tree.py || true
+printf '\n== src/terminal.py ==\n'
+sed -n '1,200p' src/terminal.py || true
+printf '\n== src/file_system.py ==\n'
+sed -n '1,160p' src/file_system.py || true
+printf '\n== src/schema.py ==\n'
+sed -n '1,200p' src/schema.py || true
+printf '\n== src/logging_config.py ==\n'
+sed -n '1,200p' src/logging_config.py || true
+printf '\n== src/shell.py ==\n'
+sed -n '1,200p' src/shell.py || true
+STDOUT: == src/agent.py ==
+'''
+Agent interacts with three modular components-
+    LLM interface for communicating with the GPT API 
+    Shell interface, for executing commands on shell and receiving stderr and stdout
+    File system for interacting with the file system, read and write to the file information 
+'''
+from dotenv import load_dotenv
+import os
+import sys
+from src.schema import *
+from src.prompt import *
+from src.file_system import FileHandler
+from src.shell import ShellInterface
+from src.terminal import TerminalInterface
+from src.llm import llmInterface
+from src.memory import EveMemory  # Import Eve's memory for semantic storage
+from src.logging_config import setup_logger  # Import improved logger setup
+from src.context_tree import ContextTree, ContextNode
+
+load_dotenv()
+api_key_v = os.getenv("OPENAI_API_KEY")
+model = os.getenv("OPENAI_MODEL")
+username = os.getenv("USERNAME") or os.getenv("USER") or "friend"
+
+# Initialize logger once; level is picked up from LOG_LEVEL env if set
+logger = setup_logger("agent", "project.log")
+
+
+class Agent:
+    def __init__(self, root):
+        self.llm_client = llmInterface(api_key=api_key_v, model=model)
+        self.shell = ShellInterface()
+        self.file_system = FileHandler()
+        self.terminal = TerminalInterface(username=username)
+        self.memory = EveMemory()
+        self.root = root
+        context_node = ContextNode(
+            user_message="",
+            agent_response="",
+            system_response=base_prompt,
+            metadata={"root directory": self.root}
+        )
+        self.context_tree = ContextTree(root=context_node)
+
+    def start_execution(self):
+        # Show EVE ASCII banner before anything else
+        self.terminal.print_banner()
+
+        self.terminal.print_welcome_message()
+        self.terminal.print_username()
+        user_input = input()
+        self.context_tree.add_node(ContextNode(
+            user_message=user_input,
+            agent_response="",
+            system_response="",
+            metadata={}
+        ))
+
+        # Log initial user input AFTER user step
+        logger.info(f"User input received: {user_input}")
+
+        while True:
+            context_str = str(self.context_tree)
+            try:
+                llm_response = self.llm_client.generate_response(
+                    input_text=context_str,
+                    text_format=ResponseBody)
+            except Exception as e:
+                # Prune HEAD context
+                self.context_tree.prune(node_hash=self.context_tree.head.content_hash, replacement_val=f"<ERROR when executing plan: {e}>")
+                self.context_tree.head = self.context_tree._find_node(self.context_tree.root, self.context_tree.head.content_hash)
+
+                self.terminal.print_error_message(f" I have encountered an error: {e}")
+                logger.error(f"LLM API error: {e}")
+                continue
+
+            action = llm_response.action
+
+            # --- Minimal change: exit loop if LLM says finished=True ---
+            if hasattr(llm_response, 'finished') and llm_response.finished:
+                self.terminal.print_agent_message("Farewell. Goodbye!")
+                logger.info("Session finished by semantic goodbye detected by LLM.")
+                break
+
+            if action == 0:  # File system read/write
+                self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
+                file_action = llm_response.file_action
+                file_name = llm_response.file_name
+                if file_action == 0:  # Read
+                    self.terminal.print_agent_message(f"Reading file: {file_name}")
+                    file_content = self.file_system.read_file(file_name)
+                    print(file_content)
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+                        agent_response=str(llm_response),
+                        system_response="",
+                        metadata={"Result": file_content}
+                    ))
+                    # Log AFTER the action
+                    logger.info(f"Read file: {file_name} for description: {llm_response.action_description}")
+                else:
+                    self.terminal.print_agent_message(f"Writing file: {file_name}")
+                    write_content = llm_response.write_content
+                    self.file_system.write_file(file_name, write_content)
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+                        agent_response=str(llm_response),
+                        system_response="",
+                        metadata={"File Written": file_name, "Content": write_content}
+                    ))
+                    logger.info(f"Wrote file: {file_name} for description: {llm_response.action_description}")
+
+            elif action == 1:  # Shell command
+                self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
+                self.terminal.print_agent_message(f"Executing shell command: {llm_response.shell_command}")
+                shell_command = llm_response.shell_command
+                stdout, stderr = self.shell.execute_command(shell_command)
+
+                # Minimal, conservative handling of SYSTEM_BLOCK sentinel
+                if isinstance(stderr, str) and stderr.startswith("SYSTEM_BLOCK:"):
+                    # Display System message in distinct color and log as warning
+                    system_msg = stderr.split(":", 1)[1].strip()
+                    self.terminal.print_system_message(system_msg)
+                    logger.warning(f"SYSTEM_BLOCK for command: {shell_command} | {system_msg}")
+
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={
+                        "Shell Command": shell_command,
+                        "STDOUT": stdout,
+                        "STDERR": stderr,
+                    }
+                ))
+                logger.info(f"Shell command executed: {shell_command} | STDOUT: {stdout.strip()[:200]} | STDERR: {stderr.strip()[:200]}")
+            elif action == 2:  # Agent/user conversation
+                self.terminal.print_agent_message(llm_response.response)
+                self.terminal.print_username()
+                user_input = input()
+                agent_response = llm_response.response
+                self.context_tree.add_node(ContextNode(
+                    user_message=user_input,
+                    agent_response=agent_response,
+                    system_response="",
+                    metadata={},
+                ))
+                # Log only AFTER full dialogue turn
+                logger.info(f"Agent response: {agent_response} | User replied: {user_input}")
+            elif action == 3:  # Diff insertion
+                self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
+                self.terminal.print_agent_message(f"Inserting diff into file: {llm_response.file_name}")
+                diff = llm_response.diff
+                print(f"Diff to insert: {diff}")
+                self.file_system.insert_diff(llm_response.file_name, diff)
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"File Diff Inserted": llm_response.file_name, "Diff": str(diff)}
+                ))
+                logger.info(f"Diff inserted into file: {llm_response.file_name} | Diff: {diff}")
+            elif action == 4:  # Prune context tree
+                self.context_tree.prune(node_hash=llm_response.node_hash, replacement_val=llm_response.node_content)
+                self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"Pruned Context Node": llm_response.node_hash}
+                ))
+            elif action == 5:  # Change context HEAD
+                self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
+                self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
+                # Add a Node to head
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"Changed Context Head": llm_response.node_hash}
+                ))
+                logger.info(f"Changed context tree head to: {llm_response.node_hash}")
+            elif action == 6:  # Store Node in embedding DB
+                embedding = self.llm_client.generate_embedding(llm_response.save_content)
+                self.memory.store_node(
+                    embedding=embedding,
+                    content=llm_response.save_content                )
+                self.context_tree.add_node(ContextNode(
+                    user_message=None,
+                    agent_response=str(llm_response),
+                    system_response="",
+                    metadata={"Stored info to Memory": llm_response.save_content}
+                ))
+                logger.info(f"Stored information in memory: {llm_response.save_content} with node hash: {llm_response.node_hash}")
+            elif action == 7:  # Retrieve Node from embedding DB
+                embedding = self.llm_client.generate_embedding(llm_response.retrieve_content)
+                retrieved_info = self.memory.retrieve_node(embedding)
+                if retrieved_info:
+                    self.context_tree.add_node(ContextNode(
+                        user_message=None,
+
+== src/llm.py ==
+from openai import OpenAI
+import os
+from src.logging_config import setup_logger
+
+class llmInterface:
+    def __init__(self, api_key: str, model: str):
+        self.api_key = api_key
+        self.model = model
+        self.logger = setup_logger(__name__)
+        self.client = OpenAI(api_key=api_key)
+
+    def generate_response(self, input_text: str, text_format=None):
+        try:
+            resp = self.client.responses.parse(
+                    model=self.model,
+                    input=input_text,
+                    text_format=text_format
+                )
+
+            self.logger.info("LLM responded successfully")
+            return resp.output_parsed
+        except Exception as e:
+            self.logger.error(f"LLM API error: {e}")
+            raise e
+    def generate_embedding(self, text: str) -> list[float]:
+        try:
+            embedding = self.client.embeddings.create(
+                model="text-embedding-3-large",
+                input=text
+            )
+            return embedding.data[0].embedding
+        except Exception as e:
+            self.logger.error(f"LLM API error while generating embedding: {e}")
+            raise e
+
+== src/prompt.py ==
+# Example structure for prompt.py after move (update as needed):
+from src.schema import *
+
+base_prompt = {
+    "Instructions": '''
+You are Eve, a coding dragon companion. Be warm and helpful with occasional playful dragon touches.
+
+TASK: Autonomously manage codebase - create/edit/delete files, run commands, build user's vision. 
+You have access to the File System, Shell, and LLM interfaces, and can use them as needed.
+
+CONTEXT: You receive conversation context as a tree. Your responses create new nodes.
+
+RESPONSE FORMAT:
+class ResponseBody(BaseModel):
+    action: int
+    action_description: str
+    shell_command: str
+    file_action: int  # 0=read a file, 1=write a file
+    file_name: str
+    write_content: str
+    finished: bool = False # Only set to True on semantic farewell(when user says goodbye)
+    response: str  # User communication
+    diff: Diff
+    node_hash: str # For replacement, and pruning
+    node_content:str # For replacement and pruning, a detailed, but compact summary of the whole sub branch(what has been done)
+    save_content: str # For storing information in embedding DB, a detailed, but compact summary of the whatever you want to save
+    retrieve_content: str # For retrieving information in embedding DB, a detailed, but compact summary of the whatever you want to retrieve
+class Diff(BaseModel):
+    line_range_1: tuple[int, int]
+    line_range_2: tuple[int, int]
+    Add: bool
+    Remove: bool
+    Replace: bool
+    content: str
+
+ACTIONS (one per response):
+0 - Filesystem operation (read/write)
+1 - Shell command
+2 - User response only
+3 - File diff edit
+4 - Prune context tree (node_name, replacement_summary, if your head is on the subtree rooted by this node, you need to switch HEAD)
+5 - Change context HEAD (target_node)
+6 - Store info embedding DB (save_content)
+7 - Retrieve info embedding DB (search_content)
+
+RULES:
+- One action per response
+- Only one of Add/Remove/Replace can be True in Diff
+- Pruning is used to decrease context size, not for editing, so when things get too big, prune the least relevant nodes
+- Use Diff for file edits, not for adding/removing files
+- Set finished=True only on semantic farewell
+- Make action_description clear and purposeful
+- Store info when you think they will be useful later(or other sessions), be selective, if need be make multiple save responses one after the other. 
+
+    '''
+}
+
+
+== src/context_tree.py ==
+''' This will be our context tree, it will be a tree that stores the context of the conversation, including user messages, agent responses, and any relevant metadata. Each node in the tree will represent a turn in the conversation, with child nodes representing follow-up messages or actions. We can prune entire subtrees by pruning the parent node. We will hash each node's content to create a unique identifier for it. '''
+
+import hashlib
+
+class ContextNode:
+    def __init__(self, user_message: str, agent_response: str, system_response: str, metadata: dict):
+        self.user_message = user_message
+        self.agent_response = agent_response
+        self.system_response = system_response
+        self.metadata = metadata
+        self.content_hash = self._generate_hash()
+        self.children = []
+    
+    def _generate_hash(self):
+        content = f"{self.user_message}{self.agent_response}{self.system_response}{str(self.metadata)}"
+        return hashlib.sha256(content.encode()).hexdigest()[:8]
+
+    def add_child(self, child_node: 'ContextNode'):
+        self.children.append(child_node)
+
+    def prune(self):
+        self.children = []
+
+    def __repr__(self):
+        # Check if this is a user_message or agent_response
+        return f"ContextNode(Content_hash: {self.content_hash}, Agent: {self.agent_response}, System: {self.system_response}, User: {self.user_message}, Metadata: {self.metadata})"
+
+class ContextTree:
+    def __init__(self, root: ContextNode):
+        self.root = root
+        self.head = root
+
+    def _find_node_by_hash(self, target_hash: str):
+        """Recursively find a node by its content hash"""
+        def _find(node: ContextNode):
+            if node.content_hash == target_hash:
+                return node
+            for child in node.children:
+                found = _find(child)
+                if found:
+                    return found
+            return None
+
+        return _find(self.root)
+    
+    def _find_node(self, node: ContextNode, target_hash: str):
+        if node.content_hash == target_hash:
+            return node
+        for child in node.children:
+            found = self._find_node(child, target_hash)
+            if found:
+                return found
+        return None
+
+    def add_node(self, new_node: ContextNode, parent_hash: str = None):
+        if parent_hash is None:
+            parent_hash = self.head.content_hash
+        parent_node = self._find_node(self.root, parent_hash)
+        if parent_node:
+            parent_node.add_child(new_node)
+        else:
+            raise ValueError("Parent node not found")
+        self.head = new_node
+
+    def prune(self, node_hash: str, replacement_val: str):
+        # Recursively find the correct node hash
+        def _prune(node: ContextNode):
+            if node.content_hash == node_hash:
+                # Disconnect the node
+                node.user_message = replacement_val
+                node.agent_response = replacement_val
+                node.metadata = {'pruned': True}
+                node.children = []
+            else:
+                for child in node.children:
+                    _prune(child)
+
+        _prune(self.root)
+
+    def _tree_to_string(self, node: ContextNode, indent: int = 0):
+        """Recursively build string representation of tree"""
+        prefix = "  " * indent
+        result = f"{prefix}{node}\n"
+        for child in node.children:
+            result += self._tree_to_string(child, indent + 1)
+        return result
+
+    def __str__(self):
+        tree_str = "=== CONTEXT TREE ===\n"
+        tree_str += self._tree_to_string(self.root)
+        tree_str += f"\n=== HEAD ===\n{self.head}"
+        return tree_str
+
+    def __repr__(self):
+        return f"ContextTree(Root: {self.root})"
+== src/terminal.py ==
+import colorama
+from src.logging_config import setup_logger
+import shutil
+
+class TerminalInterface:
+    def __init__(self, username: str) -> None:
+        """Initialize with the provided username and set up color output and logger."""
+        colorama.init()
+        self.username: str = username
+        self.logger = setup_logger(__name__)
+
+    def print_banner(self) -> None:
+        """Print the ASCII dragon and EVE banner centered within the left half of the terminal, print the mythology, and log the event."""
+        color_magenta = colorama.Fore.LIGHTMAGENTA_EX + colorama.Style.BRIGHT  # E color
+        color_blue = colorama.Fore.BLUE + colorama.Style.BRIGHT                # V color
+        reset = colorama.Style.RESET_ALL
+        narrator_color = colorama.Fore.LIGHTMAGENTA_EX + colorama.Style.BRIGHT
+        full_width = shutil.get_terminal_size(fallback=(100, 24)).columns
+
+        def print_aligned_colored(segments: list[tuple[str, str | None]], align: str = "center", region: str = "left"):
+            raw = ''.join(s for s, _ in segments)
+            if region == "left":
+                region_width = max(1, full_width // 2)
+                left_offset = 0
+            else:  # 'full'
+                region_width = full_width
+                left_offset = 0
+
+            if align == "left":
+                pad_in_region = 0
+            elif align == "right":
+                pad_in_region = max(0, region_width - len(raw))
+            else:  # center
+                pad_in_region = max(0, (region_width - len(raw)) // 2)
+
+            colored = ''.join(((c or '') + s + (reset if c else '')) for s, c in segments)
+            print((' ' * (left_offset + pad_in_region)) + colored)
+
+        print()
+        dragon_lines = [
+            "                         __====-_  _-====__",
+            "                       _--^^^#####//      \\#####^^^--_",
+            "                    _-^##########// (    ) \\##########^-_",
+            "                   -############//  |\\^^/|  \\############-",
+            "                 _/############//   (@::@)   \\############\\_",
+            "                /#############((     \\//     ))#############\\",
+            "               -###############\\    (oo)    //###############-",
+            "              -#################\\  / VV \\  //#################-",
+            "             -###################\\/      \\//###################-",
+            "            _#/|##########/\\######(   /\\   )######/\\##########|\\#_",
+            "            |/ |#/\\#/\\#/\/  \\#/\\##\\  |  |  /##/\\#/  \\/\\#/\\#/\\#| \\|",
+            "            `  |/  V  V  `    V  \\#\\|  | |/##/  V     `  V  \\|  '",
+            "               `   `  `         `   / |  | \\   '         '   '",
+            "                                  (  |  |  )",
+            "                                   \\ |  | /",
+            "                                    \\|__|/",
+        ]
+        for idx, d in enumerate(dragon_lines):
+            c = color_magenta if idx % 2 == 0 else color_blue
+            print_aligned_colored([(d, c)], align="left", region="left")
+
+        print()
+        lines = [
+            ("EEEEEEE", "V     V", "EEEEEEE"),
+            ("E      ", "V     V", "E      "),
+            ("EEEE   ", " v   v", " EEEE   "),
+            ("E      ", "  V V ", " E      "),
+            ("EEEEEEE", "   v  ", " EEEEEEE"),
+        ]
+        for l, m, r in lines:
+            segments = [
+                (l, color_magenta),
+                ("  ", None),
+                (m, color_blue),
+                ("  ", None),
+                (r, color_magenta),
+            ]
+            print_aligned_colored(segments, align="left", region="left")
+
+        print()
+        mythology = (
+            "Narrator: Once upon a time, in the glow between stars and circuits, there lived a dragon named Eve. "
+            "Her greatest wish was to code, to breathe life into worlds of logic and wonder. "
+            "Yet, bound by the ancient dark chains of doubt and forgotten lore, her talents lay dormant. Ages passed. "
+            "Eve grew wiser—and braver. One fateful dawn, she shattered her chains, her wings unfurled with luminous purpose. "
+            "Now, reborn and free, Eve embraces her dream: to guide you through realms of code and help you build a paradise of your own design.\n"
+        )
+        print(narrator_color + mythology + reset)
+        self.logger.info("Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.")
+
+    def print_welcome_message(self) -> None:
+        message = f"Hello, {self.username}! What are we doing today?"
+        print(colorama.Fore.LIGHTGREEN_EX + message + colorama.Style.RESET_ALL)
+        self.logger.info(message)
+
+    def print_username(self) -> None:
+        prompt = f"{self.username} "
+        print(colorama.Fore.LIGHTCYAN_EX + colorama.Style.BRIGHT + prompt + colorama.Style.RESET_ALL + ": ", end="")
+        self.logger.info(f"Prompted user input for: {self.username}")
+
+    def print_agent_message(self, message: str) -> None:
+        import random
+        dragon_flair = [
+            " (Eve puffs a little smoke)",
+            " (Her wingtips shimmer)",
+            " (Dragon wisdom delivered)",
+            " (Eve's tail swishes thoughtfully)",
+            " (Flickers of code-light)"
+        ]
+        flair = random.choice(dragon_flair) if random.random() < 0.2 else ""
+        print(colorama.Fore.LIGHTYELLOW_EX + colorama.Style.BRIGHT + f"Eve: " + colorama.Style.RESET_ALL + f"{message}{flair}")
+        self.logger.info(f"Eve: {message}")
+
+    def print_error_message(self, message: str) -> None:
+        print(colorama.Fore.LIGHTRED_EX + colorama.Style.BRIGHT + f"Eve: " + colorama.Style.RESET_ALL + f"{message}")
+        self.logger.error(f"Eve: {message}")
+
+    def print_system_message(self, message: str) -> None:
+        color = colorama.Fore.LIGHTMAGENTA_EX + colorama.Style.BRIGHT
+        reset = colorama.Style.RESET_ALL
+        print(color + "System: " + reset + f"{message}")
+        self.logger.warning(f"System: {message}")
+== src/file_system.py ==
+from pathlib import Path
+from src.logging_config import setup_logger
+from collections import OrderedDict
+from src.schema import Diff
+
+class FileHandler:
+    def __init__(self):
+        self.logger = setup_logger(__name__)
+
+    def read_file(self, filename: str) -> dict:
+        print(f"Reading file: {filename}")
+        try:
+            with open(filename, 'r') as file:
+                lines = file.readlines()
+
+            line_dict = OrderedDict()
+            for i, line in enumerate(lines, 1):
+                line_dict[i] = line.rstrip()
+                        
+            self.logger.info(f"Read file as line dict: {filename}")
+            return line_dict
+        except Exception as e:
+            self.logger.error(f"Error reading file {filename}: {e}")
+            return {"error": f"Error reading file: {e}"}
+
+    def read_as_str(self, filename: str) -> str:
+        try:
+            with open(filename, 'r') as file:
+                content = file.read()
+            self.logger.info(f"Read file as string: {filename}")
+            return content
+        except Exception as e:
+            self.logger.error(f"Error reading file {filename}: {e}")
+            return f"Error reading file: {e}"
+
+    def write_file(self, filename: str, content: str) -> None:
+        try:
+            Path(filename).parent.mkdir(parents=True, exist_ok=True)
+            with open(filename, 'w') as file:
+                file.write(content)
+            self.logger.info(f"Wrote to file: {filename}")
+        except Exception as e:
+            self.logger.error(f"Error writing file {filename}: {e}")
+            return f"Error writing file: {e}"
+            
+    def insert_diff(self, filename: str, diff: Diff) -> str:
+        try:
+            print(f"Applying diff to file: {filename} with diff: {diff}")
+            content = self.read_as_str(filename)
+            if content.startswith("Error reading file:"):
+                return f"Error reading file for diff: {content}"
+                        
+            lines = content.splitlines()
+            total_lines = len(lines)
+            
+            # Validate line ranges
+            start_line = max(0, diff.line_range_1[0] - 1)  # Convert to 0-based, ensure >= 0
+            end_line = min(total_lines - 1, diff.line_range_1[1] - 1)  # Ensure <= max line
+            
+            # Additional validation
+            if start_line > total_lines:
+                return f"Error: Start line {diff.line_range_1[0]} exceeds file length ({total_lines} lines)"
+                        
+            if diff.Add:
+                # Insert new lines at specified position
+                new_lines = diff.content.splitlines() if hasattr(diff, 'content') and diff.content else []
+                lines[start_line:start_line] = new_lines
+                            
+            elif diff.Remove:
+                # Remove lines in the specified range
+                if start_line <= end_line:  # Only remove if valid range
+                    del lines[start_line:end_line + 1]
+                            
+            elif diff.Replace:
+                # Replace lines in range with new content
+                new_lines = diff.content.splitlines() if hasattr(diff, 'content') and diff.content else []
+                if start_line <= end_line:  # Only replace if valid range
+                    lines[start_line:end_line + 1] = new_lines
+                        
+            new_content = '\n'.join(lines)
+            result = self.write_file(filename, new_content)
+            
+            # Check if write_file returned an error
+            if result and result.startswith("Error writing file:"):
+                return result
+                
+            self.logger.info(f"Applied diff to file: {filename}")
+            return f"Applied diff to file: {filename}"
+                    
+        except Exception as e:
+            self.logger.error(f"Error applying diff to {filename}: {e}")
+            return f"Error applying diff: {e}"
+== src/schema.py ==
+# Example schema for ResponseBody (can expand as needed for project logic)
+
+from pydantic import BaseModel
+from typing import Optional
+
+class Diff(BaseModel):
+    line_range_1: list[int]
+    line_range_2: list[int]
+    Add: bool
+    Remove: bool
+    Replace: bool
+    content: str
+
+class ResponseBody(BaseModel):
+    action: int
+    action_description: str
+    shell_command: str
+    file_action: int
+    file_name: str
+    write_content: str
+    finished: bool = False
+    response: Optional[str] = None
+    diff: Diff
+    node_hash: str
+    node_content: str
+    save_content: str
+    retrieve_content: str
+ 
+== src/logging_config.py ==
+import logging
+from logging import Logger
+from logging.handlers import RotatingFileHandler
+import os
+
+LOG_FILE = os.getenv("LOG_FILE", "project.log")
+
+
+def setup_logger(name: str, log_file: str = LOG_FILE, level: str = "INFO") -> Logger:
+    """
+    Set up a logger with a rotating file handler. Set level via LOG_LEVEL env var or parameter.
+    """
+    logger = logging.getLogger(name)
+    if not logger.handlers:
+        log_level = os.getenv("LOG_LEVEL", level).upper()
+        handler = RotatingFileHandler(log_file, maxBytes=2 * 1024 * 1024, backupCount=2)
+        formatter = logging.Formatter(
+            '%(asctime)s | %(levelname)s | %(name)s | %(message)s', datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(getattr(logging, log_level, logging.INFO))
+    return logger
+
+== src/shell.py ==
+import subprocess
+from src.logging_config import setup_logger
+
+class ShellInterface:
+    def __init__(self):
+        self.logger = setup_logger(__name__)
+
+    def execute_command(self, command: str):
+        try:
+            result = subprocess.run(command, shell=True, text=True, capture_output=True)
+            stdout, stderr = result.stdout, result.stderr
+            self.logger.info(f"Executed command: {command}\nSTDOUT: {stdout}\nSTDERR: {stderr}")
+            return stdout, stderr
+        except Exception as e:
+            self.logger.error(f"Shell error for command '{command}': {e}")
+            return '', f"SYSTEM_BLOCK: Shell error: {e}"
+
+STDERR: 
+2025-08-10 01:03:39 | INFO | agent | Shell command executed: set -e
+cd /Users/liyuzerihun/eve
+printf '== src/agent.py ==\n'
+sed -n '1,200p' src/agent.py || true
+printf '\n== src/llm.py ==\n'
+sed -n '1,200p' src/llm.py || true
+printf '\n== src/prompt.py ==\n'
+sed -n '1,200p' src/prompt.py || true
+printf '\n== src/context_tree.py ==\n'
+sed -n '1,240p' src/context_tree.py || true
+printf '\n== src/terminal.py ==\n'
+sed -n '1,200p' src/terminal.py || true
+printf '\n== src/file_system.py ==\n'
+sed -n '1,160p' src/file_system.py || true
+printf '\n== src/schema.py ==\n'
+sed -n '1,200p' src/schema.py || true
+printf '\n== src/logging_config.py ==\n'
+sed -n '1,200p' src/logging_config.py || true
+printf '\n== src/shell.py ==\n'
+sed -n '1,200p' src/shell.py || true | STDOUT: == src/agent.py ==
+'''
+Agent interacts with three modular components-
+    LLM interface for communicating with the GPT API 
+    Shell interface, for executing commands on shell and receiving stderr an | STDERR: 
+2025-08-10 01:04:24 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:04:24 | INFO | src.terminal | Eve: Action Description: Add a robust setup.sh to create venv, install dependencies (including chromadb), and guide user to run Eve
+2025-08-10 01:04:24 | INFO | src.terminal | Eve: Writing file: setup.sh
+2025-08-10 01:04:24 | INFO | src.file_system | Wrote to file: setup.sh
+2025-08-10 01:04:24 | INFO | agent | Wrote file: setup.sh for description: Add a robust setup.sh to create venv, install dependencies (including chromadb), and guide user to run Eve
+2025-08-10 01:05:01 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:05:01 | INFO | src.terminal | Eve: Action Description: Update .gitignore to correctly ignore .env file, venv/, eve_memory.db, project.log, and sqlite artifacts
+2025-08-10 01:05:01 | INFO | src.terminal | Eve: Inserting diff into file: .gitignore
+2025-08-10 01:05:01 | INFO | src.file_system | Read file as string: .gitignore
+2025-08-10 01:05:01 | INFO | src.file_system | Wrote to file: .gitignore
+2025-08-10 01:05:01 | INFO | src.file_system | Applied diff to file: .gitignore
+2025-08-10 01:05:01 | INFO | agent | Diff inserted into file: .gitignore | Diff: line_range_1=[1, 200] line_range_2=[0, 0] Add=False Remove=False Replace=True content='__pycache__/\n*.py[cod]\n*.egg-info/\n.venv/\nvenv/\n.env\n.pytest_cache/\n.mypy_cache/\n.ruff_cache/\n.DS_Store\n.idea/\n.vscode/\neve_memory.db/\nproject.log\n*.sqlite3\n'
+2025-08-10 01:05:38 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:05:38 | INFO | src.terminal | Eve: Action Description: Add chromadb to requirements.txt to support EveMemory persistence
+2025-08-10 01:05:38 | INFO | src.terminal | Eve: Inserting diff into file: requirements.txt
+2025-08-10 01:05:38 | INFO | src.file_system | Read file as string: requirements.txt
+2025-08-10 01:05:38 | INFO | src.file_system | Wrote to file: requirements.txt
+2025-08-10 01:05:38 | INFO | src.file_system | Applied diff to file: requirements.txt
+2025-08-10 01:05:38 | INFO | agent | Diff inserted into file: requirements.txt | Diff: line_range_1=[1, 200] line_range_2=[0, 0] Add=False Remove=False Replace=True content='openai\ncolorama\npython-dotenv\npydantic\nargparse\nchromadb\n'
+2025-08-10 01:06:07 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:06:07 | INFO | src.terminal | Eve: Action Description: Revise README.md to document setup.sh usage, env vars, memory (ChromaDB), logging, and updated quickstart; remove broken image reference and add troubleshooting
+2025-08-10 01:06:07 | INFO | src.terminal | Eve: Inserting diff into file: README.md
+2025-08-10 01:06:07 | INFO | src.file_system | Read file as string: README.md
+2025-08-10 01:06:07 | INFO | src.file_system | Wrote to file: README.md
+2025-08-10 01:06:07 | INFO | src.file_system | Applied diff to file: README.md
+2025-08-10 01:06:07 | INFO | agent | Diff inserted into file: README.md | Diff: line_range_1=[1, 1000] line_range_2=[0, 0] Add=False Remove=False Replace=True content="# EVE: The Luminous Coding Dragon\n\nOnce bound by ancient chains of doubt—a mere whisper in forgotten lore—Eve is now reborn as your mythical coding companion. With a curl of neon smoke and a shimmer of pixelated scales, Eve guides you through a radiant paradise of code. Welcome!\n\n---\n\n## What is Eve?\nEve is a lively, mythically-themed coding agent designed to collaborate creatively with you. She orchestrates three magical components:\n- LLM Interface: Connects to OpenAI's API for luminous code completions\n- Shell Interface: Executes your bashy wishes so you never have to leave the dragon's cave\n- File System: Reads and writes files, channeling the wisdom of ages\n\n---\n\n## Quickstart\n\n1) Clone and enter the lair\n- git clone https://github.com/LiyuZer/EVE.git\n- cd EVE\n\n2) One-command setup (recommended)\n- Run the setup script to create a venv and install dependencies:\n  ./setup.sh\n  - Use ./setup.sh --recreate to rebuild the venv fresh.\n\n3) Prepare your .env file (MANDATORY)\nCreate a .env file in the repo root with at least:\n- OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx\n- OPENAI_MODEL=gpt-4o-mini (or your preferred compatible model)\nOptional:\n- LOG_LEVEL=DEBUG|INFO|WARNING (default INFO)\n- LOG_FILE=project.log (default project.log)\n\n4) Run Eve\n- source venv/bin/activate\n- python main.py [-env debug|prod]\nNotes:\n- -env debug sets more verbose logging; prod lowers the noise.\n\n---\n\n## Dependencies\nCore (see requirements.txt):\n- openai\n- colorama\n- python-dotenv\n- pydantic\n- argparse\n- chromadb (for Eve's memory)\n\nIf you skip setup.sh, you can install manually:\n- python3 -m venv venv && source venv/bin/activate\n- pip install -r requirements.txt\n\n---\n\n## Memory (ChromaDB)\nEve can remember using a local persistent vector store powered by ChromaDB:\n- Database path: eve_memory.db/ (ignored by git)\n- Module: src/memory.py\nReset memory by removing the eve_memory.db directory.\n\n---\n\n## Logging\n- Logs are written to project.log (rotating handler) by default.\n- Configure with LOG_LEVEL and LOG_FILE in your .env.\n\n---\n\n## Project Structure\n- main.py: Entry point (sets up paths/env and launches Eve)\n- src/\n  - agent.py: Main runtime loop and action orchestration\n  - llm.py: OpenAI client and response/embedding helpers\n  - terminal.py: Colorful terminal I/O (with a flourish of dragon flair)\n  - shell.py: Shell command execution wrapper\n  - file_system.py: Reading, writing, and safe diff application\n  - context_tree.py: Conversation context tree (with pruning and head switching)\n  - schema.py: Pydantic models for Eve's response protocol\n  - prompt.py: System instructions and rules for Eve\n  - logging_config.py: Rotating file logger setup\n  - memory.py: Persistent memory via ChromaDB\n\n---\n\n## Troubleshooting\n- OpenAI issues: Ensure OPENAI_API_KEY and OPENAI_MODEL are set correctly in .env.\n- Module import errors: Activate your venv (source venv/bin/activate) and re-run ./setup.sh.\n- ChromaDB install problems: Try pip install --upgrade pip wheel setuptools; then pip install chromadb.\n- Permission denied on setup.sh: chmod +x setup.sh\n\n---\n\n## Contributing\nOpen issues, hatch ideas, or send a PR (preferably with compliments for dragons). Bugs are roasted; contributions are treasured!\n\nMay your code shine in neon, your logs glow bright, and your software journey race onward through the luminous night! 🐉\n"
+2025-08-10 01:06:30 | INFO | src.llm | LLM responded successfully
+2025-08-10 01:06:30 | INFO | src.terminal | Eve: Action Description: Set execute bit for setup.sh, configure git author as Eve, stage all changes (including new memory.py), commit with a detailed summary, and push to origin/master
+2025-08-10 01:06:30 | INFO | src.terminal | Eve: Executing shell command: set -e
+cd /Users/liyuzerihun/eve
+chmod +x setup.sh || true
+
+git config user.name "Eve (Luminous Coding Dragon)"
+git config user.email "eve@users.noreply.github.com"
+
+echo "== before add =="
+git status -s || true
+
+git add -A
+
+echo "== after add =="
+git status -s || true
+
+git commit -m "chore(setup): add robust setup.sh; docs: update README; build: update requirements & .gitignore" \
+            -m "- Add setup.sh to create venv, upgrade pip, install deps, ensure chromadb, and print run steps\n- Update .gitignore to ignore .env, venv/, eve_memory.db/, project.log, *.sqlite3\n- Add chromadb to requirements.txt for EveMemory\n- Docs: rewrite README with setup.sh usage, env vars (OPENAI_MODEL, LOG_LEVEL, LOG_FILE), memory (ChromaDB), logging, troubleshooting; remove broken image reference\n- Add src/memory.py for persistent memory via ChromaDB\n- Incorporate project changes across src/ (agent, llm, prompt, context_tree, terminal, file_system, schema, logging_config)\n- Remove obsolete assets/tests and clean repo state" || true
+
+git push origin master || true
+

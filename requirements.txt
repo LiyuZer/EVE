@@ -3,3 +3,4 @@ colorama
 python-dotenv
 pydantic
 argparse
+chromadb
