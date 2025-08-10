@@ -1,11 +1,7 @@
 from pathlib import Path
 from src.logging_config import setup_logger
-import subprocess
-import tempfile
-import difflib
-from pathlib import Path
-from schema import Diff
 from collections import OrderedDict
+from src.schema import Diff
 
 class FileHandler:
     def __init__(self):

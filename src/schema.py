@@ -23,7 +23,6 @@ class ResponseBody(BaseModel):
     diff: Diff
     node_hash: str
     node_content: str
-
-# You can add additional pydantic models/types/functions here as needed.
-# If you require 'base_prompt', import it using absolute import, e.g.,
-# from src.prompt import base_prompt
+    save_content: str
+    retrieve_content: str
+ 

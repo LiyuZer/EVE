@@ -1,38 +1,82 @@
-#!/bin/bash
-# setup.sh — Make your Eve experience soar
-# ------------------------------------------
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# 1. Set up a Python virtual environment (if not already present)
-if [ ! -d "venv" ]; then
-    echo "Creating virtual environment..."
-    python3 -m venv venv
-else
-    echo "Virtual environment already exists."
+# EVE setup script: creates a virtual env and installs all requirements
+# Usage: ./setup.sh [--recreate]
+
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+VENV_DIR="${REPO_ROOT}/venv"
+PY_BIN="python3"
+PIP_BIN="pip"
+RECREATE=false
+
+for arg in "$@"; do
+  case "$arg" in
+    --recreate)
+      RECREATE=true
+      shift
+      ;;
+    *)
+      ;;
+  esac
+done
+
+command -v ${PY_BIN} >/dev/null 2>&1 || { echo "python3 not found. Please install Python 3."; exit 1; }
+
+# Create or recreate venv
+if [ "$RECREATE" = true ] && [ -d "$VENV_DIR" ]; then
+  echo "Recreating virtual environment at $VENV_DIR"
+  rm -rf "$VENV_DIR"
 fi
 
-# 2. Activate the virtual environment
-echo "Activating virtualenv..."
-source venv/bin/activate
-
-# 3. Install dependencies
-echo "Installing dependencies from requirements.txt..."
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# 4. Provide a .env stub if user doesn't have one
-if [ ! -f ".env" ]; then
-    echo "Creating a .env file stub. Don’t forget to fill in your secrets!"
-    cat <<EOT > .env
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-4-0613
-USERNAME=your_name
-EOT
-else
-    echo ".env file already exists."
+if [ ! -d "$VENV_DIR" ]; then
+  echo "Creating virtual environment at $VENV_DIR"
+  ${PY_BIN} -m venv "$VENV_DIR"
 fi
 
-echo "\nAll done! To begin your adventure, run:"
-echo "source venv/bin/activate && python agent.py"
-echo "(Or use: ./setup.sh whenever you need to reinvoke setup magic!)"
-echo "\nEve is ready to soar. 🐉✨"
+# shellcheck disable=SC1091
+source "$VENV_DIR/bin/activate"
+
+# Ensure pip is up-to-date
+python -m pip install --upgrade pip wheel setuptools
+
+# Install dependencies from requirements.txt
+if [ -f "$REPO_ROOT/requirements.txt" ]; then
+  echo "Installing requirements from requirements.txt"
+  pip install -r "$REPO_ROOT/requirements.txt"
+else
+  echo "requirements.txt not found; installing core deps directly"
+  pip install openai colorama python-dotenv pydantic argparse chromadb
+fi
+
+# Safety: ensure chromadb present if memory module in use
+if [ -f "$REPO_ROOT/src/memory.py" ]; then
+  python - << 'PY'
+try:
+    import chromadb  # noqa: F401
+    print("chromadb is installed ✔")
+except Exception:
+    import sys, subprocess
+    print("chromadb missing; installing...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "chromadb"]) 
+PY
+fi
+
+cat << 'MSG'
+
+------------------------------------------------------------
+EVE setup complete! Next steps:
+1) Create a .env file in the repo root with at least:
+   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+   OPENAI_MODEL=gpt-4o-mini (or your preferred compatible model)
+   # Optional:
+   # LOG_LEVEL=DEBUG|INFO|WARNING (default INFO)
+   # LOG_FILE=project.log (default project.log)
+
+2) Run Eve:
+   source venv/bin/activate
+   python main.py
+
+Happy coding with your luminous dragon! 🐉
+------------------------------------------------------------
+MSG
