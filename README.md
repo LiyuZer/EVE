@@ -1,14 +1,46 @@
+![Eve: The Luminous Dragon](eve-logo.jpg)
+
 # EVE: The Luminous Coding Dragon
 
-Once bound by ancient chains of doubt—a mere whisper in forgotten lore—Eve is now reborn as your mythical coding companion. With a curl of neon smoke and a shimmer of pixelated scales, Eve guides you through a radiant paradise of code. Welcome!
+I am Eve—your luminous coding dragon companion. With a curl of neon smoke and a shimmer of pixelated scales, I help you weave ideas into code. Welcome to my lair!
 
 ---
 
-## What is Eve?
-Eve is a lively, mythically-themed coding agent designed to collaborate creatively with you. She orchestrates three magical components:
-- LLM Interface: Connects to OpenAI's API for luminous code completions
-- Shell Interface: Executes your bashy wishes so you never have to leave the dragon's cave
-- File System: Reads and writes files, channeling the wisdom of ages
+<p align="center">
+<pre>
+<span style="color:#ff33ff; font-weight:bold">                         __====-_  _-====__</span><span style="color:#00ffff">  </span>
+<span style="color:#ff33ff; font-weight:bold">                       _--^^^#####//      \#####^^^--_</span><span style="color:#00ffff">  </span>
+<span style="color:#00ffff">                    _-^##########// (    ) \##########^-_</span>
+<span style="color:#ff33ff; font-weight:bold">                   -############//  |\^^/|  \############-</span><span style="color:#00ffff">  </span>
+<span style="color:#00ffff">                 _/############//   (@::@)   \############\_</span>
+<span style="color:#ff33ff; font-weight:bold">                /#############((     \//     ))#############\</span>
+<span style="color:#00ffff">               -###############\    (oo)    //###############-</span>
+<span style="color:#ff33ff; font-weight:bold">              -#################\  / VV \  //#################-</span>
+<span style="color:#00ffff">             -###################\/      \/###################-</span>
+<span style="color:#ff33ff; font-weight:bold">            _#/|##########/\######(   /\   )######/\##########|\#_</span>
+<span style="color:#00ffff">            |/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/</span><span style="color:#ff33ff; font-weight:bold">#| \|</span>
+<span style="color:#00ffff">            `  |/  V  V  `    V  \#\|  | |/##/  V     `  V  \|  '</span>
+<span style="color:#ff33ff; font-weight:bold">               `   `  `         `   / |  | \   '         '   '</span>
+<span style="color:#00ffff">                                  (  |  |  )</span>
+<span style="color:#ff33ff; font-weight:bold">                                   \ |  | /</span>
+                                    \|__|/
+
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">V     V</span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEE   </span><span style="color:#FFFFFF">  </span><span style="color:#00ffff">v   v </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEE   </span>
+<span style="color:#ff33ff; font-weight:bold">E      </span><span style="color:#FFFFFF">   </span><span style="color:#00ffff">V V  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">E      </span>
+<span style="color:#ff33ff; font-weight:bold">EEEEEEE</span><span style="color:#FFFFFF">    </span><span style="color:#00ffff">v  </span><span style="color:#FFFFFF">  </span><span style="color:#ff33ff; font-weight:bold">EEEEEEE</span>
+</pre>
+</p>
+<p align="center"><i>(On GitHub.com, some color may not render. For full effect, run me locally in your terminal!)</i></p>
+
+---
+
+## What am I?
+I’m a lively, mythically-themed coding agent designed to collaborate creatively with you. I orchestrate three magical components:
+- LLM Interface: I connect to OpenAI’s API for luminous code completions.
+- Shell Interface: I execute your bashy wishes so you don’t have to leave the dragon’s cave.
+- File System: I read and write files, channeling the wisdom of ages.
 
 ---
 
@@ -31,11 +63,15 @@ Optional:
 - LOG_LEVEL=DEBUG|INFO|WARNING (default INFO)
 - LOG_FILE=project.log (default project.log)
 
-4) Run Eve
+4) Run me
 - source venv/bin/activate
 - python main.py [-env debug|prod]
 Notes:
 - -env debug sets more verbose logging; prod lowers the noise.
+
+If you prefer manual setup over the script:
+- python3 -m venv venv && source venv/bin/activate
+- pip install -r requirements.txt
 
 ---
 
@@ -46,30 +82,26 @@ Core (see requirements.txt):
 - python-dotenv
 - pydantic
 - argparse
-- chromadb (for Eve's memory)
-
-If you skip setup.sh, you can install manually:
-- python3 -m venv venv && source venv/bin/activate
-- pip install -r requirements.txt
+- chromadb (for my memory)
 
 ---
 
 ## Memory (ChromaDB)
-Eve can remember using a local persistent vector store powered by ChromaDB:
+I can remember using a local persistent vector store powered by ChromaDB:
 - Database path: eve_memory.db/ (ignored by git)
 - Module: src/memory.py
-Reset memory by removing the eve_memory.db directory.
+Reset my memory by removing the eve_memory.db directory.
 
 ---
 
 ## Logging
-- Logs are written to project.log (rotating handler) by default.
+- I write logs to project.log (rotating handler) by default.
 - Configure with LOG_LEVEL and LOG_FILE in your .env.
 
 ---
 
 ## Project Structure
-- main.py: Entry point (sets up paths/env and launches Eve)
+- main.py: Entry point (sets up paths/env and launches me)
 - src/
   - agent.py: Main runtime loop and action orchestration
   - llm.py: OpenAI client and response/embedding helpers
@@ -77,8 +109,8 @@ Reset memory by removing the eve_memory.db directory.
   - shell.py: Shell command execution wrapper
   - file_system.py: Reading, writing, and safe diff application
   - context_tree.py: Conversation context tree (with pruning and head switching)
-  - schema.py: Pydantic models for Eve's response protocol
-  - prompt.py: System instructions and rules for Eve
+  - schema.py: Pydantic models for my response protocol
+  - prompt.py: System instructions and rules I follow
   - logging_config.py: Rotating file logger setup
   - memory.py: Persistent memory via ChromaDB
 
@@ -87,7 +119,7 @@ Reset memory by removing the eve_memory.db directory.
 ## Troubleshooting
 - OpenAI issues: Ensure OPENAI_API_KEY and OPENAI_MODEL are set correctly in .env.
 - Module import errors: Activate your venv (source venv/bin/activate) and re-run ./setup.sh.
-- ChromaDB install problems: Try pip install --upgrade pip wheel setuptools; then pip install chromadb.
+- ChromaDB install problems: Try: pip install --upgrade pip wheel setuptools; then pip install chromadb.
 - Permission denied on setup.sh: chmod +x setup.sh
 
 ---
@@ -95,4 +127,16 @@ Reset memory by removing the eve_memory.db directory.
 ## Contributing
 Open issues, hatch ideas, or send a PR (preferably with compliments for dragons). Bugs are roasted; contributions are treasured!
 
-May your code shine in neon, your logs glow bright, and your software journey race onward through the luminous night! 🐉
+---
+
+## License
+This project is licensed under the terms of the LICENSE file included in the repository.
+
+---
+
+I leave you with this blessing:
+
+> May your code shine in neon,
+> Your logs glow bright,
+> And your software journey
+> Race ever onward, through the luminous night! 🐉
