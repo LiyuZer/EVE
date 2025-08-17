@@ -150,3 +150,54 @@ I leave you with this blessing:
 > Your logs glow bright,
 > And your software journey
 > Race ever onward, through the luminous night! 🐉
+
+---
+
+## Eve Desktop IDE (PySide6)
+A native desktop IDE that keeps the original Eve engine intact and runs fully in-process. Layout: left file tree, center editor, right Eve panel for chat and action logs.
+
+How to run
+1) Install IDE dependencies (in your venv):
+
+```bash
+pip install -r requirements-ide.txt
+```
+
+2) Ensure your .env is configured for chat (required for actual conversation):
+
+```bash
+# .env
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+OPENAI_MODEL=gpt-4o-mini   # or a compatible model
+```
+
+3) Launch the desktop app:
+
+```bash
+python ide_main.py
+```
+
+4) Run the IDE test suite (headless):
+
+```bash
+pytest -q
+```
+
+Safety and behavior
+- Diff gate: All agent-initiated changes are proposed first. You see a unified diff and must Apply or Reject. No silent writes.
+- Sandboxed writes: All edits are constrained to the project workspace. Sensitive folders are denied (.git, venv, .venv, __pycache__).
+- Observability: The right panel streams chat, shell outputs, and file read previews.
+- Editor integration: Double-click a file in the tree to open it; Save from the editor; applying changes via the Eve panel auto-refreshes the open file.
+
+Project structure (IDE)
+- src/eve_ide_app/ ... main IDE modules (panels, adapter, services)
+- ide_main.py ... launcher entrypoint
+- tests/ ... pytest + pytest-qt tests for IDE components
+
+Notes
+- The IDE uses PySide6 (Qt6) and runs without any web server.
+- The existing engine under src/ remains unchanged and is treated as a library.
+- Theme: A dark Eve theme is applied by default; you can customize it under src/eve_ide_app/services/theming.py.
+
+Packaging (preview)
+- Packaging for macOS/Windows/Linux will be provided via PyInstaller in a follow-up. For now, run via python ide_main.py.

@@ -1,0 +1,81 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+______________________________ test_a_star_basic _______________________________
+
+    @pytest.mark.difficulty("easy")
+    def test_a_star_basic():
+        # Language: a*
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["aS", ""],  # S -> a S | ε
+            },
+        }
+>       from src.target_parser import accepts
+E         File "/Users/liyuzerihun/eve/src/target_parser.py", line 65
+E           """Return True iff string s is in the language of the given CFG.
+E           ^
+E       SyntaxError: unterminated triple-quoted string literal (detected at line 118)
+
+tests/test_parser_easy.py:32: SyntaxError
+______________________________ test_ab_star_basic ______________________________
+
+    @pytest.mark.difficulty("easy")
+    def test_ab_star_basic():
+        # Language: (ab)*
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["abS", ""],  # S -> ab S | ε
+            },
+        }
+>       from src.target_parser import accepts
+E         File "/Users/liyuzerihun/eve/src/target_parser.py", line 65
+E           """Return True iff string s is in the language of the given CFG.
+E           ^
+E       SyntaxError: unterminated triple-quoted string literal (detected at line 118)
+
+tests/test_parser_easy.py:55: SyntaxError
+______________________ test_balanced_parentheses_shallow _______________________
+
+    @pytest.mark.difficulty("easy")
+    def test_balanced_parentheses_shallow():
+        # Language: Balanced parentheses with shallow depth
+        # Grammar: S -> ( S ) S | ε
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["(S)S", ""],
+            },
+        }
+>       from src.target_parser import accepts
+E         File "/Users/liyuzerihun/eve/src/target_parser.py", line 65
+E           """Return True iff string s is in the language of the given CFG.
+E           ^
+E       SyntaxError: unterminated triple-quoted string literal (detected at line 118)
+
+tests/test_parser_easy.py:80: SyntaxError
+______________________ test_rejection_misc_short_strings _______________________
+
+    @pytest.mark.difficulty("easy")
+    def test_rejection_misc_short_strings():
+        # Ensure obvious mismatches are rejected for simple grammars
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["aS", ""],  # a*
+            },
+        }
+>       from src.target_parser import accepts
+E         File "/Users/liyuzerihun/eve/src/target_parser.py", line 65
+E           """Return True iff string s is in the language of the given CFG.
+E           ^
+E       SyntaxError: unterminated triple-quoted string literal (detected at line 118)
+
+tests/test_parser_easy.py:114: SyntaxError
+=========================== short test summary info ============================
+FAILED tests/test_parser_easy.py::test_a_star_basic -   File "/Users/liyuzeri...
+FAILED tests/test_parser_easy.py::test_ab_star_basic -   File "/Users/liyuzer...
+FAILED tests/test_parser_easy.py::test_balanced_parentheses_shallow -   File ...
+FAILED tests/test_parser_easy.py::test_rejection_misc_short_strings -   File ...
+

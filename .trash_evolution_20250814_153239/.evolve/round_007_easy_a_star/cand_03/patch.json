@@ -1,0 +1,10 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 5,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions\n    if s == \"\" and \"\" in rules.get(start, []):\n        return True\n\n    # For non-empty strings, try to match using the grammar\n    def can_derive(nt: str, remaining: str) -> bool:\n        for production in rules.get(nt, []):\n            if _try_production(production, remaining):\n                return True\n        return False\n\n    def _try_production(prod: str, remaining: str) -> bool:\n        # Try to match production against remaining string\n        # Base case: empty production\n        if prod == \"\":\n            return remaining == \"\"\n        \n        # If production starts with terminal\n        if prod[0].islower() or not prod[0].isalpha():\n            if remaining and remaining[0] == prod[0]:\n                return _try_production(prod[1:], remaining[1:])\n            else:\n                return False\n        # If production starts with nonterminal\n        elif prod[0].isupper():\n            # Try all possible splits of remaining string\n            for i in range(len(remaining) + 1):\n                prefix = remaining[:i]\n                suffix = remaining[i:]\n                if can_derive(prod[0], prefix) and _try_production(prod[1:], suffix):\n                    return True\n            return False\n        return False\n\n    return can_derive(start, s)"
+    }
+  ]
+}

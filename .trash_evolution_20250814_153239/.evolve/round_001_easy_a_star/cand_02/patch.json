@@ -1,0 +1,37 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 68,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 69,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "insert",
+      "line": 70,
+      "text": "    # Simple case: if string is exactly a terminal production of start, accept it"
+    },
+    {
+      "op": "insert",
+      "line": 71,
+      "text": "    if s in rules.get(start, []):"
+    },
+    {
+      "op": "insert",
+      "line": 72,
+      "text": "        return True"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 59,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 60,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 61,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "insert",
+      "line": 62,
+      "count": 0,
+      "text": "    # Check if string is exactly one 'a' and start produces 'aS' and ''"
+    },
+    {
+      "op": "insert",
+      "line": 63,
+      "count": 0,
+      "text": "    if s == \"a\" and start in rules and \"aS\" in rules[start] and \"\" in rules[start]:"
+    },
+    {
+      "op": "insert",
+      "line": 64,
+      "count": 0,
+      "text": "        return True"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 70,
+      "count": 1,
+      "text": "    # Everything else is rejected by the initial stub"
+    },
+    {
+      "op": "insert",
+      "line": 71,
+      "count": 0,
+      "text": "    # For now, reject all non-empty strings"
+    }
+  ]
+}

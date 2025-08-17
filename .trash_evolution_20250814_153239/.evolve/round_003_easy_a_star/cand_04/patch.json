@@ -1,0 +1,52 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 59,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 60,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 61,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "replace",
+      "line": 63,
+      "count": 1,
+      "text": "    # For non-empty strings, try direct productions from start symbol"
+    },
+    {
+      "op": "insert",
+      "line": 64,
+      "count": 0,
+      "text": "    for production in rules.get(start, []):"
+    },
+    {
+      "op": "insert",
+      "line": 65,
+      "count": 0,
+      "text": "        if production == s:"
+    },
+    {
+      "op": "insert",
+      "line": 66,
+      "count": 0,
+      "text": "            return True"
+    },
+    {
+      "op": "replace",
+      "line": 68,
+      "count": 1,
+      "text": "    return False"
+    }
+  ]
+}

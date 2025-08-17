@@ -1,0 +1,51 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 68,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 69,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "replace",
+      "line": 71,
+      "count": 1,
+      "text": "    # For non-empty strings, try to match productions"
+    },
+    {
+      "op": "replace",
+      "line": 72,
+      "count": 1,
+      "text": "    def can_derive(nt: str, remaining: str) -> bool:"
+    },
+    {
+      "op": "replace",
+      "line": 73,
+      "count": 1,
+      "text": "        if nt not in rules:"
+    },
+    {
+      "op": "replace",
+      "line": 74,
+      "count": 1,
+      "text": "            return False"
+    },
+    {
+      "op": "insert",
+      "line": 75,
+      "text": "        for production in rules[nt]:\n            if _try_match(production, remaining, rules):\n                return True\n        return False"
+    }
+  ]
+}
