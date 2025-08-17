@@ -1,0 +1,21 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 70,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 71,
+      "count": 3,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):\n        return True\n    # For non-empty strings, try to match productions"
+    },
+    {
+      "op": "insert",
+      "line": 74,
+      "text": "    for production in rules.get(start, []):\n        if production == s:\n            return True\n    return False"
+    }
+  ]
+}

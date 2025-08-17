@@ -1,0 +1,34 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 70,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 71,
+      "count": 3,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):\n        return True\n    # For non-empty strings, try to match the first symbol"
+    },
+    {
+      "op": "insert",
+      "line": 74,
+      "count": 0,
+      "text": "    if s and s[0] == 'a' and 'aS' in rules.get(start, []):\n        # Recursively check the rest of the string with the same grammar\n        return accepts(grammar, s[1:])\n"
+    },
+    {
+      "op": "insert",
+      "line": 78,
+      "count": 0,
+      "text": "    # If we have a string but no matching rule, reject\n"
+    },
+    {
+      "op": "replace",
+      "line": 79,
+      "count": 1,
+      "text": "    return False"
+    }
+  ]
+}

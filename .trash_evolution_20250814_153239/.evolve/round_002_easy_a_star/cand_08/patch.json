@@ -1,0 +1,49 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 68,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 69,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "replace",
+      "line": 71,
+      "count": 1,
+      "text": "    # Simple case for direct production matching"
+    },
+    {
+      "op": "insert",
+      "line": 72,
+      "text": "    for production in rules.get(start, []):"
+    },
+    {
+      "op": "insert",
+      "line": 73,
+      "text": "        if production == s:"
+    },
+    {
+      "op": "insert",
+      "line": 74,
+      "text": "            return True"
+    },
+    {
+      "op": "replace",
+      "line": 76,
+      "count": 1,
+      "text": "    return False"
+    }
+  ]
+}

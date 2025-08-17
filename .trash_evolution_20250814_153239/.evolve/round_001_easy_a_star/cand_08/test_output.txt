@@ -1,0 +1,40 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______________________________ test_a_star_basic _______________________________
+
+    @pytest.mark.difficulty("easy")
+    def test_a_star_basic():
+        # Language: a*
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["aS", ""],  # S -> a S | ε
+            },
+        }
+>       from src.target_parser import accepts
+E         File "/Users/liyuzerihun/eve/src/target_parser.py", line 67
+E           def accepts(grammar: Dict, s: str) -> bool:
+E       IndentationError: expected an indented block after 'if' statement on line 63
+
+tests/test_parser_easy.py:32: IndentationError
+______________________ test_rejection_misc_short_strings _______________________
+
+    @pytest.mark.difficulty("easy")
+    def test_rejection_misc_short_strings():
+        # Ensure obvious mismatches are rejected for simple grammars
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["aS", ""],  # a*
+            },
+        }
+>       from src.target_parser import accepts
+E         File "/Users/liyuzerihun/eve/src/target_parser.py", line 67
+E           def accepts(grammar: Dict, s: str) -> bool:
+E       IndentationError: expected an indented block after 'if' statement on line 63
+
+tests/test_parser_easy.py:114: IndentationError
+=========================== short test summary info ============================
+FAILED tests/test_parser_easy.py::test_a_star_basic -   File "/Users/liyuzeri...
+FAILED tests/test_parser_easy.py::test_rejection_misc_short_strings -   File ...
+

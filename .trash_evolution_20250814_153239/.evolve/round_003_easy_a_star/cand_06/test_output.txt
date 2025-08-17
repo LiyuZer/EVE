@@ -1,0 +1,25 @@
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+______________________________ test_a_star_basic _______________________________
+
+    @pytest.mark.difficulty("easy")
+    def test_a_star_basic():
+        # Language: a*
+        grammar = {
+            "start": "S",
+            "rules": {
+                "S": ["aS", ""],  # S -> a S | ε
+            },
+        }
+        from src.target_parser import accepts
+    
+        # Positive cases
+        assert accepts(grammar, "") is True
+>       assert accepts(grammar, "a") is True
+E       AssertionError: assert False is True
+E        +  where False = <function accepts at 0x10745b560>({'rules': {'S': ['aS', '']}, 'start': 'S'}, 'a')
+
+tests/test_parser_easy.py:36: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_parser_easy.py::test_a_star_basic - AssertionError: assert ...
+

@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "passed": 1,
+    "failed": 3,
+    "errors": 0,
+    "returncode": 1
+  },
+  "candidates": [
+    {
+      "changed_lines": 43,
+      "passed": 0,
+      "failed": 4,
+      "errors": 0
+    },
+    {
+      "changed_lines": 8,
+      "passed": 0,
+      "failed": 4,
+      "errors": 0
+    }
+  ],
+  "accepted": null
+}

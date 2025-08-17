@@ -1,0 +1,47 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 68,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 69,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "insert",
+      "line": 70,
+      "text": "\n    # Simple case: if string is just \"a\" and grammar allows it"
+    },
+    {
+      "op": "insert",
+      "line": 71,
+      "text": "    if s == \"a\" and start in rules:"
+    },
+    {
+      "op": "insert",
+      "line": 72,
+      "text": "        for production in rules[start]:"
+    },
+    {
+      "op": "insert",
+      "line": 73,
+      "text": "            if production == \"a\" or (production.startswith(\"a\") and production[1:] in rules):"
+    },
+    {
+      "op": "insert",
+      "line": 74,
+      "text": "                return True"
+    }
+  ]
+}

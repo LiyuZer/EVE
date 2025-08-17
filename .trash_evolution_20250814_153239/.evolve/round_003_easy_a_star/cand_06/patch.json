@@ -1,0 +1,10 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 5,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions\n    if s == \"\" and \"\" in rules.get(start, []):\n        return True\n\n    # For now, only handle direct productions from start symbol\n    for production in rules.get(start, []):\n        if production == s:\n            return True\n\n    # Everything else is rejected by the initial stub\n    return False"
+    }
+  ]
+}

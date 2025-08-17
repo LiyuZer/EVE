@@ -1,0 +1,10 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 67,
+      "count": 6,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions\n    if s == \"\" and \"\" in rules.get(start, []):\n        return True\n\n    # For non-empty strings, try to match using simple recursive derivation\n    def derive(nt: str, pos: int) -> int:\n        for production in rules.get(nt, []):\n            if production == \"\":\n                continue  # epsilon productions don't consume input\n            i = pos\n            match = True\n            for symbol in production:\n                if symbol.isupper():  # Nonterminal\n                    new_pos = derive(symbol, i)\n                    if new_pos == -1:\n                        match = False\n                        break\n                    i = new_pos\n                else:  # Terminal\n                    if i >= len(s) or s[i] != symbol:\n                        match = False\n                        break\n                    i += 1\n            if match:\n                return i\n        return -1  # No matching production found\n\n    # Try to derive the entire string from the start symbol\n    if len(s) > 0:\n        result_pos = derive(start, 0)\n        return result_pos == len(s)\n\n    return False"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "edits": [
+    {
+      "op": "replace",
+      "line": 70,
+      "count": 1,
+      "text": "    # Accept epsilon only if explicitly allowed by start productions"
+    },
+    {
+      "op": "replace",
+      "line": 71,
+      "count": 1,
+      "text": "    if s == \"\" and \"\" in rules.get(start, []):"
+    },
+    {
+      "op": "replace",
+      "line": 72,
+      "count": 1,
+      "text": "        return True"
+    },
+    {
+      "op": "replace",
+      "line": 74,
+      "count": 1,
+      "text": "    # Simple case for direct productions matching the entire string"
+    },
+    {
+      "op": "insert",
+      "line": 75,
+      "count": 0,
+      "text": "    if s in rules.get(start, []):"
+    },
+    {
+      "op": "insert",
+      "line": 76,
+      "count": 0,
+      "text": "        return True"
+    },
+    {
+      "op": "replace",
+      "line": 78,
+      "count": 1,
+      "text": "    # Everything else is rejected by the initial stub"
+    },
+    {
+      "op": "replace",
+      "line": 79,
+      "count": 1,
+      "text": "    return False"
+    }
+  ]
+}

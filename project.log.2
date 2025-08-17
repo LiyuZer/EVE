@@ -1,0 +1,303 @@
+2025-08-17 05:33:30 | INFO | src.shell | Executed command: cargo test -q
+CWD: /Users/liyuzerihun/toy_c
+STDOUT: 
+running 57 tests
+......... 9/57
+ast::tests::display_declarators --- FAILED
+. 11/57
+ast::tests::display_stmt_return_and_compound --- FAILED
+......... 21/57
+parse::tests::decl_char_array_with_char_list --- FAILED
+parse::tests::decl_char_array_with_string_init --- FAILED
+parse::tests::decl_const_int_ptr --- FAILED
+.. 26/57
+parse::tests::decl_function_pointer --- FAILED
+. 28/57
+parse::tests::decl_expr_init_with_comma_expression --- FAILED
+parse::tests::decl_init_list_nested --- FAILED
+.. 32/57
+parse::tests::decl_init_list_simple --- FAILED
+parse::tests::decl_init_list_trailing_comma --- FAILED
+... 37/57
+parse::tests::decl_multiple_declarators --- FAILED
+parse::tests::decl_simple_int_var --- FAILED
+. 40/57
+parse::tests::decl_unsigned_long_array --- FAILED
+parse::tests::enum_definition_and_decl --- FAILED
+parse::tests::enum_incomplete_and_decls --- FAILED
+. 44/57
+parse::tests::enum_trailing_comma --- FAILED
+........ 53/57
+parse::tests::struct_incomplete_and_decls --- FAILED
+parse::tests::typedef_enum_integration --- FAILED
+parse::tests::struct_definition_with_members_and_bitfields --- FAILED
+parse::tests::union_definition_and_decl --- FAILED
+
+failures:
+
+---- ast::tests::display_declarators stdout ----
+
+thread 'ast::tests::display_declarators' panicked at src/ast/mod.rs:596:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [(*fp)(int, long)]"
+ right: "Decl(Specs(-, -, int), [(*fp)(int, long)])"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- ast::tests::display_stmt_return_and_compound stdout ----
+
+thread 'ast::tests::display_stmt_return_and_compound' panicked at src/ast/mod.rs:616:9:
+assertion `left == right` failed
+  left: "Compound[Decl(Specs(-, -, int), [x], Return(Int(0))]"
+ right: "Compound[Decl(Specs(-, -, int), [x]), Return(Int(0))]"
+
+---- parse::tests::decl_char_array_with_char_list stdout ----
+
+thread 'parse::tests::decl_char_array_with_char_list' panicked at src/parse/mod.rs:846:101:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, char), [s[] = InitList[InitExpr(Char(104)), InitExpr(Char(105)), InitExpr(Int(0))]]"
+ right: "Decl(Specs(-, -, char), [s[] = InitList[InitExpr(Char(104)), InitExpr(Char(105)), InitExpr(Int(0))]])"
+
+---- parse::tests::decl_char_array_with_string_init stdout ----
+
+thread 'parse::tests::decl_char_array_with_string_init' panicked at src/parse/mod.rs:817:45:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, char), [s[] = InitExpr(String(\"hi\"))]"
+ right: "Decl(Specs(-, -, char), [s[] = InitExpr(String(\"hi\"))])"
+
+---- parse::tests::decl_const_int_ptr stdout ----
+
+thread 'parse::tests::decl_const_int_ptr' panicked at src/parse/mod.rs:811:31:
+assertion `left == right` failed
+  left: "Decl(Specs(-, const, int), [*p]"
+ right: "Decl(Specs(-, const, int), [*p])"
+
+---- parse::tests::decl_function_pointer stdout ----
+
+thread 'parse::tests::decl_function_pointer' panicked at src/parse/mod.rs:808:34:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [(*fp)(int, long)]"
+ right: "Decl(Specs(-, -, int), [(*fp)(int, long)])"
+
+---- parse::tests::decl_expr_init_with_comma_expression stdout ----
+
+thread 'parse::tests::decl_expr_init_with_comma_expression' panicked at src/parse/mod.rs:849:98:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [x = InitExpr(Binary(,, Int(1), Int(2)))]"
+ right: "Decl(Specs(-, -, int), [x = InitExpr(Binary(,, Int(1), Int(2)))])"
+
+---- parse::tests::decl_init_list_nested stdout ----
+
+thread 'parse::tests::decl_init_list_nested' panicked at src/parse/mod.rs:843:104:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [m[2][3] = InitList[InitList[InitExpr(Int(1)), InitExpr(Int(2)), InitExpr(Int(3))], InitList[InitExpr(Int(4)), InitExpr(Int(5)), InitExpr(Int(6))]]]"
+ right: "Decl(Specs(-, -, int), [m[2][3] = InitList[InitList[InitExpr(Int(1)), InitExpr(Int(2)), InitExpr(Int(3))], InitList[InitExpr(Int(4)), InitExpr(Int(5)), InitExpr(Int(6))]]])"
+
+---- parse::tests::decl_init_list_simple stdout ----
+
+thread 'parse::tests::decl_init_list_simple' panicked at src/parse/mod.rs:837:88:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [a[3] = InitList[InitExpr(Int(1)), InitExpr(Int(2)), InitExpr(Int(3))]]"
+ right: "Decl(Specs(-, -, int), [a[3] = InitList[InitExpr(Int(1)), InitExpr(Int(2)), InitExpr(Int(3))]])"
+
+---- parse::tests::decl_init_list_trailing_comma stdout ----
+
+thread 'parse::tests::decl_init_list_trailing_comma' panicked at src/parse/mod.rs:840:96:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [a[] = InitList[InitExpr(Int(1)), InitExpr(Int(2)), InitExpr(Int(3)),]]"
+ right: "Decl(Specs(-, -, int), [a[] = InitList[InitExpr(Int(1)), InitExpr(Int(2)), InitExpr(Int(3)),]])"
+
+---- parse::tests::decl_multiple_declarators stdout ----
+
+thread 'parse::tests::decl_multiple_declarators' panicked at src/parse/mod.rs:814:38:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [a, *b]"
+ right: "Decl(Specs(-, -, int), [a, *b])"
+
+---- parse::tests::decl_simple_int_var stdout ----
+
+thread 'parse::tests::decl_simple_int_var' panicked at src/parse/mod.rs:802:32:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, int), [x]"
+ right: "Decl(Specs(-, -, int), [x])"
+
+---- parse::tests::decl_unsigned_long_array stdout ----
+
+thread 'parse::tests::decl_unsigned_long_array' panicked at src/parse/mod.rs:805:37:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, unsigned long), [a[10]]"
+ right: "Decl(Specs(-, -, unsigned long), [a[10]])"
+
+---- parse::tests::enum_definition_and_decl stdout ----
+
+thread 'parse::tests::enum_definition_and_decl' panicked at src/parse/mod.rs:923:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, enum E{A, B = Int(3), C}), [x]"
+ right: "Decl(Specs(-, -, enum E{A, B = Int(3), C}), [x])"
+
+---- parse::tests::enum_incomplete_and_decls stdout ----
+
+thread 'parse::tests::enum_incomplete_and_decls' panicked at src/parse/mod.rs:914:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, enum E), [*p]"
+ right: "Decl(Specs(-, -, enum E), [*p])"
+
+---- parse::tests::enum_trailing_comma stdout ----
+
+thread 'parse::tests::enum_trailing_comma' panicked at src/parse/mod.rs:930:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, enum E{A, B}), [y]"
+ right: "Decl(Specs(-, -, enum E{A, B}), [y])"
+
+---- parse::tests::struct_incomplete_and_decls stdout ----
+
+thread 'parse::tests::struct_incomplete_and_decls' panicked at src/parse/mod.rs:870:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, struct S), [*p]"
+ right: "Decl(Specs(-, -, struct S), [*p])"
+
+---- parse::tests::typedef_enum_integration stdout ----
+
+thread 'parse::tests::typedef_enum_integration' panicked at src/parse/mod.rs:958:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, E), [x]"
+ right: "Decl(Specs(-, -, E), [x])"
+
+---- parse::tests::struct_definition_with_members_and_bitfields stdout ----
+
+thread 'parse::tests::struct_definition_with_members_and_bitfields' panicked at src/parse/mod.rs:879:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, struct S{int x;unsigned int y:Int(3);char z[];}), [s]"
+ right: "Decl(Specs(-, -, struct S{int x;unsigned int y:Int(3);char z[];}), [s])"
+
+---- parse::tests::union_definition_and_decl stdout ----
+
+thread 'parse::tests::union_definition_and_decl' panicked at src/parse/mod.rs:886:9:
+assertion `left == right` failed
+  left: "Decl(Specs(-, -, union U{int a;unsigned int b:Int(1);}), [u]"
+ right: "Decl(Specs(-, -, union U{int a;unsigned int b:Int(1);}), [u])"
+
+
+failures:
+    ast::tests::display_declarators
+    ast::tests::display_stmt_return_and_compound
+    parse::tests::decl_char_array_with_char_list
+    parse::tests::decl_char_array_with_string_init
+    parse::tests::decl_const_int_ptr
+    parse::tests::decl_expr_init_with_comma_expression
+    parse::tests::decl_function_pointer
+    parse::tests::decl_init_list_nested
+    parse::tests::decl_init_list_simple
+    parse::tests::decl_init_list_trailing_comma
+    parse::tests::decl_multiple_declarators
+    parse::tests::decl_simple_int_var
+    parse::tests::decl_unsigned_long_array
+    parse::tests::enum_definition_and_decl
+    parse::tests::enum_incomplete_and_decls
+    parse::tests::enum_trailing_comma
+    parse::tests::struct_definition_with_members_and_bitfields
+    parse::tests::struct_incomplete_and_decls
+    parse::tests::typedef_enum_integration
+    parse::tests::union_definition_and_decl
+
+test result: FAILED. 37 passed; 20 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+STDERR: warning: value assigned to `base` is never read
+   --> src/lex/mod.rs:268:17
+    |
+268 |         let mut base = IntBase::Dec;
+    |                 ^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: value assigned to `has_digits` is never read
+   --> src/lex/mod.rs:305:74
+    |
+305 | ...   while let Some(c) = self.peek() { match c { b'0'..=b'9' => { has_digits = true; digits.push(self.bump().unwrap()); }, _ => break } }
+    |                                                                    ^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: value assigned to `v` is never read
+   --> src/lex/mod.rs:339:25
+    |
+339 |                 let mut v: u32 = 0;
+    |                         ^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: methods `at_end` and `eat_keyword` are never used
+  --> src/parse/mod.rs:44:8
+   |
+42 | impl TS {
+   | ------- methods in this implementation
+43 |     fn new(toks: Vec<Token>) -> Self { TS { toks, i: 0, typedef_scopes: vec![HashSet::new()] } }
+44 |     fn at_end(&self) -> bool { matches!(self.peek_kind(), TokenKind::Eof) }
+   |        ^^^^^^
+...
+72 |     fn eat_keyword(&mut self, kw: Keyword) -> bool {
+   |        ^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+error: test failed, to rerun pass `--lib`
+
+2025-08-17 05:35:50 | INFO | src.shell | Executed command: cargo test -q
+CWD: /Users/liyuzerihun/toy_c
+STDOUT: 
+running 57 tests
+.........................................................
+test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 2 tests
+..
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+STDERR: warning: value assigned to `base` is never read
+   --> src/lex/mod.rs:268:17
+    |
+268 |         let mut base = IntBase::Dec;
+    |                 ^^^^
+    |
+    = help: maybe it is overwritten before being read?
+    = note: `#[warn(unused_assignments)]` on by default
+
+warning: value assigned to `has_digits` is never read
+   --> src/lex/mod.rs:305:74
+    |
+305 | ...   while let Some(c) = self.peek() { match c { b'0'..=b'9' => { has_digits = true; digits.push(self.bump().unwrap()); }, _ => break } }
+    |                                                                    ^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: value assigned to `v` is never read
+   --> src/lex/mod.rs:339:25
+    |
+339 |                 let mut v: u32 = 0;
+    |                         ^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: methods `at_end` and `eat_keyword` are never used
+  --> src/parse/mod.rs:44:8
+   |
+42 | impl TS {
+   | ------- methods in this implementation
+43 |     fn new(toks: Vec<Token>) -> Self { TS { toks, i: 0, typedef_scopes: vec![HashSet::new()] } }
+44 |     fn at_end(&self) -> bool { matches!(self.peek_kind(), TokenKind::Eof) }
+   |        ^^^^^^
+...
+72 |     fn eat_keyword(&mut self, kw: Keyword) -> bool {
+   |        ^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+
