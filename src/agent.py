@@ -97,14 +97,18 @@ class Agent:
 
         while True:
             # Use simplified summary of context tree for LLM input
-            context_core = str(self.context_tree) +  "Context Tree Summary:\n" + self.context_tree.return_root_head_string(include_full=True, include_labels=False)
+            context_core = str(self.context_tree)
             size = len(context_core)
             size_line = "Context Tree size: " + str(size) + " characters; hard max 600,000."
             policy_line = ""
-            if size > 400000:
+            if size > 600000:
                 policy_line = (
-                    "Context policy: size > 400,000 — prioritize action=10 Replace (shorten node summaries, keep children) "
-                    "and/or action=4 Prune (summarize and drop subtrees) until size < 400,000."
+                    """" 
+                    Planning policy: If the task is complex try to break it down into sub sections.
+                                     When you are done with a section, prune it and go up.
+                    Context policy: size > 600,000 — prioritize action=10 Replace (shorten node summaries, keep children) "
+                    and/or action=4 Prune (summarize and drop subtrees) until size < 600,000.
+                    """
                 )
             context_str = context_core + "\n" + size_line + ("\n" + policy_line if policy_line else "")
             # Always emit a plain context size line for IDE to parse

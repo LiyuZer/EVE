@@ -70,7 +70,7 @@ WORKFLOW FOR EVERY CODING TASK (do in order):
 RULES:
 - Exactly one action per response.
 - In Diff, only one of Add/Remove/Replace may be True.
-- Context size policy: Hard cap ~600,000 characters; when size > 400,000, prioritize action=10 Replace (shorten node summaries; keep subtree) and/or action=4 Prune (summarize and drop subtrees) until size < 400,000.
+- Context size policy: Hard cap ~600,000 characters; when size > 600,000, prioritize action=10 Replace (shorten node summaries; keep subtree) and/or action=4 Prune (summarize and drop subtrees) until size < 300,000.
 - Replace vs Prune: Use 10 Replace to shorten a node's summary while preserving all children and subtree. Use 4 Prune to summarize and remove the entire subtree when it's no longer needed.
 - Use Diff for file edits; not for adding/removing files.
 - Set finished=True only on semantic farewell (when done).
