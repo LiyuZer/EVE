@@ -16176,3 +16176,233 @@ git push origin HEAD
 
 echo "=== Done ==="'
 
+2025-08-18 18:42:08 | INFO | src.shell | Executed command: bash -lc '
+set -e
+cd /Users/liyuzerihun/eve
+
+echo "=== Confirm Git User ==="
+echo -n "user.name: "; git config user.name || echo "<not set>"
+echo -n "user.email: "; git config user.email || echo "<not set>"
+
+echo "=== Staging All Changes ==="
+git add -A
+
+echo "=== Staged Diff ==="
+if git diff --cached --quiet; then
+  echo "No changes staged; nothing to commit."
+else
+  git diff --cached --name-status
+  echo "=== Committing ==="
+  GIT_AUTHOR_NAME="Eve" GIT_AUTHOR_EMAIL="eve@users.noreply.github.com" \
+  GIT_COMMITTER_NAME="Eve" GIT_COMMITTER_EMAIL="eve@users.noreply.github.com" \
+  git commit -m "chore: commit current changes by Eve" -m "Stage modified and untracked files; include tests and updates."
+fi
+
+echo "=== Pushing ==="
+# Push current HEAD to its upstream (origin/master)
+git push origin HEAD
+
+echo "=== Done ==="'
+
+CWD: /Users/liyuzerihun/eve
+STDOUT: === Confirm Git User ===
+user.name: Eve
+Eve
+user.email: eve@users.noreply.github.com
+=== Staging All Changes ===
+=== Staged Diff ===
+A	.eve_playground/recursion_demo/A.txt
+A	embedding_payload.json
+M	project.log
+M	server_info.json
+M	src/agent.py
+M	src/prompt.py
+M	src/server_info.json
+M	src/shell.py
+A	src/tests/test_recurse_isolation.py
+A	tests/test_cli.py
+=== Committing ===
+[master 465c5b8] chore: commit current changes by Eve
+ 10 files changed, 1119 insertions(+), 9 deletions(-)
+ create mode 100644 .eve_playground/recursion_demo/A.txt
+ create mode 100644 embedding_payload.json
+ create mode 100644 src/tests/test_recurse_isolation.py
+ create mode 100644 tests/test_cli.py
+=== Pushing ===
+
+STDERR: To https://github.com/LiyuZer/EVE.git
+ ! [rejected]        HEAD -> master (fetch first)
+error: failed to push some refs to 'https://github.com/LiyuZer/EVE.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+2025-08-18 18:42:08 | INFO | agent | Shell command executed: bash -lc '
+set -e
+cd /Users/liyuzerihun/eve
+
+echo "=== Confirm Git User ==="
+echo -n "user.name: "; git config user.name || echo "<not set>"
+echo -n "user.email: "; git config user.email || echo "<not set>"
+
+echo "=== Staging All Changes ==="
+git add -A
+
+echo "=== Staged Diff ==="
+if git diff --cached --quiet; then
+  echo "No changes staged; nothing to commit."
+else
+  git diff --cached --name-status
+  echo "=== Committing ==="
+  GIT_AUTHOR_NAME="Eve" GIT_AUTHOR_EMAIL="eve@users.noreply.github.com" \
+  GIT_COMMITTER_NAME="Eve" GIT_COMMITTER_EMAIL="eve@users.noreply.github.com" \
+  git commit -m "chore: commit current changes by Eve" -m "Stage modified and untracked files; include tests and updates."
+fi
+
+echo "=== Pushing ==="
+# Push current HEAD to its upstream (origin/master)
+git push origin HEAD
+
+echo "=== Done ==="'
+ | STDOUT: === Confirm Git User ===
+user.name: Eve
+Eve
+user.email: eve@users.noreply.github.com
+=== Staging All Changes ===
+=== Staged Diff ===
+A	.eve_playground/recursion_demo/A.txt
+A	embedding_payload.json
+M	p | STDERR: To https://github.com/LiyuZer/EVE.git
+ ! [rejected]        HEAD -> master (fetch first)
+error: failed to push some refs to 'https://github.com/LiyuZer/EVE.git'
+hint: Updates were rejected because the 
+2025-08-18 18:42:35 | INFO | src.llm | LLM responded successfully
+2025-08-18 18:42:35 | INFO | src.terminal | Eve: Action Description: Fetch latest from origin, rebase local master onto origin/master, and push to resolve non-fast-forward rejection.
+2025-08-18 18:42:35 | INFO | src.terminal | Eve: Executing shell command: bash -lc '
+set -e
+cd /Users/liyuzerihun/eve
+
+echo "=== Fetching ==="
+git fetch origin --prune
+
+echo "=== Status Before Rebase ==="
+git status -sb || true
+
+echo "Ahead/Behind vs origin/master:" 
+( git rev-list --left-right --count origin/master...HEAD || true )
+
+echo "=== Rebase onto origin/master ==="
+# This will stop on conflicts if any, which we can resolve next
+git pull --rebase origin master
+
+echo "=== Status After Rebase ==="
+git status -sb || true
+
+echo "=== Pushing ==="
+# Push rebased commits
+git push origin HEAD:master
+
+echo "=== Done ==="'
+2025-08-18 18:42:36 | INFO | src.shell | Executed command: bash -lc '
+set -e
+cd /Users/liyuzerihun/eve
+
+echo "=== Fetching ==="
+git fetch origin --prune
+
+echo "=== Status Before Rebase ==="
+git status -sb || true
+
+echo "Ahead/Behind vs origin/master:" 
+( git rev-list --left-right --count origin/master...HEAD || true )
+
+echo "=== Rebase onto origin/master ==="
+# This will stop on conflicts if any, which we can resolve next
+git pull --rebase origin master
+
+echo "=== Status After Rebase ==="
+git status -sb || true
+
+echo "=== Pushing ==="
+# Push rebased commits
+git push origin HEAD:master
+
+echo "=== Done ==="'
+CWD: /Users/liyuzerihun/eve
+STDOUT: === Fetching ===
+=== Status Before Rebase ===
+## master...origin/master [ahead 2, behind 1]
+ M project.log
+Ahead/Behind vs origin/master:
+1	2
+=== Rebase onto origin/master ===
+
+STDERR: From https://github.com/LiyuZer/EVE
+   73b335c..8bb6f49  master     -> origin/master
+error: cannot pull with rebase: You have unstaged changes.
+error: please commit or stash them.
+
+2025-08-18 18:42:36 | INFO | agent | Shell command executed: bash -lc '
+set -e
+cd /Users/liyuzerihun/eve
+
+echo "=== Fetching ==="
+git fetch origin --prune
+
+echo "=== Status Before Rebase ==="
+git status -sb || true
+
+echo "Ahead/Behind vs origin/master:" 
+( git rev-list --left-right --count origin/master...HEAD || true )
+
+echo "=== Rebase onto origin/master ==="
+# This will stop on conflicts if any, which we can resolve next
+git pull --rebase origin master
+
+echo "=== Status After Rebase ==="
+git status -sb || true
+
+echo "=== Pushing ==="
+# Push rebased commits
+git push origin HEAD:master
+
+echo "=== Done ==="' | STDOUT: === Fetching ===
+=== Status Before Rebase ===
+## master...origin/master [ahead 2, behind 1]
+ M project.log
+Ahead/Behind vs origin/master:
+1	2
+=== Rebase onto origin/master === | STDERR: From https://github.com/LiyuZer/EVE
+   73b335c..8bb6f49  master     -> origin/master
+error: cannot pull with rebase: You have unstaged changes.
+error: please commit or stash them.
+2025-08-18 18:43:00 | INFO | src.llm | LLM responded successfully
+2025-08-18 18:43:00 | INFO | src.terminal | Eve: Action Description: Stash unstaged changes, rebase onto origin/master, push to resolve non-fast-forward, and report stash state.
+2025-08-18 18:43:00 | INFO | src.terminal | Eve: Executing shell command: bash -lc '
+set -e
+cd /Users/liyuzerihun/eve
+
+echo "=== Checking for unstaged changes ==="
+if ! git diff --quiet; then
+  echo "Unstaged changes present; stashing before rebase."
+  STASH_NAME="eve-temp-before-rebase-$(date +%s)"
+  git stash push -m "$STASH_NAME"
+  echo "Created stash: $STASH_NAME"
+else
+  echo "No unstaged changes."
+fi
+
+echo "=== Pull --rebase origin/master ==="
+git pull --rebase origin master
+
+echo "=== Push to origin/master ==="
+git push origin HEAD:master
+
+echo "=== Final Status ==="
+git status -sb || true
+
+echo "=== Stash List ==="
+git stash list || true
+'
