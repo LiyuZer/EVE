@@ -12,4 +12,5 @@ venv/
 .vscode/
 eve_memory.db/
 project.log
-*.sqlite3
+*.sqlite3.eve/
+.eve
