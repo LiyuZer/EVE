@@ -1,4 +1,4 @@
-![Eve: The Luminous Dragon](eve-logo.jpg)
+![Eve: The Luminous Dragon](eve-logo1.jpg)
 
 # EVE: The Luminous Coding Dragon
 
