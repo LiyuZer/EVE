@@ -27,6 +27,7 @@ import os
 import sys
 import shutil
 from .ac_client import sync_health
+from .splash import get_logo_path
 
 
 
@@ -249,20 +250,45 @@ class MainWindow(QMainWindow):
         self._install_find_actions()
 
         # Logo in toolbar/status
-        logo_path = Path(__file__).resolve().parents[2] / 'eve-logo.jpg'
-        if logo_path.exists():
-            self.setWindowIcon(QIcon(str(logo_path)))
-            lbl = QLabel()
-            pix = QPixmap(str(logo_path)).scaledToHeight(18, Qt.SmoothTransformation)
-            lbl.setPixmap(pix)
-            tb.addWidget(lbl)
-        self.statusBar().showMessage('Ready')
-        # Add a right-side permanent context indicator
-        self.context_indicator = QLabel('Context: —')
         try:
+            logo_path = get_logo_path()
+        except Exception:
+            logo_path = None
+        if logo_path:
+            # Always set window icon to the dragon
+            self.setWindowIcon(QIcon(str(logo_path)))
+            # Show a tiny toolbar dragon only if explicitly enabled via env
+            try:
+                v = (os.environ.get("EVE_TOOLBAR_LOGO") or "").strip().lower()
+                show_toolbar_logo = v in {"1", "true", "on", "yes"}
+            except Exception:
+                show_toolbar_logo = False
+            if show_toolbar_logo:
+                # Optional height in px (default 24)
+                try:
+                    h = int((os.environ.get("EVE_TOOLBAR_LOGO_PX") or "24").strip())
+                    h = max(12, min(128, h))
+                except Exception:
+                    h = 24
+                lbl = QLabel()
+                pix = QPixmap(str(logo_path)).scaledToHeight(h, Qt.SmoothTransformation)
+                lbl.setPixmap(pix)
+                tb.addWidget(lbl)
+
+        # Context indicator in status bar so updates are safe
+        try:
+            self.context_indicator = QLabel('Context: 0')
+            # Permanent widget keeps it aligned to the right of the status bar
             self.statusBar().addPermanentWidget(self.context_indicator)
         except Exception:
-            pass
+            # Fallback: attach to toolbar if status bar is unavailable
+            try:
+                self.context_indicator = QLabel('Context: 0')
+                tb.addWidget(self.context_indicator)
+            except Exception:
+                # Last resort: create the attribute to avoid AttributeError
+                self.context_indicator = QLabel('Context: 0')
+        self.statusBar().showMessage('Ready')
 
         # Wiring
         self.file_explorer.fileOpenRequested.connect(self._open_file_path)
