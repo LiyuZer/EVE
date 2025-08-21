@@ -14,3 +14,6 @@ eve_memory.db/
 project.log
 *.sqlite3.eve/
 .eve
+project.log.*
+/server_info.json
+.reqcheck_venv/
