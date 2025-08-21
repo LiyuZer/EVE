@@ -748,13 +748,28 @@ class MainWindow(QMainWindow):
             else:
                 QMessageBox.critical(self, 'New Project', 'Failed to create project.')
 
-    def _on_context_size(self, size: int) -> None:
+    def _on_context_size(self, size) -> None:
+        # Robust update: handle tuple/list payloads, non-int values, and disposed widgets.
         try:
-            self.context_indicator.setText(f"Context: {size:,}")
+            # Unwrap one-element sequences emitted by signals
+            if isinstance(size, (tuple, list)) and size:
+                size = size[0]
+            try:
+                n = int(size)
+                text = f"Context: {n:,}"
+            except Exception:
+                text = f"Context: {size}"
+            lbl = getattr(self, 'context_indicator', None)
+            if lbl is None:
+                return
+            try:
+                lbl.setText(text)
+            except Exception:
+                # QLabel may be disposed during shutdown; ignore
+                pass
         except Exception:
-            # Fallback without thousands separator
-            self.context_indicator.setText(f"Context: {size}")
-
+            # Never raise from a UI status update path
+            pass
     def closeEvent(self, e):
         # Dispose editors to stop timers and background work before shutdown
         try:
