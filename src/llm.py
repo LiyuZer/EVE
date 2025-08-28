@@ -77,7 +77,7 @@ class llmInterface:
                 pass
             raise CompletionError(f"Failed to generate response via Fireworks: {e} - {body}") from e
 
-    def generate_response(self, input_text: str, text_format=None, **kwargs: Any):
+    def generate_response(self, input_text: str, text_format=None, images = [], **kwargs: Any):
         """
         Call OpenAI Responses.parse for structured output (non-autocomplete paths).
         Lazily initialize the OpenAI client only when needed.
@@ -103,7 +103,19 @@ class llmInterface:
                 self.logger.debug(f"responses.parse extra kwargs: {kwargs}")
             resp = self.client.responses.parse(  # type: ignore[union-attr]
                 model=self.model,
-                input=input_text,
+                input= [{
+                        "role": "user",
+                        "content" : [
+                            {
+                                "type" : "input_text",
+                                "text": input_text
+                            },
+			*[{"type" : "input_text", "text" : img["file_path"]} for img in images], 
+
+                            *[{"type": "input_image", "image_url": "data:image/png;base64," + img["img_str"]} for img in images]
+                        ]
+                    }
+                ],
                 text_format=text_format,
             )
             self.logger.info("LLM responded successfully")

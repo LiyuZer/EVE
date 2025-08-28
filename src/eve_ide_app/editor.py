@@ -12,6 +12,20 @@ from .highlighting_registry import get_language_for_path
 from .ac_client import resolve_port, async_post_json, sync_post_json, fallback_completion
 import asyncio
 
+class LineNumberArea(QWidget):
+    def __init__(self, editor):
+        super().__init__(editor)
+        self._editor = editor
+
+    def sizeHint(self):
+        return QtCore.QSize(self._editor.line_number_area_width(), 0)
+
+    def paintEvent(self, event: QtGui.QPaintEvent):  # type: ignore[override]
+        try:
+            self._editor._line_number_area_paint_event(event)
+        except Exception:
+            pass
+
 class CodeEditor(QPlainTextEdit):
     modifiedChanged = Signal(bool)
     # Emitted when the file is reloaded from disk due to external change
@@ -63,6 +77,16 @@ class CodeEditor(QPlainTextEdit):
         f = QFont('Menlo, Consolas, monospace')
         f.setStyleHint(QFont.StyleHint.Monospace)
         self.setFont(f)
+
+        # Line number gutter (simple, always-on)
+        try:
+            self._line_number_area = LineNumberArea(self)
+            self.blockCountChanged.connect(self._update_line_number_area_width)
+            self.updateRequest.connect(self._update_line_number_area)
+            self.cursorPositionChanged.connect(self._line_number_area.update)
+            self._update_line_number_area_width(0)
+        except Exception:
+            self._line_number_area = None
 
         # Preselect language from provided path (if any) and attach highlighter
         if self._path:
@@ -244,11 +268,26 @@ class CodeEditor(QPlainTextEdit):
         finally:
             pass
         try:
-            self.highlighter = create_highlighter(self.document(), self._theme_name, self._language)
-        except Exception:
-            # Fallback to a plain highlighter if anything goes wrong
-            self.highlighter = create_highlighter(self.document(), self._theme_name, 'plain')
-
+            fp = str(self._path) if getattr(self, "_path", None) else None
+            self.highlighter = create_highlighter(self.document(), self._theme_name, self._language, fp)
+        except ImportError as ie:
+            # Pygments is required; avoid GUI calls from non-UI/headless contexts
+            try:
+                print("[Highlighter] Missing dependency: Pygments is required for syntax highlighting.\n"
+                      "Please run: pip install -r requirements.txt, then restart the IDE.")
+            except Exception:
+                pass
+            self.highlighter = None
+            return
+            return
+        except Exception as e:
+            # Do not fallback to regex/plain; keep Pygments-only and avoid crashing the editor
+            try:
+                print(f"[Highlighter] Error creating PygmentsHighlighter for {self._language}: {e}")
+            except Exception:
+                pass
+            self.highlighter = None
+            return
     def _ensure_watcher(self) -> None:
         if self._watcher is None:
             self._watcher = QFileSystemWatcher(self)
@@ -698,6 +737,84 @@ class CodeEditor(QPlainTextEdit):
         # Otherwise, default behavior (incl. Shift+Tab unindent, etc.)
         super().keyPressEvent(event)
 
+    # ------------------- Line number area helpers -------------------
+    def line_number_area_width(self) -> int:
+        try:
+            digits = len(str(max(1, self.blockCount())))
+            fm = self.fontMetrics()
+            # 3px left + digits * char width + 6px right padding
+            return 3 + fm.horizontalAdvance('9') * digits + 6
+        except Exception:
+            return 32
+
+    def _update_line_number_area_width(self, _=0) -> None:
+        try:
+            self.setViewportMargins(self.line_number_area_width(), 0, 0, 0)
+        except Exception:
+            pass
+
+    def _update_line_number_area(self, rect: QtCore.QRect, dy: int) -> None:
+        try:
+            if not hasattr(self, "_line_number_area") or self._line_number_area is None:
+                return
+            if dy:
+                self._line_number_area.scroll(0, dy)
+            else:
+                self._line_number_area.update(0, rect.y(), self._line_number_area.width(), rect.height())
+            if rect.contains(self.viewport().rect()):
+                # Update width and geometry when full viewport changes
+                self._update_line_number_area_width(0)
+        except Exception:
+            pass
+
+    def _line_number_area_paint_event(self, event: QtGui.QPaintEvent) -> None:
+        try:
+            if not hasattr(self, "_line_number_area") or self._line_number_area is None:
+                return
+            painter = QtGui.QPainter(self._line_number_area)
+            painter.setClipRect(event.rect())
+
+            pal = self.palette()
+            base_color = pal.color(QtGui.QPalette.Base)
+            # Slightly darker than editor background for subtle contrast
+            bg = QtGui.QColor(base_color)
+            try:
+                bg = base_color.darker(104)
+            except Exception:
+                pass
+            painter.fillRect(event.rect(), bg)
+
+            block = self.firstVisibleBlock()
+            block_number = block.blockNumber()
+            top = int(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
+            bottom = top + int(self.blockBoundingRect(block).height())
+
+            fm = self.fontMetrics()
+            width = self._line_number_area.width()
+            # Colors for numbers
+            num_color = pal.color(QtGui.QPalette.Mid)
+            cur_color = pal.color(QtGui.QPalette.Text)
+
+            while block.isValid() and top <= event.rect().bottom():
+                if block.isVisible() and bottom >= event.rect().top():
+                    number = str(block_number + 1)
+                    painter.setPen(cur_color if block_number == self.textCursor().blockNumber() else num_color)
+                    painter.drawText(0, top, width - 4, fm.height(), QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, number)
+                block = block.next()
+                block_number += 1
+                top = bottom
+                bottom = top + int(self.blockBoundingRect(block).height())
+
+            # Right border line for gutter
+            try:
+                border = pal.color(QtGui.QPalette.Mid)
+                painter.setPen(border)
+                painter.drawLine(width - 1, event.rect().top(), width - 1, event.rect().bottom())
+            except Exception:
+                pass
+        except Exception:
+            pass
+
     def load_file(self, path: Path):
         self._path = Path(path)
         self._file_path = str(self._path)
@@ -897,6 +1014,12 @@ class CodeEditor(QPlainTextEdit):
 
     def resizeEvent(self, event: QtGui.QResizeEvent):
         super().resizeEvent(event)
+        try:
+            if hasattr(self, "_line_number_area") and self._line_number_area is not None:
+                cr = self.contentsRect()
+                self._line_number_area.setGeometry(QtCore.QRect(cr.left(), cr.top(), self.line_number_area_width(), cr.height()))
+        except Exception:
+            pass
         self._position_find_bar()
 
     def eventFilter(self, obj, event):
@@ -1231,6 +1354,94 @@ class TabManager(QTabWidget):
         self._refresh_find_highlights()
         return count
 
+
+class TabManager(QTabWidget):
+    editorCreated = Signal(object)  # emits CodeEditor when a new editor is created
+
+    def __init__(self, parent: QWidget | None = None):
+        super().__init__(parent)
+        self.setTabsClosable(True)
+        self.tabCloseRequested.connect(self._close_index)
+        self._theme_name: str = 'eve'
+
+    def set_theme(self, name: str) -> None:
+        """Apply syntax theme to all open editors and remember it for new tabs."""
+        self._theme_name = name or 'eve'
+        for i in range(self.count()):
+            w = self.widget(i)
+            if isinstance(w, CodeEditor):
+                w.set_theme(self._theme_name)
+
+    def _close_index(self, idx: int):
+        w = self.widget(idx)
+        if hasattr(w, 'document') and w.document().isModified():
+            # TODO: prompt to save
+            pass
+        # Dispose editor resources before removal
+        try:
+            if isinstance(w, CodeEditor):
+                w.dispose()
+        except Exception:
+            pass
+        self.removeTab(idx)
+        try:
+            w.deleteLater()
+        except Exception:
+            pass
+
+    def _on_modified_changed(self, editor: CodeEditor, modified: bool) -> None:
+        # Update tab label with asterisk on modification
+        for i in range(self.count()):
+            if self.widget(i) is editor:
+                base = editor.path.name if editor.path else 'Untitled'
+                self.setTabText(i, f'*{base}' if modified else base)
+                break
+
+    def open_file(self, path: Path, port_num: int = 0, file_path: str = "") -> CodeEditor:
+        path = Path(path)
+        # Reuse existing tab if open
+        for i in range(self.count()):
+            w = self.widget(i)
+            if isinstance(w, CodeEditor) and w.path and w.path.resolve() == path.resolve():
+                self.setCurrentIndex(i)
+                return w
+        editor = CodeEditor(path, auto_completion_port=port_num, file_path=file_path)
+        editor.set_theme(self._theme_name)
+        # Reflect modified state changes in tab title
+        editor.modifiedChanged.connect(lambda m, e=editor: self._on_modified_changed(e, m))
+        # Also refresh tab title after reload (ensures no asterisk if content fresh)
+        editor.fileReloaded.connect(lambda _p, e=editor: self._on_modified_changed(e, False))
+
+        self.addTab(editor, path.name)
+        self.setCurrentWidget(editor)
+        try:
+            self.editorCreated.emit(editor)
+        except Exception:
+            pass
+        return editor
+
+    def save_current(self) -> bool:
+        w = self.currentWidget()
+        if isinstance(w, CodeEditor):
+            ok = w.save()
+            if ok:
+                self.setTabText(self.currentIndex(), (w.path.name if w.path else 'Untitled'))
+            return ok
+        return False
+
+    def dispose_all_editors(self) -> None:
+        """Dispose all CodeEditor instances managed by this tab widget."""
+        try:
+            for i in range(self.count()):
+                w = self.widget(i)
+                if isinstance(w, CodeEditor):
+                    try:
+                        w.dispose()
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+            return False
 
 class TabManager(QTabWidget):
     editorCreated = Signal(object)  # emits CodeEditor when a new editor is created

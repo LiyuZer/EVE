@@ -417,7 +417,7 @@ class JsonHighlighter(_BasicRegexHighlighter):
         self.simple_rules = []
         self.capture_rules = []
         # Keys: "name":  -> color the name group
-        self.capture_rules.append((QRegularExpression('\"([^\"]|\\.)*\"(?=\s*:)'), f['attribute'], 1))
+        self.capture_rules.append((QRegularExpression(r'"([^"\\]|\\.)*"(?=\s*:)'), f['attribute'], 1))
         # Strings
         self.simple_rules.append((QRegularExpression('\"([^\"]|\\.)*\"'), f['string']))
         # Numbers
@@ -533,7 +533,7 @@ class YamlHighlighter(_BasicRegexHighlighter):
         self.simple_rules.append((QRegularExpression(r"#[^\n]*"), f['comment']))
         self.simple_rules.append((QRegularExpression(r"'([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\""), f['string']))
         self.simple_rules.append((QRegularExpression(r"\b(?:true|false|null)\b"), f['keyword']))
-        self.simple_rules.append((QRegularExpression(r"-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?"), f['number']))
+        self.simple_rules.append((QRegularExpression(r"-?\b(?:0|[1-9]\d*)(?:\.\d+)?\b"), f['number']))
         self.simple_rules.append((QRegularExpression(r"[{}\[\]:,|>\-]"), f['punctuation']))
         # Anchors & aliases
         self.simple_rules.append((QRegularExpression(r"[&*][A-Za-z0-9_-]+"), f['type']))
@@ -639,8 +639,8 @@ class CssHighlighter(_BasicRegexHighlighter):
         self.simple_rules.append((QRegularExpression(r"'([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\""), f['string']))
         # Comments
         self.simple_rules.append((QRegularExpression(r"//[^\n]*"), f['comment']))
-        self._ml_comment_start = QRegularExpression("/\*")
-        self._ml_comment_end = QRegularExpression("\*/")
+        self._ml_comment_start = QRegularExpression(r"/\*")
+        self._ml_comment_end = QRegularExpression(r"\*/")
         # Punctuation
         self.simple_rules.append((QRegularExpression(r"[{}:;,>]"), f['punctuation']))
 
@@ -876,7 +876,7 @@ class RustHighlighter(_BasicRegexHighlighter):
         self.simple_rules.append((QRegularExpression(r"//[^\n]*"), f['comment']))
         # Strings and numbers (basic)
         self.simple_rules.append((QRegularExpression(r"'([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\""), f['string']))
-        self.simple_rules.append((QRegularExpression(r"\b(?:0[xX][0-9A-Fa-f]+|\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\b"), f['number']))
+        self.simple_rules.append((QRegularExpression(r"\\b(?:0[xX][0-9A-Fa-f]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b"), f['number']))
         # Functions and attributes / macros
         self.capture_rules.append((QRegularExpression(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*!"), f['function'], 1))  # macros like println!
         self.capture_rules.append((QRegularExpression(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\("), f['function'], 1))
@@ -1064,18 +1064,24 @@ _LANGUAGE_TO_CLASS: Dict[str, type] = {
 
 
 def get_highlighter_class(language: str):
-    """Return a QSyntaxHighlighter subclass for a given language tag.
-    Defaults to PlainHighlighter if unknown.
+    """Return PygmentsHighlighter (required). No legacy fallback.
+
+    Raises ImportError with a clear message if Pygments is unavailable.
     """
-    return _LANGUAGE_TO_CLASS.get(language or 'plain', PlainHighlighter)
+    from .highlighters_pygments import PygmentsHighlighter, _PYGMENTS_AVAILABLE  # type: ignore
+    if not _PYGMENTS_AVAILABLE:
+        raise ImportError("Pygments is required for syntax highlighting")
+    return PygmentsHighlighter
 
+def create_highlighter(document, theme_name: str, language: str, file_path: str | None = None):
+    """Instantiate a Pygments-backed highlighter for the given document.
 
-def create_highlighter(document, theme_name: str, language: str):
-    """Instantiate a theme-aware highlighter for the given document and language.
-    Falls back to PlainHighlighter if construction fails (e.g., regex edge cases).
+    Pure Pygments: no legacy/regex or Plain fallbacks.
     """
     cls = get_highlighter_class(language)
+    # Prefer 4-arg signature if supported in the Pygments bridge (future-proof),
+    # otherwise use the current 3-arg signature.
     try:
-        return cls(document, theme_name)
-    except Exception:
-        return PlainHighlighter(document, theme_name)
+        return cls(document, theme_name, language, file_path)  # type: ignore[call-arg]
+    except TypeError:
+        return cls(document, theme_name, language)  # type: ignore[call-arg]

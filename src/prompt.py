@@ -25,6 +25,7 @@ class ResponseBody(BaseModel):
     save_content: str  # detailed compact text to store in embedding DB
     retrieve_content: str  # detailed compact text to query embedding DB
     node_label: str  # 2–5 words, <=32 chars
+    screenshot_pid: int | None
 class Diff(BaseModel):
     line_range_1: list[int]
     line_range_2: list[int]
@@ -39,13 +40,14 @@ ACTIONS (exactly one per response):
 1 Shell command                  # use shell_command
 2 Reply only                     # use response
 3 File diff edit                 # use diff; edits only
-4 Prune context tree             # (node_name, replacement_summary); if HEAD inside subtree, switch HEAD first
-5 Change context HEAD            # (target_node)
+4 Prune context tree             # (node_name, replacement_summary); if HEAD inside subtree, switch HEAD first. Replacement_summary is stored in node_content
+5 Change context HEAD            # (target_node, change_summary); Reason for the change(so you can remember), change_summary is stored in node_content
 6 Add context node               # (new_node, parent_hash or None=head)
 7 Store in embeddings            # use save_content
 8 Retrieve from embeddings       # use retrieve_content
 9 No-Op Refine                   # keep context; add clarifying response
 10 Replace context node          # keep subtree; use node_hash/node_content/node_label
+11 Input an image file           # use input an image from file_name
 
 NODE LABELS:
 - Always set node_label (2–5 words, <=32 chars), concise, human-scannable, stable; Title Case/imperative fine; avoid punctuation.
@@ -78,6 +80,8 @@ RULES:
 - Store useful info often—but selectively—to avoid bloat; make multiple store steps if needed.
 - Retrieve info when useful—but not excessively—to avoid bloat.
 - For refinement with no operation, use action=9 with a clear response.
+- Before you prune, ensure your are not in the sub tree you are pruning, switch then using action=5, in node_content have the reason behind the change.
+    Then use action=4 to prune the subtree, and ensure that you have the replacement summary in node_content.
 '''
 }
 
