@@ -2,7 +2,7 @@ from pathlib import Path
 from src.logging_config import setup_logger
 from collections import OrderedDict
 from src.schema import Diff
-
+import base64
 class FileHandler:
     def __init__(self, base_root=None):
         self.logger = setup_logger(__name__)
@@ -41,6 +41,18 @@ class FileHandler:
         except Exception as e:
             self.logger.error(f"Error reading file {p}: {e}")
             return {"error": f"Error reading file: {e}"}
+
+    def read_img_as_base64(self, filename: str) -> str:
+        p = self._resolve(filename)
+        try:
+            with open(p, 'rb') as file:
+                img_data = file.read()
+            img_str = base64.b64encode(img_data).decode()
+            self.logger.info(f"Read image as base64: {p}")
+            return img_str
+        except Exception as e:
+            self.logger.error(f"Error reading image {p}: {e}")
+            return f"Error reading image: {e}"
 
     def read_as_str(self, filename: str) -> str:
         p = self._resolve(filename)

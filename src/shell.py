@@ -7,9 +7,9 @@ class ShellInterface:
     def __init__(self, timeout_seconds: Optional[int] = None, max_capture: Optional[int] = None):
         self.logger = setup_logger(__name__)
         try:
-            self.timeout_seconds = int(timeout_seconds if timeout_seconds is not None else os.getenv("EVE_SHELL_TIMEOUT", "1000"))
+            self.timeout_seconds = int(timeout_seconds if timeout_seconds is not None else os.getenv("EVE_SHELL_TIMEOUT", "10000"))
         except Exception:
-            self.timeout_seconds = 1000
+            self.timeout_seconds = 10000
         try:
             self.max_capture = int(max_capture if max_capture is not None else os.getenv("EVE_SHELL_MAX_CAPTURE", "50000"))
         except Exception:

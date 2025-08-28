@@ -17,6 +17,7 @@ from src.llm import llmInterface
 from src.memory import EveMemory  # Import Eve's memory for semantic storage
 from src.logging_config import setup_logger  # Import improved logger setup
 from src.context_tree import ContextTree, ContextNode
+import base64
 
 load_dotenv()
 api_key_v = os.getenv("OPENAI_API_KEY")
@@ -51,7 +52,6 @@ def parse_user_label(text: str) -> tuple[Optional[str], str]:
         return (label or None), rest
     return None, s
 
-
 class Agent:
     def __init__(self, root, mode: str = "console"):
         self.llm_client = llmInterface(api_key=api_key_v, model=model)
@@ -62,6 +62,7 @@ class Agent:
         self.terminal = TerminalInterface(username=username)
         self.memory = EveMemory()
         self.mode = mode  # "console" or "ide"
+        self.images = []
         context_node = ContextNode(
             user_message="",
             agent_response="",
@@ -124,7 +125,8 @@ class Agent:
             try:
                 llm_response = self.llm_client.generate_response(
                     input_text=context_str,
-                    text_format=ResponseBody)
+                    text_format=ResponseBody,
+                    images=self.images)
             except Exception as e:
                 # Prune HEAD context
                 self.terminal.print_error_message(f" I have encountered an error: {e}")
@@ -248,13 +250,14 @@ class Agent:
             self.terminal.print_agent_message(f"Pruned context tree node: {llm_response.node_hash}")
         elif action == 5:  # Change context HEAD
             self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
+            previous_head = self.context_tree.head
             self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
             # Add a Node to head
             self.context_tree.add_node(ContextNode(
                 user_message=None,
                 agent_response=str(llm_response),
                 system_response="",
-                metadata=with_label({"Changed Context Head": llm_response.node_hash})
+                metadata=with_label({"Changed Context Head": llm_response.node_hash, "Previous Context Head": previous_head, "Change Summary": llm_response.node_content})
             ))
             logger.info(f"Changed context tree head to: {llm_response.node_hash}")
         elif action == 6:  # Add context node
@@ -338,3 +341,12 @@ class Agent:
             status = "Replaced" if ok else "Replace failed (node not found)"
             self.terminal.print_agent_message(f"{status}: {llm_response.node_hash}")
             logger.info(f"Action 10: {status} | target={llm_response.node_hash}")
+        elif action == 11:  # Input an image file, convert it to base64
+            img_str = self.file_system.read_img_as_base64(llm_response.file_name)
+            self.images.append({"file_path": llm_response.file_name, "img_str": img_str})
+            meta = {"file_name": llm_response.file_name, "img_str": img_str}
+            self.context_tree.add_node(ContextNode(user_message=None, agent_response=str(llm_response), system_response="", metadata=meta))
+            self.terminal.print_agent_message(f"Image {llm_response.file_name} processed successfully")
+
+
+
