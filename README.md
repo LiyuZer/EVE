@@ -38,7 +38,7 @@ I am Eve—your luminous coding dragon companion. With a curl of neon smoke and 
 
 ## What am I? 💫
 I’m a lively, mythically-themed coding agent designed to collaborate creatively with you. I orchestrate three magical components:
-- LLM Interface: I connect to OpenAI’s API for luminous code completions.
+- LLM Interface: Core Eve conversations use the new OpenAI Responses API (OPENAI_API_KEY). Autocomplete uses a legacy chat-completions provider via Fireworks (FIREWORKS_API_KEY).
 - Shell Interface: I execute your bashy wishes so you don’t have to leave the dragon’s cave.
 - File System: I read and write files, channeling the wisdom of ages.
 
@@ -68,11 +68,22 @@ chmod +x setup.sh
 
 ```bash
 # .env (at repo root)
+
+# Required for Eve (core engine) — new OpenAI Responses API
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
-OPENAI_MODEL=gpt-4o-mini   # or your preferred compatible model
+OPENAI_MODEL=gpt-4o-mini   # or your preferred OpenAI model
+
+# Optional: Autocomplete backend (legacy chat-completions via Fireworks)
+# If not set, autocomplete falls back to a deterministic test stub
+FIREWORKS_API_KEY=fw-xxxxxxxxxxxxxxxx        # required for real autocomplete
+FIREWORKS_MODEL=accounts/fireworks/models/qwen3-coder-480b-a35b-instruct
+
 # Optional tuning
 LOG_LEVEL=INFO             # DEBUG|INFO|WARNING
 LOG_FILE=project.log
+# Autocomplete tuning (optional)
+EVE_AC_TIMEOUT=2.0         # seconds; server fallback threshold
+# EVE_AUTOCOMPLETE_TEST=1  # force stub mode for development
 ```
 
 4) Run me
@@ -80,6 +91,8 @@ LOG_FILE=project.log
 ```bash
 source venv/bin/activate
 python main.py -env debug   # or -env prod
+# Healthcheck (verifies environment and exits)
+python main.py --health
 ```
 
 If you prefer manual setup over the script:
@@ -93,13 +106,38 @@ pip install -r requirements.txt
 ---
 
 ## Dependencies 📦
-Core (see requirements.txt):
+From requirements.txt (core + IDE):
 - openai
-- colorama
+- requests
 - python-dotenv
 - pydantic
-- argparse
-- chromadb (for my memory)
+- colorama
+- chromadb
+- Flask
+- aiohttp
+- PySide6
+- shiboken6
+- Pygments
+- pytest
+
+---
+
+## Autocomplete Server 🧩
+- Backend: Fireworks chat-completions (legacy GPT-style API). Requires FIREWORKS_API_KEY.
+- Startup behavior: If FIREWORKS_API_KEY is missing, the server runs in a deterministic test fallback mode to keep the IDE responsive.
+- Optional env:
+  - FIREWORKS_MODEL (default: accounts/fireworks/models/qwen3-coder-480b-a35b-instruct)
+  - EVE_AC_TIMEOUT (default: 2.0)
+  - EVE_AUTOCOMPLETE_TEST=1 to force stub mode
+- How to run manually:
+
+```bash
+source venv/bin/activate
+python autocomplete.py
+# Emits a JSON event on stdout and writes server_info.json with port and mode
+```
+
+Note: If Flask is not installed, a minimal built-in HTTP server is used automatically.
 
 ---
 
@@ -119,22 +157,28 @@ Reset my memory by removing the eve_memory.db directory.
 
 ## Troubleshooting 🔧
 - OpenAI issues: Ensure OPENAI_API_KEY and OPENAI_MODEL are set correctly in .env.
+- Autocomplete says Missing FIREWORKS_API_KEY or shows mode=test_fallback: Set FIREWORKS_API_KEY to enable real completions via Fireworks.
 - Module import errors: Activate your venv and re-run the setup script:
-  
+
   ```bash
   source venv/bin/activate
   ./setup.sh
   ```
 - ChromaDB install problems:
-  
+
   ```bash
   pip install --upgrade pip wheel setuptools
   pip install chromadb
   ```
 - Permission denied on setup.sh:
-  
+
   ```bash
   chmod +x setup.sh
+  ```
+- Environment healthcheck:
+
+  ```bash
+  python main.py --health
   ```
 
 ---
@@ -160,7 +204,7 @@ How to run
 1) Install IDE dependencies (in your venv):
 
 ```bash
-pip install -r requirements-ide.txt
+pip install -r requirements.txt
 ```
 
 2) Ensure your .env is configured for chat (required for actual conversation):
