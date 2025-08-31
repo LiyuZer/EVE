@@ -16,4 +16,5 @@ project.log
 .eve
 project.log.*
 /server_info.json
+src/server_info.json
 .reqcheck_venv/

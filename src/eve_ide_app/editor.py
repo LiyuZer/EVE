@@ -10,7 +10,9 @@ from PySide6.QtCore import Signal, QFileSystemWatcher, QTimer
 from .highlighters import create_highlighter
 from .highlighting_registry import get_language_for_path
 from .ac_client import resolve_port, async_post_json, sync_post_json, fallback_completion
+from .cooldown import CooldownGate
 import asyncio
+import os
 
 class LineNumberArea(QWidget):
     def __init__(self, editor):
@@ -63,6 +65,16 @@ class CodeEditor(QPlainTextEdit):
         self._file_path = file_path  # Store the file path for reference
         self.file_context = None # Context that will be sent to the LLM for auto-completion
         # --- add to __init__ ---
+        # Error cooldown gate to avoid spamming server/logs on repeated failures
+        try:
+            cd_env = os.environ.get("EVE_AC_ERROR_COOLDOWN", "3.0")
+            cd_secs = float(cd_env) if cd_env is not None else 3.0
+        except Exception:
+            cd_secs = 3.0
+        try:
+            self._ac_error_cooldown = CooldownGate(seconds=cd_secs)
+        except Exception:
+            self._ac_error_cooldown = CooldownGate(seconds=3.0)
 
         # Find/Replace state
         self._find_text: str = ""
@@ -427,6 +439,13 @@ class CodeEditor(QPlainTextEdit):
 
         # Local fallback ghost is disabled: only show server completions when available.
 
+        # Respect error cooldown: avoid repeated server calls during recent failures
+        try:
+            if getattr(self, "_ac_error_cooldown", None) and self._ac_error_cooldown.in_cooldown():
+                return
+        except Exception:
+            pass
+
         # If an asyncio event loop is running (e.g., via qasync), use async path
         try:
             _ = asyncio.get_running_loop()
@@ -478,14 +497,28 @@ class CodeEditor(QPlainTextEdit):
                     except Exception:
                         ctx = {}
                 payload = {"prefix": prefix_payload, "suffix": suffix, "context": ctx}
-                data = sync_post_json(self.auto_completion_port, "/autocomplete", payload=payload, timeout=5)
-                comp_text = data.get("completion", "")
-                if isinstance(comp_text, list):
-                    comp_text = comp_text[0] if comp_text else ""
-                if not isinstance(comp_text, str):
-                    comp_text = str(comp_text)
+
+                # Respect error cooldown: avoid attempting during cooldown window
+                cd = getattr(self, "_ac_error_cooldown", None)
+                if not (cd and cd.in_cooldown()):
+                    data = sync_post_json(self.auto_completion_port, "/autocomplete", payload=payload, timeout=5)
+                    comp_text = data.get("completion", "")
+                    if isinstance(comp_text, list):
+                        comp_text = comp_text[0] if comp_text else ""
+                    if not isinstance(comp_text, str):
+                        comp_text = str(comp_text)
             except Exception as e:
-                print("Error contacting auto-completion server (thread):", e)
+                # Log only once per cooldown window and start cooldown
+                try:
+                    cd = getattr(self, "_ac_error_cooldown", None)
+                    if cd:
+                        if not cd.in_cooldown():
+                            print("Error contacting auto-completion server (thread):", e)
+                        cd.trip(message=str(e))
+                    else:
+                        print("Error contacting auto-completion server (thread):", e)
+                except Exception:
+                    pass
                 comp_text = ""
             # Always deliver via signal to UI thread; handler filters out non-meaningful text
             try:
@@ -644,6 +677,11 @@ class CodeEditor(QPlainTextEdit):
     async def fetch_completion(self, prefix: str, suffix: str, context: str, port: int) -> str:
         # Use centralized client with retry + port re-resolve
         payload = {"prefix": prefix, "suffix": suffix, "context": context}
+
+        # Respect cooldown: if in cooldown, skip contacting the server
+        cd = getattr(self, "_ac_error_cooldown", None)
+        if cd and cd.in_cooldown():
+            return "", {}
         try:
             data = await async_post_json(port, "/autocomplete", payload=payload, timeout=5)
             comp = data.get("completion", "")
@@ -652,7 +690,17 @@ class CodeEditor(QPlainTextEdit):
             if not isinstance(comp, str):
                 comp = str(comp)
             return comp, data
-        except Exception:
+        except Exception as e:
+            # Log only once per cooldown and trip it
+            try:
+                if cd:
+                    if not cd.in_cooldown():
+                        print("Error contacting auto-completion server:", e)
+                    cd.trip(message=str(e))
+                else:
+                    print("Error contacting auto-completion server:", e)
+            except Exception:
+                pass
             return "", {}
 
     async def fetch_file_context(self, file_path: str, port: int) -> str:
@@ -669,6 +717,13 @@ class CodeEditor(QPlainTextEdit):
             return
         if not self._is_valid():
             return
+
+        # Respect cooldown again on async path
+        try:
+            if getattr(self, "_ac_error_cooldown", None) and self._ac_error_cooldown.in_cooldown():
+                return
+        except Exception:
+            pass
 
         # Ensure port is resolved when using async path
         if self.auto_completion_port <= 0:
@@ -694,7 +749,17 @@ class CodeEditor(QPlainTextEdit):
             if not isinstance(full, str):
                 full = str(full)
         except Exception as e:
-            print("Error contacting auto-completion server:", e)
+            # Log once per cooldown and trip it
+            try:
+                cd = getattr(self, "_ac_error_cooldown", None)
+                if cd:
+                    if not cd.in_cooldown():
+                        print("Error contacting auto-completion server:", e)
+                    cd.trip(message=str(e))
+                else:
+                    print("Error contacting auto-completion server:", e)
+            except Exception:
+                pass
             return
         self.clear_ghost_text()
         if current_token != self._request_token:
@@ -1354,94 +1419,6 @@ class TabManager(QTabWidget):
         self._refresh_find_highlights()
         return count
 
-
-class TabManager(QTabWidget):
-    editorCreated = Signal(object)  # emits CodeEditor when a new editor is created
-
-    def __init__(self, parent: QWidget | None = None):
-        super().__init__(parent)
-        self.setTabsClosable(True)
-        self.tabCloseRequested.connect(self._close_index)
-        self._theme_name: str = 'eve'
-
-    def set_theme(self, name: str) -> None:
-        """Apply syntax theme to all open editors and remember it for new tabs."""
-        self._theme_name = name or 'eve'
-        for i in range(self.count()):
-            w = self.widget(i)
-            if isinstance(w, CodeEditor):
-                w.set_theme(self._theme_name)
-
-    def _close_index(self, idx: int):
-        w = self.widget(idx)
-        if hasattr(w, 'document') and w.document().isModified():
-            # TODO: prompt to save
-            pass
-        # Dispose editor resources before removal
-        try:
-            if isinstance(w, CodeEditor):
-                w.dispose()
-        except Exception:
-            pass
-        self.removeTab(idx)
-        try:
-            w.deleteLater()
-        except Exception:
-            pass
-
-    def _on_modified_changed(self, editor: CodeEditor, modified: bool) -> None:
-        # Update tab label with asterisk on modification
-        for i in range(self.count()):
-            if self.widget(i) is editor:
-                base = editor.path.name if editor.path else 'Untitled'
-                self.setTabText(i, f'*{base}' if modified else base)
-                break
-
-    def open_file(self, path: Path, port_num: int = 0, file_path: str = "") -> CodeEditor:
-        path = Path(path)
-        # Reuse existing tab if open
-        for i in range(self.count()):
-            w = self.widget(i)
-            if isinstance(w, CodeEditor) and w.path and w.path.resolve() == path.resolve():
-                self.setCurrentIndex(i)
-                return w
-        editor = CodeEditor(path, auto_completion_port=port_num, file_path=file_path)
-        editor.set_theme(self._theme_name)
-        # Reflect modified state changes in tab title
-        editor.modifiedChanged.connect(lambda m, e=editor: self._on_modified_changed(e, m))
-        # Also refresh tab title after reload (ensures no asterisk if content fresh)
-        editor.fileReloaded.connect(lambda _p, e=editor: self._on_modified_changed(e, False))
-
-        self.addTab(editor, path.name)
-        self.setCurrentWidget(editor)
-        try:
-            self.editorCreated.emit(editor)
-        except Exception:
-            pass
-        return editor
-
-    def save_current(self) -> bool:
-        w = self.currentWidget()
-        if isinstance(w, CodeEditor):
-            ok = w.save()
-            if ok:
-                self.setTabText(self.currentIndex(), (w.path.name if w.path else 'Untitled'))
-            return ok
-        return False
-
-    def dispose_all_editors(self) -> None:
-        """Dispose all CodeEditor instances managed by this tab widget."""
-        try:
-            for i in range(self.count()):
-                w = self.widget(i)
-                if isinstance(w, CodeEditor):
-                    try:
-                        w.dispose()
-                    except Exception:
-                        pass
-        except Exception:
-            pass
-            return False
 
 class TabManager(QTabWidget):
     editorCreated = Signal(object)  # emits CodeEditor when a new editor is created
