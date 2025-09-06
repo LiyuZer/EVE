@@ -18,6 +18,8 @@ from src.memory import EveMemory  # Import Eve's memory for semantic storage
 from src.logging_config import setup_logger  # Import improved logger setup
 from src.context_tree import ContextTree, ContextNode
 import base64
+from src.progress_buffer import ProgressBuffer
+from dotenv import load_dotenv
 
 load_dotenv()
 api_key_v = os.getenv("OPENAI_API_KEY")
@@ -58,6 +60,7 @@ class Agent:
         self.shell = ShellInterface()
         # Use the provided root (workspace root in IDE mode) as the base for FS ops
         self.root = root
+        self.progress_buffer = ProgressBuffer(file_path=os.path.join(self.root, "PROGRESS.md"))
         self.file_system = FileHandler(base_root=self.root)
         self.terminal = TerminalInterface(username=username)
         self.memory = EveMemory()
@@ -98,30 +101,42 @@ class Agent:
 
         while True:
             # Use simplified summary of context tree for LLM input
-            context_core = str(self.context_tree)
-            size = len(context_core)
-            size_line = "Context Tree size: " + str(size) + " characters; hard max 600,000."
-            policy_line = ""
-            if size > 600000:
-                policy_line = (
-                    """" 
-                    Planning policy: If the task is complex try to break it down into sub sections.
-                                     When you are done with a section, prune it and go up.
-                    Context policy: size > 600,000 — prioritize action=10 Replace (shorten node summaries, keep children) "
-                    and/or action=4 Prune (summarize and drop subtrees) until size < 600,000.
-                    """
-                )
-            context_str = context_core + "\n" + size_line + ("\n" + policy_line if policy_line else "")
-            # Always emit a plain context size line for IDE to parse
-            try:
-                print(size_line)
-                if policy_line:
-                    print(policy_line)
-            except Exception:
-                pass
-            # Avoid noisy prints in IDE mode unless explicitly requested
-            if os.getenv("EVE_LOG_CONTEXT_TREE") == "1" and not ide_mode:
-                print(self.context_tree.structure_string(include_labels=True))
+            context_core = self.context_tree.return_root_node_sub_tree_string(self.context_tree.head, include_full=True) 
+            size_line = "Context Tree size: " + str(len(str(context_core))) + " characters; hard max 800,000."
+            policy_line = (
+                """" 
+                Planning policy: If the task is complex try to break it down into sub sections.
+                                    When you are done with a section, prune it and go up.
+                                    Plan using nop action = 9, these are your thoughts
+                                    Replace context node using action=10
+                                    Add context node using action=6, put the node_hash as the hash of the parent_Node (this must be there), and the label in node_label
+                                    Prune context node using action=4
+                                    Change context HEAD using action=5
+                                    Wait for a user response using action=2
+                                    Update ProgressBuffer using action=13
+                Context Tree, the context tree that you see is only the path from root to the current node and the descendants of the current node.
+                So if you want to see other parts of the context tree, you need to navigate there explicitly.
+
+                Thinking vs Waiting:
+                The user cannot see your thoughts, but you can use them to inform your next actions. 
+                The user can see your responses, using action=2, that is the only way to yield control back to the user.
+
+                Context policy: size > 800,000 — prioritize action=10 Replace (shorten node summaries, keep children) "
+                and/or action=4 Prune (summarize and drop subtrees) until size < 800,000.
+
+                Procedure Policy : - Plan -> Add Execution Nodes -> Execute -> Prune, Update Progress, loop.
+                                   - If you are stuck prune that path and start over.
+                                   - Use your context tree, wisely, parallelize and break down tasks. And switch between branches.
+                                   - NOTE: Label the Planning node as BACKLOG PLAN, and the plan nodes as exec 1, exec 2 etc.
+                                   - Follow the plan exactly, and then prune the subtree, by pruning the added node from the HEAD, when done with the section. This keeps the tree clean.
+                                   - Progress Buffer is for your eyes only, use it to keep track of your progress, and update it frequently. Updating rewrites the file, so be careful not to lose information.
+                                   - Progress Buffer is also stored in PROGRESS.md in the root of the workspace.
+                                   - Progress Buffer should have a full checklist of the whole Plan in detail, including future plans.
+                """
+            )
+
+            context_str = context_core + "\n" + policy_line + "\n" + self.context_tree.structure_string(self.context_tree.root, include_full=False, max_words=5, max_label_len=24) +  "Progress Buffer: " + self.progress_buffer.get_buffer() + "\n" + size_line
+            print(size_line)
             try:
                 llm_response = self.llm_client.generate_response(
                     input_text=context_str,
@@ -225,6 +240,7 @@ class Agent:
             ))
             # Log only AFTER full dialogue turn
             logger.info(f"Agent response: {agent_response} | User replied: {cleaned}")
+        
         elif action == 3:  # Diff insertion
             self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
             self.terminal.print_agent_message(f"Inserting diff into file: {llm_response.file_name}")
@@ -238,54 +254,56 @@ class Agent:
                 metadata=with_label({"File Diff Inserted": llm_response.file_name, "Diff": str(diff)})
             ))
             logger.info(f"Diff inserted into file: {llm_response.file_name} | Diff: {diff}")
+
         elif action == 4:  # Prune context tree
             self.context_tree.prune(node_hash=llm_response.node_hash, replacement_val=llm_response.node_content)
-            self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
-            self.context_tree.add_node(ContextNode(
-                user_message=None,
-                agent_response=str(llm_response),
-                system_response="",
-                metadata=with_label({"Pruned Context Node": llm_response.node_hash})
-            ))
+            # Update the metadata of the current node
+            if "pruned_nodes" in self.context_tree.head.metadata:
+                self.context_tree.head.metadata["pruned_nodes"].append(llm_response.node_hash)
+            else:
+                self.context_tree.head.metadata["pruned_nodees"] = [llm_response.node_hash]
+
             self.terminal.print_agent_message(f"Pruned context tree node: {llm_response.node_hash}")
+        
         elif action == 5:  # Change context HEAD
-            self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
             previous_head = self.context_tree.head
+            self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
             self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
-            # Add a Node to head
-            self.context_tree.add_node(ContextNode(
-                user_message=None,
-                agent_response=str(llm_response),
-                system_response="",
-                metadata=with_label({"Changed Context Head": llm_response.node_hash, "Previous Context Head": previous_head, "Change Summary": llm_response.node_content})
-            ))
+            self.context_tree.head.metadata = with_label({"Changed Context Head": llm_response.node_hash, "Previous Context Head": previous_head, "Change Summary": llm_response.node_content})
             logger.info(f"Changed context tree head to: {llm_response.node_hash}")
+
         elif action == 6:  # Add context node
             self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
             parent_hash = getattr(llm_response, 'node_hash', None)
             node_content = getattr(llm_response, 'node_content', None)
+            label = getattr(llm_response, 'node_label', None)
             if not node_content:
                 node_content = getattr(llm_response, 'response', "") or ""
-            new_meta = with_label({"added_via_action": 6})
+            new_meta = with_label({"added_via_action": 6, "Label": label if label else {}})
             new_node = ContextNode(
                 user_message=None,
                 agent_response=node_content,
                 system_response="",
                 metadata=new_meta
             )
-            try:
-                self.context_tree.add_node(new_node, parent_hash=parent_hash)
-                self.terminal.print_agent_message(f"Added context node under: {parent_hash or 'HEAD'}")
-                logger.info(f"Action 6: added context node under {parent_hash or 'HEAD'} | new node hash: {new_node.content_hash}")
-            except Exception as e:
-                logger.warning(f"Action 6: parent not found {parent_hash}. Falling back to HEAD. Error: {e}")
-                self.context_tree.add_node(new_node)  # defaults to HEAD
-                self.terminal.print_agent_message("Added context node under current HEAD (fallback).")
+            self.context_tree.add_node(new_node, parent_hash=parent_hash, advance_head=False)
+            self.terminal.print_agent_message(f"Added context node under: {parent_hash or 'HEAD'}")
+            # Update the metadata of the current node
+            if "added_context_nodes" in self.context_tree.head.metadata:
+                self.context_tree.head.metadata["added_context_nodes"].append(new_node.content_hash)
+            else:
+                self.context_tree.head.metadata["added_context_nodes"] = [new_node.content_hash]
+
+            logger.info(f"Action 6: added context node under {parent_hash or 'HEAD'} | new node hash: {new_node.content_hash}")
+
+
+
         elif action == 7:  # Store Node in embedding DB
             embedding = self.llm_client.generate_embedding(llm_response.save_content)
             self.memory.store_node(
                 embedding=embedding,
-                content=llm_response.save_content                )
+                content=llm_response.save_content
+            )
             self.context_tree.add_node(ContextNode(
                 user_message=None,
                 agent_response=str(llm_response),
@@ -313,12 +331,12 @@ class Agent:
                     metadata=with_label({"Retrieve failed": "No matching node found in memory"})
                 ))
         elif action == 9:  # No operation
-            self.context_tree.add_node(ContextNode(
-                user_message=None,
-                agent_response=str(llm_response),
-                system_response="",
-                metadata=with_label({"No Operation": "Waiting for next action"})
-            ))
+            # Add thoughts to current context
+            if "thoughts" in self.context_tree.head.metadata:
+                self.context_tree.head.metadata["thoughts"].append(llm_response.response)
+            else:
+                self.context_tree.head.metadata["thoughts"] = [llm_response.response]
+            self.terminal.print_agent_message(f"Thinking about: {llm_response.response}")
             logger.info("No operation performed, waiting for next action.")
         elif action == 10:  # Replace context node (keep subtree)
             try:
@@ -330,23 +348,53 @@ class Agent:
                 replacement_val=llm_response.node_content,
                 node_label=node_label
             )
-            meta = {"Replaced Context Node": llm_response.node_hash, "success": bool(ok)}
-            meta = with_label(meta)
-            self.context_tree.add_node(ContextNode(
-                user_message=None,
-                agent_response=str(llm_response),
-                system_response="",
-                metadata=meta
-            ))
+            if ok:
+                # Update the metadata of the current node
+                if "replaced_context_nodes" in self.context_tree.head.metadata:
+                    self.context_tree.head.metadata["replaced_context_nodes"].append(llm_response.node_hash)
+                else:
+                    self.context_tree.head.metadata["replaced_context_nodes"] = [llm_response.node_hash]
+
             status = "Replaced" if ok else "Replace failed (node not found)"
             self.terminal.print_agent_message(f"{status}: {llm_response.node_hash}")
             logger.info(f"Action 10: {status} | target={llm_response.node_hash}")
-        elif action == 11:  # Input an image file, convert it to base64
+
+        elif action == 11:  # Rename context node
+            label = getattr(llm_response, 'node_label', None)
+            if not label:
+                self.terminal.print_agent_message("Rename failed: no node_label provided.")
+                logger.warning("Action 11: Rename failed, no node_label provided.")
+            else:
+                ok = self.context_tree.rename(
+                    node_hash=llm_response.node_hash,
+                    new_label=label
+                )
+                status = "Renamed" if ok else "Rename failed (node not found)"
+                self.terminal.print_agent_message(f"{status}: {llm_response.node_hash} to '{label}'")
+                if ok:
+                    # Update the metadata of the current node
+                    if "renamed_context_nodes" in self.context_tree.head.metadata:
+                        self.context_tree.head.metadata["renamed_context_nodes"].append({"node_hash": llm_response.node_hash, "new_label": label})
+                    else:
+                        self.context_tree.head.metadata["renamed_context_nodes"] = [{"node_hash": llm_response.node_hash, "new_label": label}]
+                logger.info(f"Action 11: {status} | target={llm_response.node_hash} to '{label}'")
+        elif action == 12:  # Input an image file, convert it to base64
             img_str = self.file_system.read_img_as_base64(llm_response.file_name)
             self.images.append({"file_path": llm_response.file_name, "img_str": img_str})
             meta = {"file_name": llm_response.file_name, "img_str": img_str}
             self.context_tree.add_node(ContextNode(user_message=None, agent_response=str(llm_response), system_response="", metadata=meta))
             self.terminal.print_agent_message(f"Image {llm_response.file_name} processed successfully")
+
+        elif action == 13:  # Update ProgressBuffer
+            self.progress_buffer.write(llm_response.write_content)
+            self.terminal.print_agent_message(f"ProgressBuffer updated.")
+            self.context_tree.add_node(ContextNode(
+                user_message=None,
+                agent_response=str(llm_response),
+                system_response="",
+                metadata=with_label({"ProgressBuffer Updated": True})# Placeholder metadata
+            ))
+            logger.info(f"ProgressBuffer updated with content: {llm_response.write_content}")
 
 
 

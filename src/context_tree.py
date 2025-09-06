@@ -12,10 +12,13 @@ class ContextNode:
         self.metadata = metadata
         self.content_hash = self._generate_hash()
         self.children = []
+        self.previous_node = None  # Optional link to previous node for easier traversal
 
     def _generate_hash(self):
         content = f"{self.user_message}{self.agent_response}{self.system_response}{str(self.metadata)}"
         return hashlib.sha256(content.encode()).hexdigest()[:8]
+    def set_previous(self, prev_node):
+        self.previous_node = prev_node
 
     def add_child(self, child_node: 'ContextNode'):
         self.children.append(child_node)
@@ -58,19 +61,47 @@ class ContextTree:
                 return found
         return None
 
-    def add_node(self, new_node: ContextNode, parent_hash: str = None):
+    def add_node(self, new_node: ContextNode, parent_hash: str = None, advance_head: bool = True):
         if parent_hash is None:
             parent_hash = self.head.content_hash
         parent_node = self._find_node(self.root, parent_hash)
         if parent_node:
             parent_node.add_child(new_node)
+            new_node.set_previous(parent_node)
         else:
+            print(f"Warning: Parent node with hash {parent_hash} not found. Cannot add new node.")
             raise ValueError("Parent node not found")
-        self.head = new_node
         # Optional auto-print after each node addition when logging is enabled
         if os.getenv("EVE_LOG_CONTEXT_TREE"):
             print(self.structure_string())
 
+        
+        if advance_head:
+            # Update HEAD to point to the new node
+            self.head = new_node
+
+    def rename(self, node_hash: str, new_label: str) -> bool:
+        """Rename a node's label in metadata while preserving other contents.
+
+        - Updates metadata["label"] with new_label
+        - Preserves user_message, agent_response, system_response, children, and content_hash
+        - Marks node metadata with {"renamed": True}
+        - Returns True if node found and updated; False otherwise
+        """
+        target = self._find_node(self.root, node_hash)
+        if not target:
+            return False
+
+        try:
+            label = (new_label or "").strip()
+        except Exception:
+            label = str(new_label)
+
+        if not isinstance(target.metadata, dict):
+            target.metadata = {}
+        target.metadata["label"] = label
+        target.metadata["renamed"] = True
+        return True
     def prune(self, node_hash: str, replacement_val: str):
         # Find target node first and check if HEAD lies in its subtree
         target = self._find_node(self.root, node_hash)
@@ -117,20 +148,10 @@ class ContextTree:
             summary = str(replacement_val)
 
         # Update summary fields; keep system_response as-is
-        target.user_message = summary
-        target.agent_response = summary
+        target.user_message = ""
+        target.agent_response = summary 
 
-        # Merge/assign metadata and mark as replaced; preserve existing keys
-        if isinstance(target.metadata, dict):
-            meta = dict(target.metadata)
-        else:
-            meta = {}
-        meta["replaced"] = True
-        if node_label:
-            meta["label"] = node_label
-        target.metadata = meta
-
-        # Children and HEAD are intentionally unchanged
+        target.metadata = {"replaced": True}
         return True
     def _tree_to_string(self, node: ContextNode, indent: int = 0):
         """Recursively build string representation of tree"""
@@ -181,33 +202,20 @@ class ContextTree:
             s = s[: max_len - 1] + "…"
         return s
 
-    # --- Structure-only visualization (hashes + hierarchy, optional labels; head marked) ---
-    def _tree_to_structure(self, node: ContextNode, indent: int = 0, lines: list | None = None,
-                           include_labels: bool = False, max_words: int = 4, max_label_len: int = 32):
-        if lines is None:
-            lines = []
-        prefix = ("  " * indent) + "- "
-        head_marker = " (HEAD)" if node is self.head else ""
-        base = f"[{node.content_hash}]"
-        # Append label after head marker to preserve test substring "[hash] (HEAD)"
-        line = f"{prefix}{base}{head_marker}"
-        if include_labels:
-            label = self._short_label(node, max_words=max_words, max_len=max_label_len)
-            if label:
-                line += f" — {label}"
-        lines.append(line)
-        for child in node.children:
-            self._tree_to_structure(child, indent + 1, lines, include_labels=include_labels,
-                                    max_words=max_words, max_label_len=max_label_len)
-        return lines
-
-    def structure_string(self, include_labels: bool = False, max_words: int = 4, max_label_len: int = 32) -> str:
-        include_labels = include_labels or bool(os.getenv("EVE_LOG_CONTEXT_LABELS"))
-        lines = self._tree_to_structure(self.root, 0, [], include_labels=include_labels,
-                                        max_words=max_words, max_label_len=max_label_len)
-        out = ["=== CONTEXT TREE STRUCTURE ==="]
-        out.extend(lines)
-        return "\n".join(out) + "\n"
+    def structure_string(self,node, include_full=False, max_words=10, max_label_len=32) -> str:
+        # Start from root and recursively build structure
+        def tree_structure_string(node: ContextNode, indent: int = 0, include_full=False) -> str:
+            # Start from root and recursively build structure
+            tree_str = ""
+            tree_str = "  " * indent + "- "
+            # Add the current root node
+            label = self._short_label(node, max_words=max_words, max_len=max_label_len) if not include_full else repr(node)
+            current_node = f"Hash: {node.content_hash} {label}"
+            tree_str += current_node + "\n"
+            for child in node.children:
+                tree_str += current_node + "-> " + tree_structure_string(child, indent + 1)
+            return tree_str
+        return "=== CONTEXT TREE STRUCTURE ===\n" + tree_structure_string(node, 0, include_full=include_full)
 
     # --- Root to head path utilities ---
     def root_to_node_path(self, target: ContextNode | str | None = None) -> list[ContextNode]:
@@ -242,29 +250,26 @@ class ContextTree:
         found = _dfs(self.root, acc)
         return acc if found else []
 
-    def return_root_head_string(self, include_labels: bool = False, max_words: int = 4, max_label_len: int = 32, include_full: bool = False) -> str:
-        """Return a string showing only the path from root to the current head (inclusive).
+    def return_root_node_sub_tree_string(self, node, include_full=False) -> str:
+        """ Returns the path from the root -> head, + heads subtree as well. So essentially a full view of the current context. """
+        path = "=== Context Subtree ==="
+        # Find the path from head to root, using previous_node links
+        nodes = [node]
+        while nodes[-1] is not self.root and nodes[-1].previous_node is not None:
+            nodes.append(nodes[-1].previous_node)
+        nodes.reverse()  # Now from root to head
+        path_str = ""
+        # The path string will be Hash Label -> Hash Label -> ...
+        for n in nodes:
+            label = self._short_label(n, max_words=5, max_len=24) if not include_full else repr(n)
+            path_str += f"[{n.content_hash}] {label} -> "
+        path_str = path_str.rstrip(" -> ")  # Remove trailing arrow
+        path += "\n" + path_str + "\n"
+        # Add the subtree under using structure_string
+        path += self.structure_string(node, include_full=include_full, max_words=3, max_label_len=24)
 
-        - When include_full=True, include each node's full repr (ContextNode(...)).
-        - Otherwise, mirror structure_string: show [hash], optional labels, and mark (HEAD) on head node.
-        """
-        path = self.root_to_node_path(self.head)
-        out = ["=== ROOT TO HEAD PATH ==="]
-        include_labels = include_labels or bool(os.getenv("EVE_LOG_CONTEXT_LABELS"))
+        return path
 
-        for depth, node in enumerate(path):
-            prefix = ("  " * depth) + "- "
-            head_marker = " (HEAD)" if node is self.head else ""
-            if include_full:
-                line = f"{prefix}{node!r}{head_marker}"
-            else:
-                line = f"{prefix}[{node.content_hash}]{head_marker}"
-                if include_labels:
-                    label = self._short_label(node, max_words=max_words, max_len=max_label_len)
-                    if label:
-                        line += f" — {label}"
-            out.append(line)
-        return "\n".join(out) + "\n"
 
     # --- Summarized view for LLM context (short fields; minimal metadata) ---
     def _shorten(self, text, max_len: int = 120) -> str:
