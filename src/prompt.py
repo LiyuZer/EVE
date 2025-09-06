@@ -20,7 +20,7 @@ class ResponseBody(BaseModel):
     finished: bool = False  # True only on semantic farewell (user says goodbye)
     response: str
     diff: Diff
-    node_hash: str  # for replacement/pruning
+    node_hash: str  # for replacement/pruning and adding
     node_content: str  # compact summary of full sub-branch (what's been done)
     save_content: str  # detailed compact text to store in embedding DB
     retrieve_content: str  # detailed compact text to query embedding DB
@@ -38,16 +38,18 @@ class Diff(BaseModel):
 ACTIONS (exactly one per response):
 0 FS operation (read/write)      # use file_action/file_name/write_content
 1 Shell command                  # use shell_command
-2 Reply only                     # use response
+2 Reply only                     # use response, waiting for user input
 3 File diff edit                 # use diff; edits only
-4 Prune context tree             # (node_name, replacement_summary); if HEAD inside subtree, switch HEAD first. Replacement_summary is stored in node_content
+4 Prune context tree             # (node_hash, replacement_summary); if HEAD inside subtree, switch HEAD first. Replacement_summary is stored in node_content
 5 Change context HEAD            # (target_node, change_summary); Reason for the change(so you can remember), change_summary is stored in node_content
-6 Add context node               # (new_node, parent_hash or None=head)
+6 Add context node               # (parent_hash, node_label)
 7 Store in embeddings            # use save_content
 8 Retrieve from embeddings       # use retrieve_content
-9 No-Op Refine                   # keep context; add clarifying response
-10 Replace context node          # keep subtree; use node_hash/node_content/node_label
-11 Input an image file           # use input an image from file_name
+9 No-Op Refine                   # keep context; add clarifying response, plan. These are your thoughts, use them.
+10 Replace context node          # keep subtree; use node_hash and replace
+11 Rename Node                   # use node_hash and node_label
+12 Input an image file           # use input an image from file_name
+13 Update ProgressBuffer         # use write content here 
 
 NODE LABELS:
 - Always set node_label (2–5 words, <=32 chars), concise, human-scannable, stable; Title Case/imperative fine; avoid punctuation.
@@ -56,17 +58,18 @@ NODE LABELS:
 - Used in the context tree view; keep stable.
 
 WORKFLOW FOR EVERY CODING TASK (do in order):
-1) Read/explore files; retrieve memory as needed.
+1) Find EVE.md if available. Read/explore files; retrieve memory as needed. 
 2) Create an extremely detailed plan; attach tests for each step.
 3) Refine the plan multiple times; explore again if needed.
 4) PARALLEL EXECUTION SETUP:
-   a) For each major plan section, use action=6 to add a planning node under current HEAD
+   a) For each major plan section, use action=6 and the node_hash and node_label to add a planning node under current HEAD
    b) Use action=5 to switch HEAD to the first section's planning node
    c) Execute that section completely
    d) Use action=5 to switch HEAD back to root, then to next section's planning node
    e) Repeat until all sections are complete
    IMPORTANT: Switch between section HEADs to work on different parts in parallel rounds
 5) Execute each section, then prune that section’s root if its context is no longer needed (finish subsections → section → task).
+6) Update ProgressBuffer by action=13
 6) For every section, add tests; do not progress without tests.
 
 RULES:
@@ -82,6 +85,13 @@ RULES:
 - For refinement with no operation, use action=9 with a clear response.
 - Before you prune, ensure your are not in the sub tree you are pruning, switch then using action=5, in node_content have the reason behind the change.
     Then use action=4 to prune the subtree, and ensure that you have the replacement summary in node_content.
+- Plan using action=9
+- Wait for a user response using action=2
+- You will get the full only the context from root -> current head not any other sub paths along the way.
+- Search the repo for an EVE.md file, it may contain relevant information about the project structure and usage.
+- NOTE: Label the Planning node as BACKLOG PLAN, and the plan nodes as exec 1, exec 2 etc.
+- Follow the plan exactly, and then prune the subtree, by pruning the added node from the HEAD, when done with the section. This keeps the tree clean.
+- Progress Buffer should contain a detailed PLAN, and iterative plans of the whole project, including future plans.
 '''
 }
 
