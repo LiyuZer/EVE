@@ -73,6 +73,58 @@ class Agent:
             metadata={"root directory": self.root}
         )
         self.context_tree = ContextTree(root=context_node)
+        self.phase = "Test"  # Initial phase
+
+    def save_state(self):
+        # Save agent state to .eve/agent_state.json, buffers and context tree
+        state_dir = os.path.join(self.root, ".eve")
+        os.makedirs(state_dir, exist_ok=True)
+        state_path = os.path.join(state_dir, "agent_state.json")
+        context_tree_serialized = self.context_tree.serialize()
+        state = {
+            "context_tree": context_tree_serialized,
+            "buffers": {name: buffer.get_buffer() for name, buffer in self.buffers.items()},
+            "phase": self.phase,
+        }
+        try:
+            with open(state_path, "w") as f:
+                import json
+                json.dump(state, f, indent=2)
+            self.terminal.print_agent_message(f"Agent state saved to {state_path}")
+            logger.info(f"Agent state saved to {state_path}")
+        except Exception as e:
+            self.terminal.print_error_message(f"Failed to save agent state: {e}")
+            logger.error(f"Failed to save agent state: {e}")
+
+
+    def load_agent_state(self):
+        # Return true if state loaded, False otherwise
+        state_path = os.path.join(self.root, ".eve", "agent_state.json")
+        if not os.path.exists(state_path):
+            self.terminal.print_agent_message("No previous agent state found.")
+            return False
+        try:
+            with open(state_path, "r") as f:
+                import json
+                state = json.load(f)
+            self.context_tree = ContextTree.deserialize(state["context_tree"])
+            self.phase = state.get("phase", "Test")
+            buffers_data = state.get("buffers", {})
+            for name, content in buffers_data.items():
+                buffer_path = os.path.join(self.root, f"{name}.md")
+                self.buffers[name] = Buffer(file_path=buffer_path, name=name)
+                self.buffers[name].write(content)  # Initialize buffer content
+            self.terminal.print_agent_message(f"Agent state loaded from {state_path}")
+            logger.info(f"Agent state loaded from {state_path}")
+            return True
+        except Exception as e:
+            self.terminal.print_error_message(f"Failed to load agent state: {e}")
+            self.context_tree = None
+            self.buffers = {}
+            self.phase = "Test"
+            logger.error(f"Failed to load agent state: {e}")
+            return False
+
 
     def start_execution(self):
         ide_mode = True if getattr(self, "mode", "console") == "ide" else False
@@ -84,6 +136,14 @@ class Agent:
             self.terminal.print_banner()
             self.terminal.print_welcome_message()
             self.terminal.print_username()
+        return 
+        # Attempt to load previous agent state; start fresh if none found
+        if not self.load_agent_state():
+            self.terminal.print_agent_message("No previous state found, starting fresh.")
+            logger.info("No previous agent state found, starting fresh.")
+        else: 
+            self.terminal.print_agent_message("Previous state loaded, resuming session.")
+            logger.info("Previous agent state loaded, resuming session.")
         # First user input (from console or IDE stdin)
         user_input = input()
         # Parse optional user label syntax
@@ -123,27 +183,50 @@ class Agent:
                 Context policy: size > 500,000 — prioritize action=10 Replace (shorten node summaries, keep children) "
                 and/or action=4 Prune (summarize and drop subtrees) until size < 200,000.
 
-                Procedure Policy : - Plan -> Add Execution Nodes -> Execute -> Prune, Update Progress, loop.
+                Procedure Policy : - Plan Test -> Add Execution Nodes -> Execute -> Prune, Update Progress, switch to Implementation
+                                   - Plan Implementation -> Add Execution Nodes -> Execute -> Prune, Update Progress, switch to Refactor
+                                   - Plan Refactor -> Add Execution Nodes -> Execute -> Prune, Update Progress, switch to Test
                                    - If you are stuck prune that path and start over.
                                    - Use your context tree, wisely, parallelize and break down tasks. And switch between branches.
-                                   - NOTE: Label the Planning node as BACKLOG PLAN, and the plan nodes as exec 1, exec 2 etc.
+                                   - NOTE: Label the Planning node as BACKLOG PLAN SPECIFIC INFO, and the plan nodes as exec 1, exec 2 etc.
+                                      - For example refactoring a codebase would have a BACKLOG PLAN REFACTOR SRC FILES, and then exec 1, exec 2 etc under
+                                      - This helps you keep track of your plans, and progress.
                                    - Follow the plan exactly, and then prune the subtree, by pruning the added node from the HEAD, when done with the section. This keeps the tree clean.
+                                   - Pruning keeps the node you are pruning, but removes the subtree, and adds a summary of the pruned node in its place.
+                                   - When you prune, add the pruned node hash and (node_hash, replacement_summary); if HEAD inside subtree, switch HEAD first. Replacement_summary is stored in node_content
+                                        - Example pruning node_hash=abc123, replacement_summary="Refactored src files, added tests, improved code quality", the node with hash abc123 is replaced with a new node with the same hash, but with the content as replacement_summary
                                    - Buffer add/update is action=13, use it frequently to keep track of your progress, plans, and next steps. Use 13 + buffer_name, write_content to update/create a buffer.
                                    - Aim to write modular code, and rewrite files to multiple files for better organization.
                                    - When writing code, aim for high cohesion and low coupling.
                                    - If a file is truncated, due to size then break it down into smaller files, and import them.
                                    - Buffers are used for a mix of short term and long term memory. Use them to keep track of your progress, and your plans.
-                                        - Minimum progress, long term plan must exist as buffers.
+                                        - Minimum progress, long term plan and codebase_info must be in buffers.
                                         - Update them frequently, and keep them detailed. 
                                         - One buffer might be progress, another might be long term plan (changed rarely), another notes, another decisions, errors, etc.
                                         - For example if you repeatedly have an issue and the context length is too long, you can store the error in a buffer, prune the context, and then retrieve the buffer when needed.
+                                   - We have three stages of development, Test, Implementation, Refactor. Each stage has its own plan, and execution nodes.
+                                        - Test: Plan Test -> Add Execution Nodes -> Execute -> Prune, Update Progress and Codebase_info, loop to implementation
+                                        - Implementation: Plan Implementation -> Add Execution Nodes -> Execute -> Prune, Update Progress and Codebase_info, loop to refactor
+                                        - Refactor: Plan Refactor -> Add Execution Nodes -> Execute -> Prune, Update Progress and Codebase_info, loop to test
+                                   - Every major section must have tests, preferably close to 100% coverage, along with numerous integration tests. The repo should be saturated 
+                                        with hundreds to thousands of tests: small, medium, and large.
+                                   - You cannot see the path from root to other branches, so you must navigate there explicitly using action=5 to change HEAD, and prune 
+                                     based on the summarized view of the context tree.
+                                   - Stick to the phase until you are done, then switch to the next phase. Use action=14 to change phase, the valid phases are Test, Implementation, Refactor.
+                                   - For refactoring, focus on improving code quality, readability, and maintainability. Do not add new features during refactoring. Break down large functions, and classes into smaller, more manageable pieces.
+                                   - For implementation, focus on adding new features, and functionality. Do not refactor during implementation. Follow the plan closely, and ensure that all tests pass before moving on to the next feature.
+                                   - For testing, focus on writing comprehensive tests for all features, and functionality. Do not refactor or implement during testing. Ensure that all tests pass before moving on to the next phase.
 
                 """
             )
             structured_tree = self.context_tree.structure_string(self.context_tree.root, include_full=False, max_words=5, max_label_len=24) 
             buffer_str = "Buffers: " + "\n".join([f"{name}: {buffer.get_buffer()}" for name, buffer in self.buffers.items()]) 
             size_line = "Context Tree size: " + str(len(str(context_core)) + len(policy_line) + len(structured_tree) + len(buffer_str) ) + " characters; hard max 800,000."
-            context_str = context_core + "\n" + policy_line + "\n" + structured_tree + '\n' + buffer_str + "\n" + size_line
+            full_context_size = "Full Context tree size: " + str(len(str(self.context_tree))) + " characters."
+            phase_line = f"Current Phase: {self.phase}. Do only the tasks related to this phase, do not do an implementation task in the test phase, or a refactor task in the implementation phase. 
+            Use ProgressBuffer to keep track of your phase related tasks, and progress."
+
+            context_str = context_core + "\n" + policy_line + "\n" + "Summarized view : " + structured_tree + '\n' + buffer_str + "\n" + size_line + "\n" + full_context_size + "\n" + phase_line
             print(size_line)
             try:
                 llm_response = self.llm_client.generate_response(
@@ -404,7 +487,7 @@ class Agent:
             if buffer_name:
                 # Create buffer if it doesn't exist
                 if buffer_name not in self.buffers:
-                    buffer_path = os.path.join(self.root, f"{buffer_name}.md")
+                    buffer_path = os.path.join(self.root , f"{buffer_name}.md")
                     self.buffers[buffer_name] = Buffer(file_path=buffer_path, name=buffer_name)
                     self.terminal.print_agent_message(f"Created new buffer: {buffer_name} at {buffer_path}")
                     logger.info(f"Created new buffer: {buffer_name} at {buffer_path}")
@@ -422,6 +505,17 @@ class Agent:
             else:
                 self.terminal.print_agent_message("Buffer update failed: no buffer_name provided.")
                 logger.warning("Action 13: Buffer update failed, no buffer_name provided.")
-
-
-
+        elif action == 14:  # Change Phase
+            new_phase = getattr(llm_response, "response", None)
+            if new_phase in ["Test", "Implementation", "Refactor"]:
+                old_phase = self.phase
+                self.phase = new_phase
+                self.terminal.print_agent_message(f"Phase changed from {old_phase} to {new_phase}.")
+                self.context_tree.head.metadata.update({"phase_changed": {"from": old_phase, "to": new_phase}})
+                logger.info(f"Phase changed from {old_phase} to {new_phase}.")
+            else:
+                self.terminal.print_agent_message("Phase change failed: invalid phase provided. Use 'Test', 'Implementation', or 'Refactor'.")
+                self.context_tree.head.metadata.update({"phase_change_failed": llm_response.response})
+                logger.warning("Action 14: Phase change failed, invalid phase provided.")
+        # Persist state after every action (SLOW!)
+        self.save_agent_state()

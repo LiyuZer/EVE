@@ -1,10 +1,11 @@
 # This Progress Buffer, is attached to a file, everytime it is changed it updates the buffer with the new content, and the file. 
 
-class ProgressBuffer:
-    def __init__(self, file_path):
+class Buffer:
+    def __init__(self, file_path, name):
         self.file_path = file_path
         self.buffer = ""
         self.load_from_file()
+        self.name = name
 
     def load_from_file(self):
         try:
