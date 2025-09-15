@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -7,14 +8,33 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# OS / Editor
 .DS_Store
 .idea/
 .vscode/
+
+# Eve artifacts
 eve_memory.db/
-project.log
 *.sqlite3.eve/
 .eve
+
+# Logs
+project.log
 project.log.*
+*.log
+
+# Local config
 /server_info.json
 src/server_info.json
+
+# Tool venvs
 .reqcheck_venv/
+
+# Local trash
+.trash_evolution*/
+
+# Rust build artifacts
+# Ignore top-level and nested Rust targets to avoid committing build outputs
+/target/
+src/indexer/target/
