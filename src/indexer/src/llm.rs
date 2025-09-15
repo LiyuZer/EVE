@@ -1,9 +1,10 @@
-// We will interact with an LLM using the openAI endpoint. 
+// We will interact with an LLM using the openAI endpoint.
 use reqwest;
 use reqwest::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use tokio;
 use serde_json;
 use std::fmt;
+
 #[derive(Debug, Clone, Default)]
 pub struct File{
     pub size: u64,
@@ -63,14 +64,14 @@ impl fmt::Display for Morphism {
 
 pub async fn request_llm(input : String) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
-    let api_key = "sk-REDACTED";
+    let api_key = std::env::var("OPENAI_API_KEY")?;
     let response = "https://api.openai.com/v1/responses";
     let base_prompt = r#"You are a code canonicalizer, you will receive code snippets and you wil output the canonicalized version of the code. Return a json of object, function relationships
     Objects are classes, structs, interfaces, not imports. Morphisms are functions, methods, procedures. You will identify the objects and morphisms in the code and their relationships.
     Note only add to objects and functions that are explicitly defined in the code. Do not add any extra objects or functions.
     Add dependencies to objects and functions. Dependencies are other objects or functions that are used or called by the object or function, they don't
     have to be defined in the code snippet. Descriptions are medium length, but extremely informative, distinct and focused on the semantic and purpose-related details of the objects and morphisms.
-    An example 
+    An example
         import json
         import requests
         class Animal:
@@ -90,7 +91,7 @@ pub async fn request_llm(input : String) -> Result<String, Box<dyn std::error::E
                 else:
                     response.raise_for_status()
 
-        # You will return 
+        # You will return
         {
             'General Information': {
                 'Total Objects': 2,
@@ -103,7 +104,7 @@ pub async fn request_llm(input : String) -> Result<String, Box<dyn std::error::E
                 {"name": "Animal", "type": "class", "morphisms": ["__init__", "speak"], "Dependencies": [], "description": "Base python class for animals with a speak method that must be implemented by subclasses."},
                 {"name": "Dog", "type": "class", "morphisms": ["speak"], "Dependencies": ["Animal"], "description": "Dog class inheriting from Animal, implements the speak method to return a dog-specific sound."},
             ]
-            
+
             'Morphisms':
             [
                 {"name": "__init__", "type": "method", "Dependencies": ["self", "name"], "description": "Initializes the Animal class with a name attribute."},
@@ -111,7 +112,7 @@ pub async fn request_llm(input : String) -> Result<String, Box<dyn std::error::E
                 {"name": "fetch_inst", "type": "function", "Dependencies": ["url"], "description": "Fetches JSON data from a given URL using HTTP GET request."}
             ]
 
-        
+
         }
             Input :
             "#;
@@ -159,7 +160,7 @@ pub async fn request_llm(input : String) -> Result<String, Box<dyn std::error::E
 // Function that outputs embeddings for a given text using openAI embeddings endpoint
 pub async fn get_embeddings(text: String) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
-    let api_key = "sk-REDACTED";
+    let api_key = std::env::var("OPENAI_API_KEY")?;
     let response = "https://api.openai.com/v1/embeddings";
     let body = serde_json::json!({
         "model": "text-embedding-3-large",
@@ -187,14 +188,14 @@ pub async fn get_embeddings(text: String) -> Result<Vec<f32>, Box<dyn std::error
 
 // Function that takes in raw llm response and parses it into File, Object and Morphism structs
 pub fn parse_llm_response(response: String, file_path: String) -> (File, Vec<Object>, Vec<Morphism>) {
-    // Extract File Name 
+    // Extract File Name
     let file_name = std::path::Path::new(&file_path)
         .file_name()
         .and_then(|name| name.to_str())
         .unwrap_or("")
         .to_string();
 
-    
+
     // Parse the output string as JSON
     let parsed: serde_json::Value = serde_json::from_str(&response).expect("Failed to parse JSON");
     // Extract general information
@@ -270,4 +271,3 @@ pub fn parse_llm_response(response: String, file_path: String) -> (File, Vec<Obj
 
     (file, objects, morphisms)
 }
-
