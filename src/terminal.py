@@ -1,6 +1,8 @@
 import colorama
 from src.logging_config import setup_logger
 import shutil
+from src.cli.style import styler
+
 
 class TerminalInterface:
     def __init__(self, username: str) -> None:
@@ -41,14 +43,14 @@ class TerminalInterface:
             "                         __====-_  _-====__",
             "                       _--^^^#####//      \\#####^^^--_",
             "                    _-^##########// (    ) \\##########^-_",
-            "                   -############//  |\\^^/|  \\############-",
+            "                   -############//  |\\\^^/|  \\############-",
             "                 _/############//   (@::@)   \\############\\_",
             "                /#############((     \\//     ))#############\\",
             "               -###############\\    (oo)    //###############-",
             "              -#################\\  / VV \\  //#################-",
             "             -###################\\/      \\//###################-",
             "            _#/|##########/\\######(   /\\   )######/\\##########|\\#_",
-            "            |/ |#/\\\\#/\\\\#/\\/  \\\\#/\\\\##\\\\  |  |  /##/\\\\#/  \\\\/\\\\#/\\\\#/\\\\#| \\\\|",
+            "            |/ |#/\\\\#/\\\\#/\\/  \\\#/\\\\##\\\\  |  |  /##/\\\\#/  \\\//\\\\#/\\\\#/\\\\#| \\|",
             "            `  |/  V  V  `    V  \\#\\|  | |/##/  V     `  V  \\|  '",
             "               `   `  `         `   / |  | \\   '         '   '",
             "                                  (  |  |  )",
@@ -89,34 +91,28 @@ class TerminalInterface:
         self.logger.info("Displayed dragon + EVE ASCII banner (center-left) and mythology from Narrator.")
 
     def print_welcome_message(self) -> None:
+        title = "EVE CLI"
+        print(styler.header(title))
         message = f"Hello, {self.username}! What are we doing today?"
-        print(colorama.Fore.LIGHTGREEN_EX + message + colorama.Style.RESET_ALL)
+        print(styler.tag("info", "info"), message)
         self.logger.info(message)
 
     def print_username(self) -> None:
-        prompt = f"{self.username} "
-        print(colorama.Fore.LIGHTCYAN_EX + colorama.Style.BRIGHT + prompt + colorama.Style.RESET_ALL + ": ", end="")
+        prompt = f"{self.username}: "
+        print(styler.apply(styler.palette.accent, prompt), end="")
         self.logger.info(f"Prompted user input for: {self.username}")
 
     def print_agent_message(self, message: str) -> None:
-        import random
-        dragon_flair = [
-            " (Eve puffs a little smoke)",
-            " (Her wingtips shimmer)",
-            " (Dragon wisdom delivered)",
-            " (Eve's tail swishes thoughtfully)",
-            " (Flickers of code-light)"
-        ]
-        flair = random.choice(dragon_flair) if random.random() < 0.2 else ""
-        print(colorama.Fore.LIGHTYELLOW_EX + colorama.Style.BRIGHT + f"Eve: " + colorama.Style.RESET_ALL + f"{message}{flair}")
+        tag = styler.tag("eve", "info")
+        print(f"{tag} {message}")
         self.logger.info(f"Eve: {message}")
 
     def print_error_message(self, message: str) -> None:
-        print(colorama.Fore.LIGHTRED_EX + colorama.Style.BRIGHT + f"Eve: " + colorama.Style.RESET_ALL + f"{message}")
+        tag = styler.tag("error", "error")
+        print(f"{tag} {message}")
         self.logger.error(f"Eve: {message}")
 
     def print_system_message(self, message: str) -> None:
-        color = colorama.Fore.LIGHTMAGENTA_EX + colorama.Style.BRIGHT
-        reset = colorama.Style.RESET_ALL
-        print(color + "System: " + reset + f"{message}")
+        tag = styler.tag("system", "warn")
+        print(f"{tag} {message}")
         self.logger.warning(f"System: {message}")
