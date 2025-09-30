@@ -12,7 +12,7 @@ from src.schema import *
 from src.prompt import *
 from src.file_system import FileHandler
 from src.shell import ShellInterface
-from src.terminal import TerminalInterface
+from src.terminal import EnhancedTerminalInterface as TerminalInterface
 from src.llm import llmInterface
 from src.memory import EveMemory  # Import Eve's memory for semantic storage
 from src.logging_config import setup_logger  # Import improved logger setup
@@ -24,13 +24,13 @@ import json
 
 
 load_dotenv()
-api_key_v = os.getenv("OPENAI_API_KEY")
-model = os.getenv("OPENAI_MODEL")
+api_key_v = os.getenv("API_KEY")
+model = os.getenv("MODEL")
+org = os.getenv("ORG") or "OpenAI"
 username = os.getenv("USERNAME") or os.getenv("USER") or "friend"
-
-
 # Initialize logger once; level is picked up from LOG_LEVEL env if set
 logger = setup_logger("agent", "project.log")
+
 
 
 def parse_user_label(text: str) -> tuple[Optional[str], str]:
@@ -61,7 +61,7 @@ def parse_user_label(text: str) -> tuple[Optional[str], str]:
 
 class Agent:
    def __init__(self, root, mode: str = "console"):
-       self.llm_client = llmInterface(api_key=api_key_v, model=model)
+       self.llm_client = llmInterface(api_key=api_key_v, model=model, org=org)
        self.shell = ShellInterface()
        # Use the provided root (workspace root in IDE mode) as the base for FS ops
        self.root = root
@@ -131,7 +131,6 @@ class Agent:
 
 
 
-
    def start_execution(self):
        ide_mode = True if getattr(self, "mode", "console") == "ide" else False
        self.terminal.print_agent_message("Eve is in IDE mode." if ide_mode else "Eve is running in console mode.")
@@ -142,7 +141,7 @@ class Agent:
            # Show EVE ASCII banner before anything else
            self.terminal.print_banner()
            self.terminal.print_welcome_message()
-           self.terminal.print_username()
+
        # Attempt to load previous agent state; start fresh if none found
        if not self.load_state():
            self.terminal.print_agent_message("No previous state found, starting fresh.")
@@ -150,6 +149,10 @@ class Agent:
        else:
            self.terminal.print_agent_message("Previous state loaded, resuming session.")
            logger.info("Previous agent state loaded, resuming session.")
+
+       if not ide_mode:
+            self.terminal.print_username()
+
        # First user input (from console or IDE stdin)
        user_input = input()
        # Parse optional user label syntax
@@ -362,22 +365,34 @@ class Agent:
                 ✓ Comprehensive test coverage (tracked in ProgressBuffer "progress")
                 ✓ Clean, modular codebase
                 ✓ Complete buffer documentation
+                    ================================================================================
+                                          OUTPUT FORMAT:
+                    ================================================================================ 
 
-                ================================================================================
-                                        REMEMBER THE PRIME DIRECTIVE:
-                                    Autonomous execution with strategic pruning
-                ================================================================================ """
+            Return ONLY a JSON object matching the schema when required by the client SDK. Do NOT include code fences, comments, or extra text.
+            No extra test, explanation, or formatting outside the JSON object. only {...}. Do NOT return markdown or code fences.
+
+                    ================================================================================
+                                            REMEMBER THE PRIME DIRECTIVE:
+                                        Autonomous execution with strategic pruning
+                    ================================================================================ """
            )
            structured_tree = self.context_tree.structure_string(self.context_tree.root, include_full=False, max_words=5, max_label_len=24)
            buffer_str = "Buffers: " + "\n".join([f"{name}: {buffer.get_buffer()}" for name, buffer in self.buffers.items()])
            size_line = "Context Tree size: " + str(len(str(context_core)) + len(policy_line) + len(structured_tree) + len(buffer_str) ) + " characters; hard max 500,000."
            full_context_size = "Full Context tree size: " + str(len(str(self.context_tree))) + " characters."
            phase_line = f"Current Phase: {self.phase}. Do only the tasks related to this phase, do not do an implementation task in the test phase, or a refactor task in the implementation phase.\nUse ProgressBuffer to keep track of your phase related tasks, and progress."
-           print(structured_tree)
-
-
            context_str = context_core + "\n" + policy_line + "\n" + "Summarized view : " + structured_tree + '\n' + buffer_str + "\n" + size_line + "\n" + full_context_size + "\n" + phase_line
-           print(size_line)
+
+           # New visual size indicator
+           try:
+               current_size_val = len(str(context_core)) + len(policy_line) + len(structured_tree) + len(buffer_str)
+               full_size_val = len(str(self.context_tree))
+               self.terminal.print_context_size_warning(current_size_val, full_size_val)
+           except Exception:
+               # Fallback to simple system message if needed
+               self.terminal.print_system_message(size_line)
+
            try:
                llm_response = self.llm_client.generate_response(
                    input_text=context_str,
@@ -417,11 +432,14 @@ class Agent:
 
 
        if action == 0:  # File system read/write
-           self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
            file_action = llm_response.file_action
            file_name = llm_response.file_name
+           try:
+               self.terminal.print_action_header("file_read" if file_action == 0 else "file_write", f"{llm_response.action_description}")
+           except Exception:
+               self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
+
            if file_action == 0:  # Read
-               self.terminal.print_agent_message(f"Reading file: {file_name}")
                file_content = self.file_system.read_file(file_name)
                # If file_content is too long, truncate it to first 150000 characters
                truncated = False
@@ -429,6 +447,10 @@ class Agent:
                if len(file_content) > 150000:
                    file_content = file_content[:150000]
                    truncated = True
+               try:
+                   self.terminal.print_file_operation("read", file_name, file_content, truncated)
+               except Exception:
+                   self.terminal.print_agent_message(f"Reading file: {file_name}")
                self.context_tree.add_node(ContextNode(
                    user_message=None,
                    agent_response="",  # Keep empty to avoid clutter
@@ -437,10 +459,13 @@ class Agent:
                ))
                # Log AFTER the action
                logger.info(f"Read file: {file_name} for description: {llm_response.action_description}")
-           else:
-               self.terminal.print_agent_message(f"Writing file: {file_name}")
+           else:  # Write
                write_content = llm_response.write_content
                self.file_system.write_file(file_name, write_content)
+               try:
+                   self.terminal.print_file_operation("write", file_name)
+               except Exception:
+                   self.terminal.print_agent_message(f"Writing file: {file_name}")
                self.context_tree.add_node(ContextNode(
                    user_message=None,
                    agent_response=str(llm_response),
@@ -451,8 +476,10 @@ class Agent:
 
 
        elif action == 1:  # Shell command
-           self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
-           self.terminal.print_agent_message(f"Executing shell command: {llm_response.shell_command}")
+           try:
+               self.terminal.print_action_header("shell", f"{llm_response.action_description}")
+           except Exception:
+               self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
            shell_command = llm_response.shell_command
            stdout, stderr = self.shell.execute_command(shell_command)
 
@@ -464,6 +491,10 @@ class Agent:
                self.terminal.print_system_message(system_msg)
                logger.warning(f"SYSTEM_BLOCK for command: {shell_command} | {system_msg}")
 
+           try:
+               self.terminal.print_shell_command(shell_command, stdout or "", stderr or "")
+           except Exception:
+               self.terminal.print_agent_message(f"Executing shell command: {shell_command}")
 
            self.context_tree.add_node(ContextNode(
                user_message=None,
@@ -475,7 +506,7 @@ class Agent:
                    "STDERR": stderr,
                })
            ))
-           logger.info(f"Shell command executed: {shell_command} | STDOUT: {stdout.strip()[:200]} | STDERR: {stderr.strip()[:200]}")
+           logger.info(f"Shell command executed: {shell_command} | STDOUT: {str(stdout).strip()[:200]} | STDERR: {str(stderr).strip()[:200]}")
        elif action == 2:  # Agent/user conversation
            self.terminal.print_agent_message(llm_response.response)
            # Only prompt with username in console mode; IDE provides its own input UI
@@ -494,12 +525,17 @@ class Agent:
            ))
            # Log only AFTER full dialogue turn
            logger.info(f"Agent response: {agent_response} | User replied: {cleaned}")
-      
+
        elif action == 3:  # Diff insertion
-           self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
-           self.terminal.print_agent_message(f"Inserting diff into file: {llm_response.file_name}")
+           try:
+               self.terminal.print_action_header("diff", f"{llm_response.action_description}")
+           except Exception:
+               self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
            diff = llm_response.diff
-           print(f"Diff to insert: {diff}")
+           try:
+               self.terminal.print_diff(str(diff))
+           except Exception:
+               self.terminal.print_system_message(f"Diff to insert: {diff}")
            self.file_system.insert_diff(diff)
            self.context_tree.add_node(ContextNode(
                user_message=None,
@@ -518,19 +554,28 @@ class Agent:
            else:
                self.context_tree.head.metadata["already_pruned_nodes"] = [llm_response.node_hash]
 
-           self.terminal.print_agent_message(f"Pruned context tree node: {llm_response.node_hash}")
-      
+           try:
+               self.terminal.print_context_operation("prune", llm_response.node_hash, llm_response.node_content or "")
+           except Exception:
+               self.terminal.print_agent_message(f"Pruned context tree node: {llm_response.node_hash}")
+
        elif action == 5:  # Change context HEAD
            previous_head_hash = self.context_tree.head.content_hash
 
            self.context_tree.head = self.context_tree._find_node(self.context_tree.root, llm_response.node_hash)
-           self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
+           try:
+               self.terminal.print_context_operation("navigate", llm_response.node_hash, llm_response.node_content or "")
+           except Exception:
+               self.terminal.print_agent_message(f"Changed context tree head to: {llm_response.node_hash}")
            self.context_tree.head.metadata = with_label({"Changed Context Head": llm_response.node_hash, "Previous Context Hash": previous_head_hash, "Change Summary": llm_response.node_content})
            logger.info(f"Changed context tree head to: {llm_response.node_hash}")
 
 
        elif action == 6:  # Add context node
-           self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
+           try:
+               self.terminal.print_action_header("add_node", f"{llm_response.action_description}")
+           except Exception:
+               self.terminal.print_agent_message(f"Action Description: {llm_response.action_description}")
            parent_hash = getattr(llm_response, 'node_hash', None)
            node_content = getattr(llm_response, 'node_content', None)
            label = getattr(llm_response, 'node_label', None)
@@ -544,7 +589,10 @@ class Agent:
                metadata=new_meta
            )
            self.context_tree.add_node(new_node, parent_hash=parent_hash, advance_head=False)
-           self.terminal.print_agent_message(f"Added context node under: {parent_hash or 'HEAD'}")
+           try:
+               self.terminal.print_context_operation("add", parent_hash or "HEAD", f"Label: {label}" if label else "")
+           except Exception:
+               self.terminal.print_agent_message(f"Added context node under: {parent_hash or 'HEAD'}")
            # Update the metadata of the current node
            if "added_context_nodes" in self.context_tree.head.metadata:
                self.context_tree.head.metadata["added_context_nodes"].append(new_node.content_hash)
@@ -557,9 +605,11 @@ class Agent:
 
 
 
-
-
        elif action == 7:  # Store Node in embedding DB
+           try:
+               self.terminal.print_action_header("memory", "Store to memory")
+           except Exception:
+               pass
            embedding = self.llm_client.generate_embedding(llm_response.save_content)
            self.memory.store_node(
                embedding=embedding,
@@ -573,6 +623,10 @@ class Agent:
            ))
            logger.info(f"Stored information in memory: {llm_response.save_content} with node hash: {llm_response.node_hash}")
        elif action == 8:  # Retrieve Node from embedding DB
+           try:
+               self.terminal.print_action_header("memory", "Retrieve from memory")
+           except Exception:
+               pass
            embedding = self.llm_client.generate_embedding(llm_response.retrieve_content)
            retrieved_info = self.memory.retrieve_node(embedding)
            if retrieved_info:
@@ -598,7 +652,10 @@ class Agent:
                self.context_tree.head.metadata["thoughts"].append(llm_response.response)
            else:
                self.context_tree.head.metadata["thoughts"] = [llm_response.response]
-           self.terminal.print_agent_message(f"Thinking about: {llm_response.response}")
+           try:
+               self.terminal.print_thinking(llm_response.response)
+           except Exception:
+               self.terminal.print_agent_message(f"Thinking about: {llm_response.response}")
            logger.info("No operation performed, waiting for next action.")
        elif action == 10:  # Replace context node (keep subtree)
            try:
@@ -608,7 +665,7 @@ class Agent:
            ok = self.context_tree.replace(
                node_hash=llm_response.node_hash,
                replacement_val=llm_response.node_content,
-               node_label=node_label
+               node_label=node_label,
            )
            if ok:
                # Update the metadata of the current node
@@ -617,9 +674,11 @@ class Agent:
                else:
                    self.context_tree.head.metadata["replaced_context_nodes"] = [llm_response.node_hash]
 
-
            status = "Replaced" if ok else "Replace failed (node not found)"
-           self.terminal.print_agent_message(f"{status}: {llm_response.node_hash}")
+           try:
+               self.terminal.print_context_operation("replace", llm_response.node_hash, llm_response.node_content or "")
+           except Exception:
+               self.terminal.print_agent_message(f"{status}: {llm_response.node_hash}")
            logger.info(f"Action 10: {status} | target={llm_response.node_hash}")
 
 
@@ -631,7 +690,7 @@ class Agent:
            else:
                ok = self.context_tree.rename(
                    node_hash=llm_response.node_hash,
-                   new_label=label
+                   new_label=label,
                )
                status = "Renamed" if ok else "Rename failed (node not found)"
                self.terminal.print_agent_message(f"{status}: {llm_response.node_hash} to '{label}'")
@@ -661,7 +720,10 @@ class Agent:
                    logger.info(f"Created new buffer: {buffer_name} at {buffer_path}")
                # Update the specified buffer
                self.buffers[buffer_name].write(llm_response.write_content)
-               self.terminal.print_agent_message(f"Updated buffer: {buffer_name} with new content {llm_response.write_content[:200]}")
+               try:
+                   self.terminal.print_buffer_update(buffer_name, llm_response.write_content[:200] if isinstance(llm_response.write_content, str) else str(llm_response.write_content)[:200])
+               except Exception:
+                   self.terminal.print_agent_message(f"Updated buffer: {buffer_name} with new content {str(llm_response.write_content)[:200]}")
                # Update head metadata, just map the buffer name to its latest content for now
                self.context_tree.add_node(ContextNode(
                    user_message=None,
@@ -669,7 +731,7 @@ class Agent:
                    system_response="",
                    metadata=with_label({f"Buffer {buffer_name} updated": llm_response.write_content})
                ))
-               logger.info(f"Updated buffer: {buffer_name} with new content {llm_response.write_content[:200]}")
+               logger.info(f"Updated buffer: {buffer_name} with new content {str(llm_response.write_content)[:200]}")
            else:
                self.terminal.print_agent_message("Buffer update failed: no buffer_name provided.")
                logger.warning("Action 13: Buffer update failed, no buffer_name provided.")
@@ -678,7 +740,10 @@ class Agent:
            if new_phase in ["Test", "Implementation", "Refactor"]:
                old_phase = self.phase
                self.phase = new_phase
-               self.terminal.print_agent_message(f"Phase changed from {old_phase} to {new_phase}.")
+               try:
+                   self.terminal.print_phase_change(old_phase, new_phase)
+               except Exception:
+                   self.terminal.print_agent_message(f"Phase changed from {old_phase} to {new_phase}.")
                self.context_tree.head.metadata.update({"phase_changed": {"from": old_phase, "to": new_phase}})
                logger.info(f"Phase changed from {old_phase} to {new_phase}.")
            else:
@@ -687,4 +752,3 @@ class Agent:
                logger.warning("Action 14: Phase change failed, invalid phase provided.")
        # Persist state after every action (SLOW!)
        self.save_state()
-

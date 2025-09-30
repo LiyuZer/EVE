@@ -3,6 +3,7 @@ import os
 import json
 import requests
 from openai import OpenAI
+import anthropic
 from src.logging_config import setup_logger
 
 
@@ -11,20 +12,26 @@ class CompletionError(Exception):
 
 
 class llmInterface:
-    def __init__(self, api_key: str | None, model: str):
+    def __init__(self, api_key: str | None, model: str, org : str = "OpenAI"):
         self.logger = setup_logger(__name__)
         self.model = model
+        self.org = org
 
         # OpenAI client is optional for autocomplete; initialize lazily
         resolved_openai = api_key or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_KEY") or os.getenv("OPENAI_API_TOKEN")
         self.api_key = resolved_openai
-        self.client: Optional[OpenAI] = None
-        if self.api_key:
-            try:
-                self.client = OpenAI(api_key=self.api_key)
-            except Exception:
-                # Don't fail constructor; generate_response will try again or raise clearly
-                self.client = None
+
+        # TODO: Make this cleaner with a factory pattern
+        if self.org.lower() == "openai":
+            self.client: Optional[OpenAI] = None
+            if self.api_key:
+                try:
+                    self.client = OpenAI(api_key=self.api_key)
+                except Exception:
+                    # Don't fail constructor; generate_response will try again or raise clearly
+                    self.client = None
+        elif self.org.lower() == "anthropic":
+            self.client = anthropic.Anthropic(api_key=self.api_key)
 
         # Fireworks API key (used by autocomplete path)
         self.fireworks_key = os.getenv("FIREWORKS_API_KEY")
@@ -78,6 +85,13 @@ class llmInterface:
             raise CompletionError(f"Failed to generate response via Fireworks: {e} - {body}") from e
 
     def generate_response(self, input_text: str, text_format=None, images = [], **kwargs: Any):
+        if self.org.lower() == "openai":
+            return self.generate_response_openai(input_text, text_format=text_format, images = images, **kwargs)
+        elif self.org.lower() == "anthropic":
+            response = self.generate_response_anthropic(input_text, **kwargs)
+            # Convert to structured text format a pydantic schema 
+            return text_format.model_validate_json(response)
+    def generate_response_openai(self, input_text: str, text_format=None, images = [], **kwargs: Any):
         """
         Call OpenAI Responses.parse for structured output (non-autocomplete paths).
         Lazily initialize the OpenAI client only when needed.
@@ -123,7 +137,34 @@ class llmInterface:
         except Exception as e:
             self.logger.error(f"LLM API error: {e}")
             raise e
+    def generate_response_anthropic(self, input_text: str, **kwargs: Any):
+        """
+        Anthropic uses messages.create
+        """
+        if self.client is None:
+            raise ValueError("Missing Anthropic API key for completions")
 
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=10000,
+                messages=[
+                    {"role": "user", "content": input_text}
+                ],
+                **kwargs
+            )
+            self.logger.info("Anthropic LLM responded successfully")
+            output = response.content[0].text
+            left_brace = output.find("{")
+            right_brace = output.rfind("}")
+            if left_brace != -1 and right_brace != -1 and right_brace > left_brace:
+                output = output[left_brace:right_brace + 1]
+                return output
+            else:
+                raise ValueError("Could not find JSON object in the response")
+        except Exception as e:
+            self.logger.error(f"Anthropic LLM API error: {e}")
+            raise e
     def generate_embedding(self, text: str) -> list[float]:
         # Lazy init for embeddings as well
         if self.client is None:
