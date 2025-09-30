@@ -384,6 +384,8 @@ class Agent:
            phase_line = f"Current Phase: {self.phase}. Do only the tasks related to this phase, do not do an implementation task in the test phase, or a refactor task in the implementation phase.\nUse ProgressBuffer to keep track of your phase related tasks, and progress."
            context_str = context_core + "\n" + policy_line + "\n" + "Summarized view : " + structured_tree + '\n' + buffer_str + "\n" + size_line + "\n" + full_context_size + "\n" + phase_line
 
+           if os.getenv("EVE_SHOW_TREE") == "true":
+               self.context_tree.print_tree(max_depth=5)
            # New visual size indicator
            try:
                current_size_val = len(str(context_core)) + len(policy_line) + len(structured_tree) + len(buffer_str)

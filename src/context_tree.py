@@ -345,7 +345,25 @@ class ContextTree:
        return path
 
 
+   def visualize(self, mode: str = "full", **kwargs) -> str:
+       from context_tree_visualizer import TreeVisualizer
+       viz = TreeVisualizer(self)
 
+       if mode == "path":
+           return viz.render_path_to_head()
+       elif mode == "subtree":
+           node_hash = kwargs.get("node_hash", self.head.content_hash)
+           return viz.render_subtree(node_hash, kwargs.get("max_depth", 3))
+       else:
+           return viz.render_tree(**kwargs)
+
+   def print_tree(self, mode: str = "full", **kwargs):
+       print(self.visualize(mode=mode, **kwargs))
+
+   def export_visualization(self, output_path: str = "context_tree.html"):
+       from context_tree_visualizer import TreeVisualizer
+       viz = TreeVisualizer(self)
+       return viz.export_html(output_path)
 
    # --- Summarized view for LLM context (short fields; minimal metadata) ---
    def _shorten(self, text, max_len: int = 120) -> str:
