@@ -3,7 +3,6 @@ import argparse
 import os
 from pathlib import Path
 
-
 def get_log_level_from_env(env_str: str):
     if env_str is None:
         return os.getenv("LOG_LEVEL", "INFO")

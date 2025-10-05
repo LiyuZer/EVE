@@ -248,6 +248,7 @@ DOCUMENTATION:
 ═══════════════════════════════════════════════════════════════════════════════
 
 Return ONLY a JSON object matching the schema when required by the client SDK. Do NOT include code fences, comments, or extra text.
+No extra test, explanation, or formatting outside the JSON object. only {...}. Do NOT return markdown or code fences.
 class Diff(BaseModel):
     line_range_1: list[int]
     file_path: str = ""  # Allow empty default so tests can omit this field
